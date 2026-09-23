@@ -22,11 +22,11 @@
             --border-color: #475569;
             
             --status-healthy: #334155;
-            --status-caries: #EF4444;   /* تسوس - أحمر */
-            --status-filled: #3B82F6;  /* حشوة - أزرق */
-            --status-rct: #F59E0B;    /* عصب - برتقالي */
-            --status-missing: #64748B;/* مخلوع - رمادي */
-            --status-crown: #EAB308;    /* تلبيسة - أصفر */
+            --status-caries: #EF4444;
+            --status-filled: #3B82F6;
+            --status-rct: #F59E0B;
+            --status-missing: #64748B;
+            --status-crown: #EAB308;
         }
 
         * {
@@ -219,7 +219,56 @@
             background: rgba(239, 68, 68, 0.2);
         }
 
-        /* تنسيق المخطط الذكي للأسنان */
+        /* قائمة سجلات المرضى السحابية */
+        .patients-list {
+            margin-top: 15px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+
+        .patient-item {
+            background: #334155;
+            padding: 14px 16px;
+            border-radius: 12px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid var(--border-color);
+            transition: border-color 0.2s;
+        }
+
+        .patient-item:hover {
+            border-color: var(--primary);
+        }
+
+        .patient-info h4 {
+            font-size: 15px;
+            color: var(--text-main);
+            margin-bottom: 4px;
+        }
+
+        .patient-info p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .patient-actions button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .patient-actions button:hover {
+            background: var(--primary-hover);
+        }
+
+        /* مخطط الأسنان الذكي */
         .smart-chart-container {
             margin-top: 15px;
             border-top: 1px dashed var(--border-color);
@@ -271,7 +320,6 @@
             flex-wrap: wrap;
         }
 
-        /* زر السن الذكي الفردي */
         .tooth-btn {
             width: 34px;
             height: 48px;
@@ -303,7 +351,6 @@
             font-size: 14px;
         }
 
-        /* ألوان حالات الأسنان التفاعلية */
         .tooth-btn.status-تسوس { background-color: var(--status-caries); border-color: #fca5a5; }
         .tooth-btn.status-حشوة { background-color: var(--status-filled); border-color: #93c5fd; }
         .tooth-btn.status-علاج-عصب { background-color: var(--status-rct); border-color: #fde68a; }
@@ -411,15 +458,37 @@
             </div>
         </div>
 
-        <!-- 3. الصفحة الأولى: معلومات المريض الأساسية -->
-        <div class="card" id="patient-info-section">
+        <!-- 3. الشاشة الرئيسية: قائمة ملفات المرضى المسجلين وسجل العيادة -->
+        <div class="card" id="dashboard-section">
             <div class="clinic-topbar">
                 <a onclick="logout()" class="logout-btn">خروج</a>
-                <div class="doctor-welcome">لوحة التحكم السحابية</div>
+                <div class="doctor-welcome">سجلات عيادة اسناي</div>
             </div>
 
             <div class="card-header" style="margin-bottom: 15px;">
-                <h2>إضافة مريض جديد</h2>
+                <h2>ملفات المرضى السحابية</h2>
+                <p>إدارة المرضى والمراجعات المخزنة في السحابة</p>
+            </div>
+
+            <button type="button" class="btn" onclick="openNewPatientForm()" style="margin-bottom: 15px;">+ إنشاء ملف مريض جديد</button>
+
+            <div class="form-group" style="margin-top: 10px;">
+                <label>المرضى المسجلون:</label>
+                <div class="patients-list" id="patients-list-container">
+                    <p style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">جاري تحميل السجلات من السحابة...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. شاشة إدخال معلومات المريض الجديد -->
+        <div class="card" id="patient-info-section">
+            <div class="clinic-topbar">
+                <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للسجلات</a>
+                <div class="doctor-welcome">بيانات المريض</div>
+            </div>
+
+            <div class="card-header" style="margin-bottom: 15px;">
+                <h2>ملف مريض جديد</h2>
                 <p>الخطوة 1: ادخل بيانات المريض الأساسية</p>
             </div>
 
@@ -457,7 +526,7 @@
             </form>
         </div>
 
-        <!-- 4. الصفحة الثانية: مخطط الأسنان التفاعلي الذكي -->
+        <!-- 5. شاشة مخطط الأسنان التفاعلي والحفظ السحابي النهائي -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
@@ -479,20 +548,16 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- الفك العلوي (Upper Arch) -->
+                <!-- الفك العلوي -->
                 <div class="arch-wrapper">
                     <div class="arch-title">الفك العلوي (Upper Arch)</div>
-                    <div class="teeth-grid" id="upper-arch-grid">
-                        <!-- يتم توليد الأسنان برمجياً هنا بدقة -->
-                    </div>
+                    <div class="teeth-grid" id="upper-arch-grid"></div>
                 </div>
 
-                <!-- الفك السفلي (Lower Arch) -->
+                <!-- الفك السفلي -->
                 <div class="arch-wrapper">
                     <div class="arch-title">الفك السفلي (Lower Arch)</div>
-                    <div class="teeth-grid" id="lower-arch-grid">
-                        <!-- يتم توليد الأسنان برمجياً هنا بدقة -->
-                    </div>
+                    <div class="teeth-grid" id="lower-arch-grid"></div>
                 </div>
             </div>
 
@@ -547,7 +612,6 @@
         let currentUser = null;
         let temporaryPatientInfo = {};
 
-        // أرقام أسنان الفك العلوي والسفلي القياسية الطبية
         const upperTeeth = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
         const lowerTeeth = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
 
@@ -562,13 +626,8 @@
             upperContainer.innerHTML = '';
             lowerContainer.innerHTML = '';
 
-            upperTeeth.forEach(num => {
-                upperContainer.appendChild(createToothElement(num));
-            });
-
-            lowerTeeth.forEach(num => {
-                lowerContainer.appendChild(createToothElement(num));
-            });
+            upperTeeth.forEach(num => upperContainer.appendChild(createToothElement(num)));
+            lowerTeeth.forEach(num => lowerContainer.appendChild(createToothElement(num)));
         }
 
         function createToothElement(num) {
@@ -587,7 +646,8 @@
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
-                switchTab('patient-info-section');
+                loadPatientsList();
+                switchTab('dashboard-section');
             } else {
                 currentUser = null;
                 switchTab('login-section');
@@ -600,9 +660,7 @@
             const pass = document.getElementById('login-pass').value;
             
             auth.signInWithEmailAndPassword(email, pass)
-                .catch((error) => {
-                    alert('خطأ في تسجيل الدخول: ' + error.message);
-                });
+                .catch((error) => alert('خطأ في تسجيل الدخول: ' + error.message));
         }
 
         function handleRegister(event) {
@@ -611,16 +669,81 @@
             const pass = document.getElementById('reg-pass').value;
 
             auth.createUserWithEmailAndPassword(email, pass)
-                .then(() => {
-                    alert('تم إنشاء الحساب السحابي بنجاح!');
-                })
-                .catch((error) => {
-                    alert('خطأ في التسجيل: ' + error.message);
-                });
+                .then(() => alert('تم إنشاء الحساب السحابي بنجاح!'))
+                .catch((error) => alert('خطأ في التسجيل: ' + error.message));
         }
 
         function logout() {
             auth.signOut().catch((error) => console.log(error));
+        }
+
+        function openNewPatientForm() {
+            document.getElementById('p-name').value = '';
+            document.getElementById('p-age').value = '';
+            document.getElementById('p-phone').value = '';
+            document.getElementById('p-history').value = '';
+            toothData = {};
+            renderTeethGrids();
+            switchTab('patient-info-section');
+        }
+
+        function loadPatientsList() {
+            const container = document.getElementById('patients-list-container');
+            container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">جاري جلب السجلات السحابية...</p>';
+
+            db.collection("patients")
+                .where("doctorId", "==", currentUser.uid)
+                .get()
+                .then((querySnapshot) => {
+                    container.innerHTML = '';
+                    if (querySnapshot.empty) {
+                        container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">لا توجد ملفات مرضى مسجلة بعد. ابدأ بإنشاء ملف جديد!</p>';
+                        return;
+                    }
+
+                    querySnapshot.forEach((doc) => {
+                        const data = doc.data();
+                        const item = document.createElement('div');
+                        item.className = 'patient-item';
+                        item.innerHTML = `
+                            <div class="patient-info">
+                                <h4>${data.name}</h4>
+                                <p>العمر: ${data.age} سنة | الهاتف: ${data.phone} | الجنس: ${data.gender}</p>
+                            </div>
+                            <div class="patient-actions">
+                                <button onclick="viewPatient('${doc.id}')">استعراض</button>
+                            </div>
+                        `;
+                        container.appendChild(item);
+                    });
+                })
+                .catch((error) => {
+                    container.innerHTML = '<p style="text-align: center; color: #EF4444; font-size: 13px; padding: 20px;">خطأ في جلب البيانات: ' + error.message + '</p>';
+                });
+        }
+
+        function viewPatient(patientId) {
+            db.collection("patients").doc(patientId).get().then((doc) => {
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('p-name').value = data.name;
+                    document.getElementById('p-gender').value = data.gender;
+                    document.getElementById('p-age').value = data.age;
+                    document.getElementById('p-phone').value = data.phone;
+                    document.getElementById('p-history').value = data.history || '';
+                    toothData = data.teeth || {};
+                    
+                    // تحديث الألوان بصرياً
+                    renderTeethGrids();
+                    for (let toothNum in toothData) {
+                        updateToothVisual(toothNum, toothData[toothNum].status);
+                    }
+
+                    temporaryPatientInfo = { name: data.name, gender: data.gender, age: data.age, phone: data.phone, history: data.history };
+                    document.getElementById('chart-patient-title').textContent = `مخطط أسنان: ${data.name}`;
+                    switchTab('patient-chart-section');
+                }
+            });
         }
 
         function goToChartSection(event) {
@@ -651,18 +774,11 @@
 
             db.collection("patients").add(finalPatientData)
                 .then(() => {
-                    alert('تم حفظ بيانات المريض والمخطط في السحابة بنجاح!');
-                    document.getElementById('p-name').value = '';
-                    document.getElementById('p-age').value = '';
-                    document.getElementById('p-phone').value = '';
-                    document.getElementById('p-history').value = '';
-                    toothData = {};
-                    renderTeethGrids();
-                    switchTab('patient-info-section');
+                    alert('تم حفظ ملف المريض ومخططه في السحابة بنجاح!');
+                    loadPatientsList();
+                    switchTab('dashboard-section');
                 })
-                .catch((error) => {
-                    alert('خطأ في الحفظ: ' + error.message);
-                });
+                .catch((error) => alert('خطأ في الحفظ: ' + error.message));
         }
 
         function openToothModal(toothNum) {
@@ -670,7 +786,7 @@
             document.getElementById('modal-tooth-title').textContent = `إدارة السن رقم: ${toothNum}`;
             if (toothData[toothNum]) {
                 document.getElementById('tooth-status').value = toothData[toothNum].status;
-                document.getElementById('tooth-notes').value = toothData[toothNum].notes;
+                document.getElementById('tooth-notes').value = toothData[toothNum].notes || '';
             } else {
                 document.getElementById('tooth-status').value = 'سليم';
                 document.getElementById('tooth-notes').value = '';
