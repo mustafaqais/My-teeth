@@ -12,21 +12,22 @@
 
     <style>
         :root {
-            --bg-color: #121824;
-            --card-bg: #1E293B;
-            --text-main: #F1F5F9;
-            --text-muted: #94A3B8;
-            --primary: #0D9488;
-            --primary-hover: #0F766E;
-            --input-bg: #273449;
-            --border-color: #334155;
+            /* لوحة ألوان فاتحة، نظيفة، ومشرقة */
+            --bg-color: #F8FAFC;
+            --card-bg: #FFFFFF;
+            --text-main: #0F172A;
+            --text-muted: #64748B;
+            --primary: #0EA5E9;
+            --primary-hover: #0284C7;
+            --input-bg: #F1F5F9;
+            --border-color: #E2E8F0;
             
-            --status-healthy: #334155;
-            --status-caries: #E11D48;
-            --status-filled: #0284C7;
-            --status-rct: #D97706;
-            --status-missing: #64748B;
-            --status-crown: #CA8A04;
+            --status-healthy: #E2E8F0;
+            --status-caries: #EF4444;
+            --status-filled: #3B82F6;
+            --status-rct: #F59E0B;
+            --status-missing: #94A3B8;
+            --status-crown: #EAB308;
         }
 
         * {
@@ -55,7 +56,7 @@
             background-color: var(--card-bg);
             padding: 30px 25px;
             border-radius: 20px;
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
             margin-bottom: 20px;
             display: none;
             border: 1px solid var(--border-color);
@@ -73,7 +74,7 @@
         .clinic-logo {
             width: 65px;
             height: 65px;
-            background: linear-gradient(135deg, #0D9488, #14B8A6);
+            background: linear-gradient(135deg, #0EA5E9, #0284C7);
             color: white;
             border-radius: 50%;
             display: flex;
@@ -81,7 +82,7 @@
             align-items: center;
             font-size: 30px;
             margin: 0 auto 15px auto;
-            box-shadow: 0 8px 20px rgba(13, 148, 136, 0.3);
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.3);
         }
 
         .card-header h2 {
@@ -128,7 +129,8 @@
         input:focus, select:focus, textarea:focus {
             border-color: var(--primary);
             outline: none;
-            box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.2);
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+            background-color: #FFFFFF;
         }
 
         .password-container {
@@ -179,10 +181,11 @@
         }
 
         .btn-secondary {
-            background-color: #475569;
+            background-color: #94A3B8;
+            color: #FFFFFF;
         }
         .btn-secondary:hover {
-            background-color: #334155;
+            background-color: #64748B;
         }
 
         .card-footer-link {
@@ -217,11 +220,11 @@
         }
 
         .logout-btn {
-            color: #F43F5E;
+            color: #EF4444;
             font-size: 13px;
             cursor: pointer;
             font-weight: 600;
-            background: rgba(244, 63, 94, 0.1);
+            background: rgba(239, 68, 68, 0.1);
             padding: 5px 12px;
             border-radius: 8px;
             text-decoration: none;
@@ -230,10 +233,10 @@
         }
 
         .logout-btn:hover {
-            background: rgba(244, 63, 94, 0.2);
+            background: rgba(239, 68, 68, 0.2);
         }
 
-        /* لوحة الأيقونات الرئيسية الجديدة */
+        /* لوحة الأيقونات الرئيسية الفاتحة */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -242,7 +245,7 @@
         }
 
         .dashboard-tile {
-            background-color: #273449;
+            background-color: #F8FAFC;
             border: 1px solid var(--border-color);
             border-radius: 16px;
             padding: 25px 15px;
@@ -254,7 +257,8 @@
         .dashboard-tile:hover {
             border-color: var(--primary);
             transform: translateY(-3px);
-            background-color: #2d3b50;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            background-color: #FFFFFF;
         }
 
         .tile-icon {
@@ -282,7 +286,7 @@
         }
 
         .patient-item {
-            background: #273449;
+            background: #F8FAFC;
             padding: 14px 16px;
             border-radius: 12px;
             margin-bottom: 10px;
@@ -354,7 +358,7 @@
 
         .arch-wrapper {
             margin-bottom: 20px;
-            background: #121824;
+            background: #F1F5F9;
             padding: 15px 10px;
             border-radius: 14px;
             border: 1px solid var(--border-color);
@@ -388,7 +392,7 @@
             padding: 4px 2px;
             cursor: pointer;
             transition: all 0.2s ease;
-            color: #ffffff;
+            color: var(--text-main);
         }
 
         .tooth-btn:hover {
@@ -406,11 +410,11 @@
             font-size: 14px;
         }
 
-        .tooth-btn.status-تسوس { background-color: var(--status-caries); border-color: #fda4af; }
-        .tooth-btn.status-حشوة { background-color: var(--status-filled); border-color: #7dd3fc; }
-        .tooth-btn.status-علاج-عصب { background-color: var(--status-rct); border-color: #fde68a; }
-        .tooth-btn.status-خلع { background-color: var(--status-missing); border-color: #94a3b8; opacity: 0.6; }
-        .tooth-btn.status-تلبيسة { background-color: var(--status-crown); border-color: #fef08a; }
+        .tooth-btn.status-تسوس { background-color: var(--status-caries); color: white; border-color: #fca5a5; }
+        .tooth-btn.status-حشوة { background-color: var(--status-filled); color: white; border-color: #93c5fd; }
+        .tooth-btn.status-علاج-عصب { background-color: var(--status-rct); color: white; border-color: #fde68a; }
+        .tooth-btn.status-خلع { background-color: var(--status-missing); color: white; border-color: #cbd5e1; opacity: 0.6; }
+        .tooth-btn.status-تلبيسة { background-color: var(--status-crown); color: white; border-color: #fef08a; }
 
         .modal {
             display: none;
@@ -419,7 +423,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(18, 24, 36, 0.85);
+            background-color: rgba(15, 23, 42, 0.5);
             justify-content: center;
             align-items: center;
             padding: 15px;
@@ -435,6 +439,7 @@
             width: 100%;
             max-width: 380px;
             border: 1px solid var(--border-color);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
         }
 
         .modal-header {
@@ -545,7 +550,7 @@
         <!-- 4. شاشة عرض أرشيف ملفات المرضى السابقين -->
         <div class="card" id="patients-archive-section">
             <div class="clinic-topbar">
-                <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(13, 148, 136, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
+                <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
                 <div class="doctor-welcome">أرشيف العيادة</div>
             </div>
 
@@ -564,7 +569,7 @@
         <!-- 5. شاشة إدخال معلومات المريض الجديد أو التعديل عليه -->
         <div class="card" id="patient-info-section">
             <div class="clinic-topbar">
-                <a onclick="backToDashboard()" class="logout-btn" style="background: rgba(13, 148, 136, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
+                <a onclick="backToDashboard()" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
                 <div class="doctor-welcome">بيانات المريض</div>
             </div>
 
@@ -610,7 +615,7 @@
         <!-- 6. شاشة مخطط الأسنان التفاعلي والحفظ السحابي النهائي -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
-                <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(13, 148, 136, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
+                <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
                 <div class="doctor-welcome">مخطط الأسنان الذكي</div>
             </div>
 
@@ -621,12 +626,12 @@
 
             <div class="smart-chart-container">
                 <div class="chart-legend">
-                    <div class="legend-item"><div class="legend-color" style="background:#334155"></div>سليم</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#E11D48"></div>تسوس</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#0284C7"></div>حشوة</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#D97706"></div>عصب</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#64748B"></div>مخلوع</div>
-                    <div class="legend-item"><div class="legend-color" style="background:#CA8A04"></div>تلبيسة</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#E2E8F0"></div>سليم</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#EF4444"></div>تسوس</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#3B82F6"></div>حشوة</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#F59E0B"></div>عصب</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#94A3B8"></div>مخلوع</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
                 <!-- الفك العلوي -->
@@ -692,7 +697,7 @@
         let currentSelectedTooth = null;
         let currentUser = null;
         let temporaryPatientInfo = {};
-        let editingPatientId = null; // لمعرفة هل نقوم بتعديل مريض سابق أم إضافة جديد
+        let editingPatientId = null;
 
         const upperTeeth = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
         const lowerTeeth = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
@@ -810,7 +815,7 @@
                     });
                 })
                 .catch((error) => {
-                    container.innerHTML = '<p style="text-align: center; color: #F43F5E; font-size: 13px; padding: 20px;">خطأ في جلب البيانات: ' + error.message + '</p>';
+                    container.innerHTML = '<p style="text-align: center; color: #EF4444; font-size: 13px; padding: 20px;">خطأ في جلب البيانات: ' + error.message + '</p>';
                 });
         }
 
@@ -866,7 +871,6 @@
             };
 
             if (editingPatientId) {
-                // تحديث ملف مريض سابق موجود مسبقاً
                 db.collection("patients").doc(editingPatientId).update(finalPatientData)
                     .then(() => {
                         alert('تم تحديث ملف المريض بنجاح!');
@@ -874,7 +878,6 @@
                     })
                     .catch((error) => alert('خطأ في التحديث: ' + error.message));
             } else {
-                // إضافة مريض جديد تماماً
                 db.collection("patients").add(finalPatientData)
                     .then(() => {
                         alert('تم حفظ ملف المريض الجديد في السحابة بنجاح!');
