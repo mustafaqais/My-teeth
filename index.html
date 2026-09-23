@@ -22,11 +22,11 @@
             --border-color: #475569;
             
             --status-healthy: rgba(14, 165, 233, 0.3);
-            --status-caries: rgba(239, 68, 68, 0.85);   /* تسوس - أحمر */
-            --status-filled: rgba(59, 130, 246, 0.85);  /* حشوة - أزرق */
-            --status-rct: rgba(245, 158, 11, 0.85);    /* عصب - برتقالي */
-            --status-missing: rgba(100, 116, 139, 0.85);/* مخلوع - رمادي */
-            --status-crown: rgba(234, 179, 8, 0.85);    /* تلبيسة - أصفر */
+            --status-caries: rgba(239, 68, 68, 0.85);
+            --status-filled: rgba(59, 130, 246, 0.85);
+            --status-rct: rgba(245, 158, 11, 0.85);
+            --status-missing: rgba(100, 116, 139, 0.85);
+            --status-crown: rgba(234, 179, 8, 0.85);
         }
 
         * {
@@ -84,6 +84,7 @@
 
         .form-group {
             margin-bottom: 18px;
+            text-align: right;
         }
 
         label {
@@ -97,7 +98,7 @@
         input[type="text"],
         input[type="password"],
         input[type="email"],
-        input[type="date"],
+        input[type="number"],
         select,
         textarea {
             width: 100%;
@@ -107,6 +108,7 @@
             background-color: var(--input-bg);
             font-size: 14px;
             color: var(--text-main);
+            text-align: right;
         }
 
         input:focus, select:focus, textarea:focus {
@@ -162,6 +164,13 @@
             background-color: var(--primary-hover);
         }
 
+        .btn-secondary {
+            background-color: #475569;
+        }
+        .btn-secondary:hover {
+            background-color: #334155;
+        }
+
         .card-footer-link {
             text-align: center;
             margin-top: 20px;
@@ -180,19 +189,38 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 22px;
             padding-bottom: 12px;
             border-bottom: 1px solid var(--border-color);
+            direction: ltr;
         }
 
         .doctor-welcome {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: var(--primary);
+            direction: rtl;
+        }
+
+        .logout-btn {
+            color: #EF4444;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 600;
+            background: rgba(239, 68, 68, 0.1);
+            padding: 5px 12px;
+            border-radius: 8px;
+            text-decoration: none;
+            direction: rtl;
+            transition: background 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: rgba(239, 68, 68, 0.2);
         }
 
         .image-chart-container {
-            margin-top: 20px;
+            margin-top: 15px;
             border-top: 1px dashed var(--border-color);
             padding-top: 15px;
         }
@@ -200,7 +228,7 @@
         .chart-legend {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
             flex-wrap: wrap;
             margin-bottom: 15px;
             font-size: 11px;
@@ -209,7 +237,7 @@
         .legend-item {
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
             color: var(--text-muted);
         }
 
@@ -372,28 +400,25 @@
             </div>
         </div>
 
-        <!-- 3. لوحة إدارة المريض والمخطط السحابي -->
-        <div class="card" id="patient-section">
+        <!-- 3. الصفحة الأولى: معلومات المريض الأساسية -->
+        <div class="card" id="patient-info-section">
             <div class="clinic-topbar">
-                <div class="doctor-welcome" id="doctor-display-name">مرحباً دكتور</div>
-                <a onclick="logout()" style="color: #EF4444; font-size: 13px; cursor: pointer; font-weight: 600;">خروج</a>
+                <a onclick="logout()" class="logout-btn">خروج</a>
+                <div class="doctor-welcome">لوحة التحكم السحابية</div>
             </div>
 
             <div class="card-header" style="margin-bottom: 15px;">
-                <h2>ملف المريض السحابي</h2>
-                <p>حفظ ومزامنة بيانات المرضى بقاعدة البيانات</p>
+                <h2>إضافة مريض جديد</h2>
+                <p>الخطوة 1: ادخل بيانات المريض الأساسية</p>
             </div>
 
-            <form onsubmit="handlePatientSave(event)">
+            <form onsubmit="goToChartSection(event)">
                 <div class="form-group">
                     <label for="p-name">اسم المريض الثلاثي</label>
                     <input type="text" id="p-name" placeholder="اسم المريض" required>
                 </div>
+                
                 <div class="form-row">
-                    <div class="form-group">
-                        <label for="p-dob">تاريخ الميلاد</label>
-                        <input type="date" id="p-dob" required>
-                    </div>
                     <div class="form-group">
                         <label for="p-gender">الجنس</label>
                         <select id="p-gender">
@@ -401,84 +426,98 @@
                             <option value="أنثى">أنثى</option>
                         </select>
                     </div>
-                </div>
-                <div class="form-row">
                     <div class="form-group">
-                        <label for="p-phone">رقم الهاتف</label>
-                        <input type="text" id="p-phone" placeholder="07700000000" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="p-cost">الكلفة (د.ع)</label>
-                        <input type="text" id="p-cost" placeholder="100,000">
+                        <label for="p-age">العمر (سنوات)</label>
+                        <input type="number" id="p-age" placeholder="مثال: 30" min="1" max="120" required>
                     </div>
                 </div>
+
+                <div class="form-group">
+                    <label for="p-phone">رقم الهاتف</label>
+                    <input type="text" id="p-phone" placeholder="07700000000" required>
+                </div>
+
                 <div class="form-group">
                     <label for="p-history">التاريخ الطبي</label>
                     <textarea id="p-history" placeholder="الأمراض المزمنة والحساسية..."></textarea>
                 </div>
 
-                <!-- المخطط البصري الاحترافي -->
-                <div class="image-chart-container">
-                    <div class="chart-legend">
-                        <div class="legend-item"><div class="legend-color" style="background:#0EA5E9"></div>سليم</div>
-                        <div class="legend-item"><div class="legend-color" style="background:#EF4444"></div>تسوس</div>
-                        <div class="legend-item"><div class="legend-color" style="background:#3B82F6"></div>حشوة</div>
-                        <div class="legend-item"><div class="legend-color" style="background:#F59E0B"></div>عصب</div>
-                        <div class="legend-item"><div class="legend-color" style="background:#64748B"></div>مخلوع</div>
-                        <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
-                    </div>
+                <button type="submit" class="btn" style="margin-top: 15px;">الانتقال لمخطط الأسنان &larr;</button>
+            </form>
+        </div>
 
-                    <!-- الفك العلوي -->
-                    <div class="jaw-section">
-                        <div class="jaw-title">الفك العلوي (Upper Arch)</div>
-                        <div style="position: relative; display: inline-block; width: 100%;">
-                            <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80" alt="Upper Jaw" class="jaw-image">
-                            <div class="tooth-hotspot" style="top: 80%; left: 16%;" onclick="openToothModal(18)">18</div>
-                            <div class="tooth-hotspot" style="top: 70%; left: 19%;" onclick="openToothModal(17)">17</div>
-                            <div class="tooth-hotspot" style="top: 57%; left: 22%;" onclick="openToothModal(16)">16</div>
-                            <div class="tooth-hotspot" style="top: 44%; left: 26%;" onclick="openToothModal(15)">15</div>
-                            <div class="tooth-hotspot" style="top: 32%; left: 32%;" onclick="openToothModal(14)">14</div>
-                            <div class="tooth-hotspot" style="top: 23%; left: 40%;" onclick="openToothModal(13)">13</div>
-                            <div class="tooth-hotspot" style="top: 17%; left: 47%;" onclick="openToothModal(12)">12</div>
-                            <div class="tooth-hotspot" style="top: 13%; left: 54%;" onclick="openToothModal(11)">11</div>
-                            <div class="tooth-hotspot" style="top: 13%; left: 61%;" onclick="openToothModal(21)">21</div>
-                            <div class="tooth-hotspot" style="top: 17%; left: 68%;" onclick="openToothModal(22)">22</div>
-                            <div class="tooth-hotspot" style="top: 23%; left: 75%;" onclick="openToothModal(23)">23</div>
-                            <div class="tooth-hotspot" style="top: 32%; left: 81%;" onclick="openToothModal(24)">24</div>
-                            <div class="tooth-hotspot" style="top: 44%; left: 86%;" onclick="openToothModal(25)">25</div>
-                            <div class="tooth-hotspot" style="top: 57%; left: 89%;" onclick="openToothModal(26)">26</div>
-                            <div class="tooth-hotspot" style="top: 70%; left: 91%;" onclick="openToothModal(27)">27</div>
-                            <div class="tooth-hotspot" style="top: 80%; left: 93%;" onclick="openToothModal(28)">28</div>
-                        </div>
-                    </div>
+        <!-- 4. الصفحة الثانية: مخطط الأسنان التفاعلي والحفظ السحابي -->
+        <div class="card" id="patient-chart-section">
+            <div class="clinic-topbar">
+                <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
+                <div class="doctor-welcome">مخطط الأسنان السحابي</div>
+            </div>
 
-                    <!-- الفك السفلي -->
-                    <div class="jaw-section">
-                        <div class="jaw-title">الفك السفلي (Lower Arch)</div>
-                        <div style="position: relative; display: inline-block; width: 100%;">
-                            <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80" alt="Lower Jaw" class="jaw-image">
-                            <div class="tooth-hotspot" style="top: 20%; left: 16%;" onclick="openToothModal(48)">48</div>
-                            <div class="tooth-hotspot" style="top: 30%; left: 19%;" onclick="openToothModal(47)">47</div>
-                            <div class="tooth-hotspot" style="top: 43%; left: 22%;" onclick="openToothModal(46)">46</div>
-                            <div class="tooth-hotspot" style="top: 56%; left: 26%;" onclick="openToothModal(45)">45</div>
-                            <div class="tooth-hotspot" style="top: 68%; left: 32%;" onclick="openToothModal(44)">44</div>
-                            <div class="tooth-hotspot" style="top: 77%; left: 40%;" onclick="openToothModal(43)">43</div>
-                            <div class="tooth-hotspot" style="top: 83%; left: 47%;" onclick="openToothModal(42)">42</div>
-                            <div class="tooth-hotspot" style="top: 87%; left: 54%;" onclick="openToothModal(41)">41</div>
-                            <div class="tooth-hotspot" style="top: 87%; left: 61%;" onclick="openToothModal(31)">31</div>
-                            <div class="tooth-hotspot" style="top: 83%; left: 68%;" onclick="openToothModal(32)">32</div>
-                            <div class="tooth-hotspot" style="top: 77%; left: 75%;" onclick="openToothModal(33)">33</div>
-                            <div class="tooth-hotspot" style="top: 68%; left: 81%;" onclick="openToothModal(34)">34</div>
-                            <div class="tooth-hotspot" style="top: 56%; left: 86%;" onclick="openToothModal(35)">35</div>
-                            <div class="tooth-hotspot" style="top: 43%; left: 89%;" onclick="openToothModal(36)">36</div>
-                            <div class="tooth-hotspot" style="top: 30%; left: 91%;" onclick="openToothModal(37)">37</div>
-                            <div class="tooth-hotspot" style="top: 20%; left: 93%;" onclick="openToothModal(38)">38</div>
-                        </div>
+            <div class="card-header" style="margin-bottom: 10px;">
+                <h2 id="chart-patient-title">مخطط الأسنان</h2>
+                <p>حدد حالة الأسنان واضغط حفظ نهائي</p>
+            </div>
+
+            <div class="image-chart-container">
+                <div class="chart-legend">
+                    <div class="legend-item"><div class="legend-color" style="background:#0EA5E9"></div>سليم</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#EF4444"></div>تسوس</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#3B82F6"></div>حشوة</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#F59E0B"></div>عصب</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#64748B"></div>مخلوع</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
+                </div>
+
+                <!-- الفك العلوي -->
+                <div class="jaw-section">
+                    <div class="jaw-title">الفك العلوي (Upper Arch)</div>
+                    <div style="position: relative; display: inline-block; width: 100%;">
+                        <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80" alt="Upper Jaw" class="jaw-image">
+                        <div class="tooth-hotspot" style="top: 80%; left: 16%;" onclick="openToothModal(18)">18</div>
+                        <div class="tooth-hotspot" style="top: 70%; left: 19%;" onclick="openToothModal(17)">17</div>
+                        <div class="tooth-hotspot" style="top: 57%; left: 22%;" onclick="openToothModal(16)">16</div>
+                        <div class="tooth-hotspot" style="top: 44%; left: 26%;" onclick="openToothModal(15)">15</div>
+                        <div class="tooth-hotspot" style="top: 32%; left: 32%;" onclick="openToothModal(14)">14</div>
+                        <div class="tooth-hotspot" style="top: 23%; left: 40%;" onclick="openToothModal(13)">13</div>
+                        <div class="tooth-hotspot" style="top: 17%; left: 47%;" onclick="openToothModal(12)">12</div>
+                        <div class="tooth-hotspot" style="top: 13%; left: 54%;" onclick="openToothModal(11)">11</div>
+                        <div class="tooth-hotspot" style="top: 13%; left: 61%;" onclick="openToothModal(21)">21</div>
+                        <div class="tooth-hotspot" style="top: 17%; left: 68%;" onclick="openToothModal(22)">22</div>
+                        <div class="tooth-hotspot" style="top: 23%; left: 75%;" onclick="openToothModal(23)">23</div>
+                        <div class="tooth-hotspot" style="top: 32%; left: 81%;" onclick="openToothModal(24)">24</div>
+                        <div class="tooth-hotspot" style="top: 44%; left: 86%;" onclick="openToothModal(25)">25</div>
+                        <div class="tooth-hotspot" style="top: 57%; left: 89%;" onclick="openToothModal(26)">26</div>
+                        <div class="tooth-hotspot" style="top: 70%; left: 91%;" onclick="openToothModal(27)">27</div>
+                        <div class="tooth-hotspot" style="top: 80%; left: 93%;" onclick="openToothModal(28)">28</div>
                     </div>
                 </div>
 
-                <button type="submit" class="btn" style="margin-top: 20px;">حفظ المريض سحابياً</button>
-            </form>
+                <!-- الفك السفلي -->
+                <div class="jaw-section">
+                    <div class="jaw-title">الفك السفلي (Lower Arch)</div>
+                    <div style="position: relative; display: inline-block; width: 100%;">
+                        <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80" alt="Lower Jaw" class="jaw-image">
+                        <div class="tooth-hotspot" style="top: 20%; left: 16%;" onclick="openToothModal(48)">48</div>
+                        <div class="tooth-hotspot" style="top: 30%; left: 19%;" onclick="openToothModal(47)">47</div>
+                        <div class="tooth-hotspot" style="top: 43%; left: 22%;" onclick="openToothModal(46)">46</div>
+                        <div class="tooth-hotspot" style="top: 56%; left: 26%;" onclick="openToothModal(45)">45</div>
+                        <div class="tooth-hotspot" style="top: 68%; left: 32%;" onclick="openToothModal(44)">44</div>
+                        <div class="tooth-hotspot" style="top: 77%; left: 40%;" onclick="openToothModal(43)">43</div>
+                        <div class="tooth-hotspot" style="top: 83%; left: 47%;" onclick="openToothModal(42)">42</div>
+                        <div class="tooth-hotspot" style="top: 87%; left: 54%;" onclick="openToothModal(41)">41</div>
+                        <div class="tooth-hotspot" style="top: 87%; left: 61%;" onclick="openToothModal(31)">31</div>
+                        <div class="tooth-hotspot" style="top: 83%; left: 68%;" onclick="openToothModal(32)">32</div>
+                        <div class="tooth-hotspot" style="top: 77%; left: 75%;" onclick="openToothModal(33)">33</div>
+                        <div class="tooth-hotspot" style="top: 68%; left: 81%;" onclick="openToothModal(34)">34</div>
+                        <div class="tooth-hotspot" style="top: 56%; left: 86%;" onclick="openToothModal(35)">35</div>
+                        <div class="tooth-hotspot" style="top: 43%; left: 89%;" onclick="openToothModal(36)">36</div>
+                        <div class="tooth-hotspot" style="top: 30%; left: 91%;" onclick="openToothModal(37)">37</div>
+                        <div class="tooth-hotspot" style="top: 20%; left: 93%;" onclick="openToothModal(38)">38</div>
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="btn" onclick="savePatientToCloud()" style="margin-top: 10px;">حفظ المريض والبيانات سحابياً</button>
         </div>
 
     </div>
@@ -503,14 +542,13 @@
                 <textarea id="tooth-notes" placeholder="ملاحظات السن..."></textarea>
             </div>
             <div class="modal-actions">
-                <button class="btn" style="background-color: #64748B;" type="button" onclick="closeToothModal()">إلغاء</button>
-                <button class="btn" type="button" onclick="saveToothStatus()">حفظ</button>
+                <button class="btn btn-secondary" type="button" onclick="closeToothModal()">إلغاء</button>
+                <button class="btn" type="button" onclick="saveToothStatus()">حفظ السن</button>
             </div>
         </div>
     </div>
 
     <script>
-        // إعدادات Firebase الخاصة بمشروعك
         const firebaseConfig = {
             apiKey: "AIzaSyBnMTON0jp18hi_nTAl98QyNEZp1fTnJdQ",
             authDomain: "my-teeth-c573b.firebaseapp.com",
@@ -528,12 +566,12 @@
         let toothData = {};
         let currentSelectedTooth = null;
         let currentUser = null;
+        let temporaryPatientInfo = {};
 
         auth.onAuthStateChanged((user) => {
             if (user) {
                 currentUser = user;
-                document.getElementById('doctor-display-name').textContent = `د. ${user.email}`;
-                switchTab('patient-section');
+                switchTab('patient-info-section');
             } else {
                 currentUser = null;
                 switchTab('login-section');
@@ -546,9 +584,6 @@
             const pass = document.getElementById('login-pass').value;
             
             auth.signInWithEmailAndPassword(email, pass)
-                .then(() => {
-                    // تم تسجيل الدخول بنجاح
-                })
                 .catch((error) => {
                     alert('خطأ في تسجيل الدخول: ' + error.message);
                 });
@@ -572,35 +607,45 @@
             auth.signOut().catch((error) => console.log(error));
         }
 
-        function handlePatientSave(event) {
+        // الانتقال من صفحة البيانات إلى صفحة المخطط
+        function goToChartSection(event) {
             event.preventDefault();
+            temporaryPatientInfo = {
+                name: document.getElementById('p-name').value,
+                gender: document.getElementById('p-gender').value,
+                age: document.getElementById('p-age').value,
+                phone: document.getElementById('p-phone').value,
+                history: document.getElementById('p-history').value
+            };
+            document.getElementById('chart-patient-title').textContent = `مخطط أسنان: ${temporaryPatientInfo.name}`;
+            switchTab('patient-chart-section');
+        }
+
+        // الحفظ النهائي للسحابة (البيانات + الأسنان)
+        function savePatientToCloud() {
             if (!currentUser) {
                 alert('الرجاء تسجيل الدخول أولاً');
                 return;
             }
 
-            const patientData = {
+            const finalPatientData = {
                 doctorId: currentUser.uid,
-                name: document.getElementById('p-name').value,
-                dob: document.getElementById('p-dob').value,
-                gender: document.getElementById('p-gender').value,
-                phone: document.getElementById('p-phone').value,
-                cost: document.getElementById('p-cost').value,
-                history: document.getElementById('p-history').value,
+                ...temporaryPatientInfo,
                 teeth: toothData,
                 updatedAt: new Date()
             };
 
-            db.collection("patients").add(patientData)
+            db.collection("patients").add(finalPatientData)
                 .then(() => {
-                    alert('تم حفظ بيانات المريض في السحابة بنجاح!');
+                    alert('تم حفظ بيانات المريض والمخطط في السحابة بنجاح!');
+                    // إعادة ضبط النماذج والعودة لصفحة البيانات
                     document.getElementById('p-name').value = '';
-                    document.getElementById('p-dob').value = '';
+                    document.getElementById('p-age').value = '';
                     document.getElementById('p-phone').value = '';
-                    document.getElementById('p-cost').value = '';
                     document.getElementById('p-history').value = '';
                     toothData = {};
                     document.querySelectorAll('.tooth-hotspot').forEach(spot => spot.className = 'tooth-hotspot');
+                    switchTab('patient-info-section');
                 })
                 .catch((error) => {
                     alert('خطأ في الحفظ: ' + error.message);
