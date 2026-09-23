@@ -250,17 +250,37 @@
         .jaw-section {
             position: relative;
             width: 100%;
-            max-width: 320px;
+            max-width: 340px;
             margin: 0 auto 20px auto;
             text-align: center;
         }
 
-        .jaw-image {
+        /* حاوية الصورة المخصصة للقص (الفك العلوي والسفلي منفصلين بوضوح) */
+        .jaw-crop-box {
+            position: relative;
             width: 100%;
-            height: auto;
-            border-radius: 12px;
+            height: 230px;
+            overflow: hidden;
+            border-radius: 14px;
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-            display: block;
+            border: 1px solid var(--border-color);
+            background: #cbd5e1;
+        }
+
+        .jaw-crop-box img {
+            position: absolute;
+            width: 100%;
+            left: 0;
+        }
+
+        /* الفك العلوي (النصف الأعلى من الصورة) */
+        .upper-jaw-img {
+            top: 0;
+        }
+
+        /* الفك السفلي (النصف الأسفل من الصورة) */
+        .lower-jaw-img {
+            bottom: 0;
         }
 
         .jaw-title {
@@ -286,6 +306,7 @@
             font-weight: bold;
             color: #0F172A;
             transition: all 0.2s ease;
+            z-index: 5;
         }
 
         .tooth-hotspot:hover {
@@ -446,7 +467,7 @@
             </form>
         </div>
 
-        <!-- 4. الصفحة الثانية: مخطط الأسنان التفاعلي بالصورة المطلوبة -->
+        <!-- 4. الصفحة الثانية: مخطط الأسنان التفاعلي بالقالب المباشر -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
@@ -468,53 +489,53 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- الفك العلوي باستخدام صورتك المحددة -->
+                <!-- الفك العلوي -->
                 <div class="jaw-section">
                     <div class="jaw-title">الفك العلوي (Upper Arch)</div>
-                    <div style="position: relative; display: inline-block; width: 100%;">
-                        <img src="https://i.ibb.co/6R228J55/1000114013.jpg" alt="Upper Jaw" class="jaw-image">
-                        <!-- نقاط الأسنان السحابية للفك العلوي مطابقة تماماً لصورة القالب -->
-                        <div class="tooth-hotspot" style="top: 86%; left: 16%;" onclick="openToothModal(18)">18</div>
-                        <div class="tooth-hotspot" style="top: 76%; left: 18%;" onclick="openToothModal(17)">17</div>
-                        <div class="tooth-hotspot" style="top: 64%; left: 22%;" onclick="openToothModal(16)">16</div>
-                        <div class="tooth-hotspot" style="top: 50%; left: 27%;" onclick="openToothModal(15)">15</div>
-                        <div class="tooth-hotspot" style="top: 38%; left: 34%;" onclick="openToothModal(14)">14</div>
-                        <div class="tooth-hotspot" style="top: 28%; left: 42%;" onclick="openToothModal(13)">13</div>
-                        <div class="tooth-hotspot" style="top: 21%; left: 50%;" onclick="openToothModal(12)">12</div>
-                        <div class="tooth-hotspot" style="top: 18%; left: 58%;" onclick="openToothModal(11)">11</div>
-                        <div class="tooth-hotspot" style="top: 18%; left: 66%;" onclick="openToothModal(21)">21</div>
-                        <div class="tooth-hotspot" style="top: 21%; left: 74%;" onclick="openToothModal(22)">22</div>
-                        <div class="tooth-hotspot" style="top: 28%; left: 82%;" onclick="openToothModal(23)">23</div>
-                        <div class="tooth-hotspot" style="top: 38%; left: 90%;" onclick="openToothModal(24)">24</div>
-                        <div class="tooth-hotspot" style="top: 50%; left: 93%;" onclick="openToothModal(25)">25</div>
-                        <div class="tooth-hotspot" style="top: 64%; left: 96%;" onclick="openToothModal(26)">26</div>
-                        <div class="tooth-hotspot" style="top: 76%; left: 99%;" onclick="openToothModal(27)">27</div>
-                        <div class="tooth-hotspot" style="top: 86%; left: 101%;" onclick="openToothModal(28)">28</div>
+                    <div class="jaw-crop-box">
+                        <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80" alt="Upper Arch" class="upper-jaw-img">
+                        <!-- نقاط الأسنان للفك العلوي -->
+                        <div class="tooth-hotspot" style="top: 80%; left: 14%;" onclick="openToothModal(18)">18</div>
+                        <div class="tooth-hotspot" style="top: 68%; left: 18%;" onclick="openToothModal(17)">17</div>
+                        <div class="tooth-hotspot" style="top: 54%; left: 23%;" onclick="openToothModal(16)">16</div>
+                        <div class="tooth-hotspot" style="top: 41%; left: 30%;" onclick="openToothModal(15)">15</div>
+                        <div class="tooth-hotspot" style="top: 30%; left: 38%;" onclick="openToothModal(14)">14</div>
+                        <div class="tooth-hotspot" style="top: 22%; left: 46%;" onclick="openToothModal(13)">13</div>
+                        <div class="tooth-hotspot" style="top: 18%; left: 54%;" onclick="openToothModal(12)">12</div>
+                        <div class="tooth-hotspot" style="top: 17%; left: 63%;" onclick="openToothModal(11)">11</div>
+                        <div class="tooth-hotspot" style="top: 17%; left: 71%;" onclick="openToothModal(21)">21</div>
+                        <div class="tooth-hotspot" style="top: 18%; left: 80%;" onclick="openToothModal(22)">22</div>
+                        <div class="tooth-hotspot" style="top: 22%; left: 88%;" onclick="openToothModal(23)">23</div>
+                        <div class="tooth-hotspot" style="top: 30%; left: 95%;" onclick="openToothModal(24)">24</div>
+                        <div class="tooth-hotspot" style="top: 41%; left: 101%;" onclick="openToothModal(25)">25</div>
+                        <div class="tooth-hotspot" style="top: 54%; left: 106%;" onclick="openToothModal(26)">26</div>
+                        <div class="tooth-hotspot" style="top: 68%; left: 110%;" onclick="openToothModal(27)">27</div>
+                        <div class="tooth-hotspot" style="top: 80%; left: 114%;" onclick="openToothModal(28)">28</div>
                     </div>
                 </div>
 
-                <!-- الفك السفلي باستخدام صورتك المحددة -->
+                <!-- الفك السفلي -->
                 <div class="jaw-section">
                     <div class="jaw-title">الفك السفلي (Lower Arch)</div>
-                    <div style="position: relative; display: inline-block; width: 100%;">
-                        <img src="https://i.ibb.co/6R228J55/1000114013.jpg" alt="Lower Jaw" class="jaw-image" style="clip-path: inset(50% 0 0 0); transform: translateY(-50%);">
-                        <!-- نقاط الأسنان السحابية للفك السفلي مطابقة تماماً لصورة القالب -->
-                        <div class="tooth-hotspot" style="top: 68%; left: 16%;" onclick="openToothModal(48)">48</div>
-                        <div class="tooth-hotspot" style="top: 78%; left: 18%;" onclick="openToothModal(47)">47</div>
-                        <div class="tooth-hotspot" style="top: 90%; left: 22%;" onclick="openToothModal(46)">46</div>
-                        <div class="tooth-hotspot" style="top: 104%; left: 27%;" onclick="openToothModal(45)">45</div>
-                        <div class="tooth-hotspot" style="top: 116%; left: 34%;" onclick="openToothModal(44)">44</div>
-                        <div class="tooth-hotspot" style="top: 126%; left: 42%;" onclick="openToothModal(43)">43</div>
-                        <div class="tooth-hotspot" style="top: 133%; left: 50%;" onclick="openToothModal(42)">42</div>
-                        <div class="tooth-hotspot" style="top: 136%; left: 58%;" onclick="openToothModal(41)">41</div>
-                        <div class="tooth-hotspot" style="top: 136%; left: 66%;" onclick="openToothModal(31)">31</div>
-                        <div class="tooth-hotspot" style="top: 133%; left: 74%;" onclick="openToothModal(32)">32</div>
-                        <div class="tooth-hotspot" style="top: 126%; left: 82%;" onclick="openToothModal(33)">33</div>
-                        <div class="tooth-hotspot" style="top: 116%; left: 90%;" onclick="openToothModal(34)">34</div>
-                        <div class="tooth-hotspot" style="top: 104%; left: 93%;" onclick="openToothModal(35)">35</div>
-                        <div class="tooth-hotspot" style="top: 90%; left: 96%;" onclick="openToothModal(36)">36</div>
-                        <div class="tooth-hotspot" style="top: 78%; left: 99%;" onclick="openToothModal(37)">37</div>
-                        <div class="tooth-hotspot" style="top: 68%; left: 101%;" onclick="openToothModal(38)">38</div>
+                    <div class="jaw-crop-box">
+                        <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80" alt="Lower Arch" class="lower-jaw-img" style="transform: scaleY(-1);">
+                        <!-- نقاط الأسنان للفك السفلي -->
+                        <div class="tooth-hotspot" style="top: 20%; left: 14%;" onclick="openToothModal(48)">48</div>
+                        <div class="tooth-hotspot" style="top: 32%; left: 18%;" onclick="openToothModal(47)">47</div>
+                        <div class="tooth-hotspot" style="top: 46%; left: 23%;" onclick="openToothModal(46)">46</div>
+                        <div class="tooth-hotspot" style="top: 59%; left: 30%;" onclick="openToothModal(45)">45</div>
+                        <div class="tooth-hotspot" style="top: 70%; left: 38%;" onclick="openToothModal(44)">44</div>
+                        <div class="tooth-hotspot" style="top: 78%; left: 46%;" onclick="openToothModal(43)">43</div>
+                        <div class="tooth-hotspot" style="top: 82%; left: 54%;" onclick="openToothModal(42)">42</div>
+                        <div class="tooth-hotspot" style="top: 83%; left: 63%;" onclick="openToothModal(41)">41</div>
+                        <div class="tooth-hotspot" style="top: 83%; left: 71%;" onclick="openToothModal(31)">31</div>
+                        <div class="tooth-hotspot" style="top: 82%; left: 80%;" onclick="openToothModal(32)">32</div>
+                        <div class="tooth-hotspot" style="top: 78%; left: 88%;" onclick="openToothModal(33)">33</div>
+                        <div class="tooth-hotspot" style="top: 70%; left: 95%;" onclick="openToothModal(34)">34</div>
+                        <div class="tooth-hotspot" style="top: 59%; left: 101%;" onclick="openToothModal(35)">35</div>
+                        <div class="tooth-hotspot" style="top: 46%; left: 106%;" onclick="openToothModal(36)">36</div>
+                        <div class="tooth-hotspot" style="top: 32%; left: 110%;" onclick="openToothModal(37)">37</div>
+                        <div class="tooth-hotspot" style="top: 20%; left: 114%;" onclick="openToothModal(38)">38</div>
                     </div>
                 </div>
             </div>
