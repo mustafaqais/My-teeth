@@ -1,642 +1,664 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>منصة اسناي السحابية - عيادات الأسنان</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة اسناي السحابية - عيادات الأسنان</title>
+    
+    <!-- استيراد مكتبات Firebase عبر CDN -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
-<!-- استيراد مكتبات Firebase عبر CDN -->
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <style>
+        :root {
+            --bg-color: #0F172A;
+            --card-bg: #1E293B;
+            --text-main: #F8FAFC;
+            --text-muted: #94A3B8;
+            --primary: #0EA5E9;
+            --primary-hover: #0284C7;
+            --input-bg: #334155;
+            --border-color: #475569;
+            
+            --status-healthy: rgba(14, 165, 233, 0.3);
+            --status-caries: rgba(239, 68, 68, 0.85);   /* تسوس - أحمر */
+            --status-filled: rgba(59, 130, 246, 0.85);  /* حشوة - أزرق */
+            --status-rct: rgba(245, 158, 11, 0.85);    /* عصب - برتقالي */
+            --status-missing: rgba(100, 116, 139, 0.85);/* مخلوع - رمادي */
+            --status-crown: rgba(234, 179, 8, 0.85);    /* تلبيسة - أصفر */
+        }
 
-<style>
-:root {
---bg-color: #0F172A;
---card-bg: #1E293B;
---text-main: #F8FAFC;
---text-muted: #94A3B8;
---primary: #0EA5E9;
---primary-hover: #0284C7;
---input-bg: #334155;
---border-color: #475569;
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
---status-healthy: rgba(14, 165, 233, 0.3);
---status-caries: rgba(239, 68, 68, 0.85); /* تسوس - أحمر /
---status-filled: rgba(59, 130, 246, 0.85); / حشوة - أزرق /
---status-rct: rgba(245, 158, 11, 0.85); / عصب - برتقالي /
---status-missing: rgba(100, 116, 139, 0.85);/ مخلوع - رمادي /
---status-crown: rgba(234, 179, 8, 0.85); / تلبيسة - أصفر */
-}
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 15px;
+        }
 
-* {
-box-sizing: border-box;
-margin: 0;
-padding: 0;
-font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+        .app-container {
+            width: 100%;
+            max-width: 600px;
+        }
 
-body {
-background-color: var(--bg-color);
-color: var(--text-main);
-display: flex;
-justify-content: center;
-align-items: center;
-min-height: 100vh;
-padding: 15px;
-}
+        .card {
+            background-color: var(--card-bg);
+            padding: 30px 25px;
+            border-radius: 20px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+            margin-bottom: 20px;
+            display: none;
+            border: 1px solid var(--border-color);
+        }
 
-.app-container {
-width: 100%;
-max-width: 600px;
-}
+        .card.active {
+            display: block;
+        }
 
-.card {
-background-color: var(--card-bg);
-padding: 30px 25px;
-border-radius: 20px;
-box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
-margin-bottom: 20px;
-display: none;
-border: 1px solid var(--border-color);
-}
+        .card-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
 
-.card.active {
-display: block;
-}
+        .card-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+        }
 
-.card-header {
-text-align: center;
-margin-bottom: 25px;
-}
+        .card-header p {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
 
-.card-header h2 {
-font-size: 24px;
-font-weight: 700;
-color: var(--text-main);
-margin-bottom: 8px;
-}
+        .form-group {
+            margin-bottom: 18px;
+        }
 
-.card-header p {
-font-size: 14px;
-color: var(--text-muted);
-}
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
 
-.form-group {
-margin-bottom: 18px;
-}
+        input[type="text"],
+        input[type="password"],
+        input[type="email"],
+        input[type="date"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            background-color: var(--input-bg);
+            font-size: 14px;
+            color: var(--text-main);
+        }
 
-label {
-display: block;
-margin-bottom: 6px;
-font-size: 13px;
-font-weight: 600;
-color: var(--text-muted);
-}
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+        }
 
-input[type="text"],
-input[type="password"],
-input[type="email"],
-input[type="date"],
-select,
-textarea {
-width: 100%;
-padding: 12px 16px;
-border-radius: 12px;
-border: 1px solid var(--border-color);
-background-color: var(--input-bg);
-font-size: 14px;
-color: var(--text-main);
-}
+        .password-container {
+            position: relative;
+        }
 
-input:focus, select:focus, textarea:focus {
-border-color: var(--primary);
-outline: none;
-box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
-}
+        .show-password {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600;
+        }
 
-.password-container {
-position: relative;
-}
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
 
-.show-password {
-position: absolute;
-left: 14px;
-top: 50%;
-transform: translateY(-50%);
-cursor: pointer;
-font-size: 12px;
-color: var(--primary);
-font-weight: 600;
-}
+        .form-row > div {
+            flex: 1;
+        }
 
-.form-row {
-display: flex;
-gap: 12px;
-}
+        textarea {
+            resize: vertical;
+            height: 90px;
+        }
 
-.form-row > div {
-flex: 1;
-}
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 12px;
+            background-color: var(--primary);
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-top: 10px;
+        }
 
-textarea {
-resize: vertical;
-height: 90px;
-}
+        .btn:hover {
+            background-color: var(--primary-hover);
+        }
 
-.btn {
-width: 100%;
-padding: 14px;
-border: none;
-border-radius: 12px;
-background-color: var(--primary);
-color: #ffffff;
-font-size: 16px;
-font-weight: 600;
-cursor: pointer;
-transition: background-color 0.3s ease;
-margin-top: 10px;
-}
+        .card-footer-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
 
-.btn:hover {
-background-color: var(--primary-hover);
-}
+        .card-footer-link a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
 
-.card-footer-link {
-text-align: center;
-margin-top: 20px;
-font-size: 13px;
-color: var(--text-muted);
-}
+        .clinic-topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border-color);
+        }
 
-.card-footer-link a {
-color: var(--primary);
-text-decoration: none;
-font-weight: 600;
-cursor: pointer;
-}
+        .doctor-welcome {
+            font-size: 14px;
+            font-weight: bold;
+            color: var(--primary);
+        }
 
-.clinic-topbar {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 20px;
-padding-bottom: 12px;
-border-bottom: 1px solid var(--border-color);
-}
+        .image-chart-container {
+            margin-top: 20px;
+            border-top: 1px dashed var(--border-color);
+            padding-top: 15px;
+        }
 
-.doctor-welcome {
-font-size: 14px;
-font-weight: bold;
-color: var(--primary);
-}
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+            font-size: 11px;
+        }
 
-.image-chart-container {
-margin-top: 20px;
-border-top: 1px dashed var(--border-color);
-padding-top: 15px;
-}
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            color: var(--text-muted);
+        }
 
-.chart-legend {
-display: flex;
-justify-content: center;
-gap: 10px;
-flex-wrap: wrap;
-margin-bottom: 15px;
-font-size: 11px;
-}
+        .legend-color {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
 
-.legend-item {
-display: flex;
-align-items: center;
-gap: 4px;
-color: var(--text-muted);
-}
+        .jaw-section {
+            position: relative;
+            width: 100%;
+            max-width: 340px;
+            margin: 0 auto 20px auto;
+            text-align: center;
+        }
 
-.legend-color {
-width: 10px;
-height: 10px;
-border-radius: 50%;
-}
+        .jaw-image {
+            width: 100%;
+            height: auto;
+            border-radius: 14px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            display: block;
+        }
 
-.jaw-section {
-position: relative;
-width: 100%;
-max-width: 340px;
-margin: 0 auto 20px auto;
-text-align: center;
-}
+        .jaw-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
 
-.jaw-image {
-width: 100%;
-height: auto;
-border-radius: 14px;
-box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-display: block;
-}
+        .tooth-hotspot {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: var(--status-healthy);
+            border: 2px solid #FFFFFF;
+            cursor: pointer;
+            transform: translate(-50%, -50%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 9px;
+            font-weight: bold;
+            color: #0F172A;
+            transition: all 0.2s ease;
+        }
 
-.jaw-title {
-font-size: 13px;
-font-weight: 700;
-color: var(--text-muted);
-margin-bottom: 8px;
-}
+        .tooth-hotspot:hover {
+            transform: translate(-50%, -50%) scale(1.3);
+            z-index: 10;
+        }
 
-.tooth-hotspot {
-position: absolute;
-width: 24px;
-height: 24px;
-border-radius: 50%;
-background-color: var(--status-healthy);
-border: 2px solid #FFFFFF;
-cursor: pointer;
-transform: translate(-50%, -50%);
-display: flex;
-justify-content: center;
-align-items: center;
-font-size: 9px;
-font-weight: bold;
-color: #0F172A;
-transition: all 0.2s ease;
-}
+        .tooth-hotspot.status-تسوس { background-color: var(--status-caries); color: white; }
+        .tooth-hotspot.status-حشوة { background-color: var(--status-filled); color: white; }
+        .tooth-hotspot.status-علاج-عصب { background-color: var(--status-rct); color: white; }
+        .tooth-hotspot.status-خلع { background-color: var(--status-missing); color: white; opacity: 0.75; }
+        .tooth-hotspot.status-تلبيسة { background-color: var(--status-crown); color: white; }
 
-.tooth-hotspot:hover {
-transform: translate(-50%, -50%) scale(1.3);
-z-index: 10;
-}
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(15, 23, 42, 0.8);
+            justify-content: center;
+            align-items: center;
+            padding: 15px;
+            z-index: 1000;
+        }
 
-.tooth-hotspot.status-تسوس { background-color: var(--status-caries); color: white; }
-.tooth-hotspot.status-حشوة { background-color: var(--status-filled); color: white; }
-.tooth-hotspot.status-علاج-عصب { background-color: var(--status-rct); color: white; }
-.tooth-hotspot.status-خلع { background-color: var(--status-missing); color: white; opacity: 0.75; }
-.tooth-hotspot.status-تلبيسة { background-color: var(--status-crown); color: white; }
+        .modal.open { display: flex; }
 
-.modal {
-display: none;
-position: fixed;
-top: 0;
-left: 0;
-width: 100%;
-height: 100%;
-background-color: rgba(15, 23, 42, 0.8);
-justify-content: center;
-align-items: center;
-padding: 15px;
-z-index: 1000;
-}
+        .modal-content {
+            background-color: var(--card-bg);
+            padding: 25px;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 380px;
+            border: 1px solid var(--border-color);
+        }
 
-.modal.open { display: flex; }
+        .modal-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
 
-.modal-content {
-background-color: var(--card-bg);
-padding: 25px;
-border-radius: 16px;
-width: 100%;
-max-width: 380px;
-border: 1px solid var(--border-color);
-}
-
-.modal-header {
-font-size: 18px;
-font-weight: bold;
-margin-bottom: 15px;
-text-align: center;
-}
-
-.modal-actions {
-display: flex;
-gap: 12px;
-margin-top: 15px;
-}
-</style>
+        .modal-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 <body>
 
-<div class="app-container">
+    <div class="app-container">
 
-<!-- 1. تسجيل الدخول السحابي -->
-<div class="card active" id="login-section">
-<div class="card-header">
-<h2>منصة اسناي السحابية</h2>
-<p>تسجيل دخول الطبيب للعيادة</p>
-</div>
-<form onsubmit="handleLogin(event)">
-<div class="form-group">
-<label for="login-email">البريد الإلكتروني</label>
-<input type="email" id="login-email" placeholder="doctor@clinic.com" required>
-</div>
-<div class="form-group">
-<label for="login-pass">كلمة المرور</label>
-<div class="password-container">
-<input type="password" id="login-pass" placeholder="••••••••" required>
-<span class="show-password" onclick="togglePass('login-pass', this)">إظهار</span>
-</div>
-</div>
-<button type="submit" class="btn">دخول السحابة</button>
-</form>
-<div class="card-footer-link">
-حساب جديد؟ <a onclick="switchTab('register-section')">سجل عيادتك الآن</a>
-</div>
-</div>
+        <!-- 1. تسجيل الدخول السحابي -->
+        <div class="card active" id="login-section">
+            <div class="card-header">
+                <h2>منصة اسناي السحابية</h2>
+                <p>تسجيل دخول الطبيب للعيادة</p>
+            </div>
+            <form onsubmit="handleLogin(event)">
+                <div class="form-group">
+                    <label for="login-email">البريد الإلكتروني</label>
+                    <input type="email" id="login-email" placeholder="doctor@clinic.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="login-pass">كلمة المرور</label>
+                    <div class="password-container">
+                        <input type="password" id="login-pass" placeholder="••••••••" required>
+                        <span class="show-password" onclick="togglePass('login-pass', this)">إظهار</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn">دخول السحابة</button>
+            </form>
+            <div class="card-footer-link">
+                حساب جديد؟ <a onclick="switchTab('register-section')">سجل عيادتك الآن</a>
+            </div>
+        </div>
 
-<!-- 2. إنشـاء حساب جديد سحابياً -->
-<div class="card" id="register-section">
-<div class="card-header">
-<h2>تسجيل عيادة جديدة</h2>
-<p>إنشاء حساب طبيب سحابي مؤمن</p>
-</div>
-<form onsubmit="handleRegister(event)">
-<div class="form-group">
-<label for="reg-clinic-name">اسم العيادة</label>
-<input type="text" id="reg-clinic-name" placeholder="عيادة الابتسامة" required>
-</div>
-<div class="form-group">
-<label for="reg-name">اسم الطبيب</label>
-<input type="text" id="reg-name" placeholder="د. أحمد" required>
-</div>
-<div class="form-group">
-<label for="reg-email">البريد الإلكتروني</label>
-<input type="email" id="reg-email" placeholder="doctor@clinic.com" required>
-</div>
-<div class="form-group">
-<label for="reg-pass">كلمة المرور</label>
-<div class="password-container">
-<input type="password" id="reg-pass" placeholder="••••••••" required>
-<span class="show-password" onclick="togglePass('reg-pass', this)">إظهار</span>
-</div>
-</div>
-<button type="submit" class="btn">إنشاء الحساب السحابي</button>
-</form>
-<div class="card-footer-link">
-لديك حساب؟ <a onclick="switchTab('login-section')">تسجيل الدخول</a>
-</div>
-</div>
+        <!-- 2. إنشـاء حساب جديد سحابياً -->
+        <div class="card" id="register-section">
+            <div class="card-header">
+                <h2>تسجيل عيادة جديدة</h2>
+                <p>إنشاء حساب طبيب سحابي مؤمن</p>
+            </div>
+            <form onsubmit="handleRegister(event)">
+                <div class="form-group">
+                    <label for="reg-clinic-name">اسم العيادة</label>
+                    <input type="text" id="reg-clinic-name" placeholder="عيادة الابتسامة" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-name">اسم الطبيب</label>
+                    <input type="text" id="reg-name" placeholder="د. أحمد" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-email">البريد الإلكتروني</label>
+                    <input type="email" id="reg-email" placeholder="doctor@clinic.com" required>
+                </div>
+                <div class="form-group">
+                    <label for="reg-pass">كلمة المرور</label>
+                    <div class="password-container">
+                        <input type="password" id="reg-pass" placeholder="••••••••" required>
+                        <span class="show-password" onclick="togglePass('reg-pass', this)">إظهار</span>
+                    </div>
+                </div>
+                <button type="submit" class="btn">إنشاء الحساب السحابي</button>
+            </form>
+            <div class="card-footer-link">
+                لديك حساب؟ <a onclick="switchTab('login-section')">تسجيل الدخول</a>
+            </div>
+        </div>
 
-<!-- 3. لوحة إدارة المريض والمخطط السحابي -->
-<div class="card" id="patient-section">
-<div class="clinic-topbar">
-<div class="doctor-welcome" id="doctor-display-name">مرحباً دكتور</div>
-<a onclick="logout()" style="color: #EF4444; font-size: 13px; cursor: pointer; font-weight: 600;">خروج</a>
-</div>
+        <!-- 3. لوحة إدارة المريض والمخطط السحابي -->
+        <div class="card" id="patient-section">
+            <div class="clinic-topbar">
+                <div class="doctor-welcome" id="doctor-display-name">مرحباً دكتور</div>
+                <a onclick="logout()" style="color: #EF4444; font-size: 13px; cursor: pointer; font-weight: 600;">خروج</a>
+            </div>
 
-<div class="card-header" style="margin-bottom: 15px;">
-<h2>ملف المريض السحابي</h2>
-<p>حفظ ومزامنة بيانات المرضى بقاعدة البيانات</p>
-</div>
+            <div class="card-header" style="margin-bottom: 15px;">
+                <h2>ملف المريض السحابي</h2>
+                <p>حفظ ومزامنة بيانات المرضى بقاعدة البيانات</p>
+            </div>
 
-<form onsubmit="handlePatientSave(event)">
-<div class="form-group">
-<label for="p-name">اسم المريض الثلاثي</label>
-<input type="text" id="p-name" placeholder="اسم المريض" required>
-</div>
-<div class="form-row">
-<div class="form-group">
-<label for="p-dob">تاريخ الميلاد</label>
-<input type="date" id="p-dob" required>
-</div>
-<div class="form-group">
-<label for="p-gender">الجنس</label>
-<select id="p-gender">
-<option value="ذكر">ذكر</option>
-<option value="أنثى">أنثى</option>
-</select>
-</div>
-</div>
-<div class="form-row">
-<div class="form-group">
-<label for="p-phone">رقم الهاتف</label>
-<input type="text" id="p-phone" placeholder="07700000000" required>
-</div>
-<div class="form-group">
-<label for="p-cost">الكلفة (د.ع)</label>
-<input type="text" id="p-cost" placeholder="100,000">
-</div>
-</div>
-<div class="form-group">
-<label for="p-history">التاريخ الطبي</label>
-<textarea id="p-history" placeholder="الأمراض المزمنة والحساسية..."></textarea>
-</div>
+            <form onsubmit="handlePatientSave(event)">
+                <div class="form-group">
+                    <label for="p-name">اسم المريض الثلاثي</label>
+                    <input type="text" id="p-name" placeholder="اسم المريض" required>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="p-dob">تاريخ الميلاد</label>
+                        <input type="date" id="p-dob" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="p-gender">الجنس</label>
+                        <select id="p-gender">
+                            <option value="ذكر">ذكر</option>
+                            <option value="أنثى">أنثى</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="p-phone">رقم الهاتف</label>
+                        <input type="text" id="p-phone" placeholder="07700000000" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="p-cost">الكلفة (د.ع)</label>
+                        <input type="text" id="p-cost" placeholder="100,000">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="p-history">التاريخ الطبي</label>
+                    <textarea id="p-history" placeholder="الأمراض المزمنة والحساسية..."></textarea>
+                </div>
 
-<!-- المخطط البصري الاحترافي -->
-<div class="image-chart-container">
-<div class="chart-legend">
-<div class="legend-item"><div class="legend-color" style="background:#0EA5E9"></div>سليم</div>
-<div class="legend-item"><div class="legend-color" style="background:#EF4444"></div>تسوس</div>
-<div class="legend-item"><div class="legend-color" style="background:#3B82F6"></div>حشوة</div>
-<div class="legend-item"><div class="legend-color" style="background:#F59E0B"></div>عصب</div>
-<div class="legend-item"><div class="legend-color" style="background:#64748B"></div>مخلوع</div>
-<div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
-</div>
+                <!-- المخطط البصري الاحترافي -->
+                <div class="image-chart-container">
+                    <div class="chart-legend">
+                        <div class="legend-item"><div class="legend-color" style="background:#0EA5E9"></div>سليم</div>
+                        <div class="legend-item"><div class="legend-color" style="background:#EF4444"></div>تسوس</div>
+                        <div class="legend-item"><div class="legend-color" style="background:#3B82F6"></div>حشوة</div>
+                        <div class="legend-item"><div class="legend-color" style="background:#F59E0B"></div>عصب</div>
+                        <div class="legend-item"><div class="legend-color" style="background:#64748B"></div>مخلوع</div>
+                        <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
+                    </div>
 
-<!-- الفك العلوي -->
-<div class="jaw-section">
-<div class="jaw-title">الفك العلوي (Upper Arch)span_0span_0</div>
-<div style="position: relative; display: inline-block; width: 100%;">
-<img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80" alt="Upper Jaw" class="jaw-image">
-<div class="tooth-hotspot" style="top: 80%; left: 16%;" onclick="openToothModal(18)">18</div>
-<div class="tooth-hotspot" style="top: 70%; left: 19%;" onclick="openToothModal(17)">17</div>
-<div class="tooth-hotspot" style="top: 57%; left: 22%;" onclick="openToothModal(16)">16</div>
-<div class="tooth-hotspot" style="top: 44%; left: 26%;" onclick="openToothModal(15)">15</div>
-<div class="tooth-hotspot" style="top: 32%; left: 32%;" onclick="openToothModal(14)">14</div>
-<div class="tooth-hotspot" style="top: 23%; left: 40%;" onclick="openToothModal(13)">13</div>
-<div class="tooth-hotspot" style="top: 17%; left: 47%;" onclick="openToothModal(12)">12</div>
-<div class="tooth-hotspot" style="top: 13%; left: 54%;" onclick="openToothModal(11)">11</div>
-<div class="tooth-hotspot" style="top: 13%; left: 61%;" onclick="openToothModal(21)">21</div>
-<div class="tooth-hotspot" style="top: 17%; left: 68%;" onclick="openToothModal(22)">22</div>
-<div class="tooth-hotspot" style="top: 23%; left: 75%;" onclick="openToothModal(23)">23</div>
-<div class="tooth-hotspot" style="top: 32%; left: 81%;" onclick="openToothModal(24)">24</div>
-<div class="tooth-hotspot" style="top: 44%; left: 86%;" onclick="openToothModal(25)">25</div>
-<div class="tooth-hotspot" style="top: 57%; left: 89%;" onclick="openToothModal(26)">26</div>
-<div class="tooth-hotspot" style="top: 70%; left: 91%;" onclick="openToothModal(27)">27</div>
-<div class="tooth-hotspot" style="top: 80%; left: 93%;" onclick="openToothModal(28)">28</div>
-</div>
-</div>
+                    <!-- الفك العلوي -->
+                    <div class="jaw-section">
+                        <div class="jaw-title">الفك العلوي (Upper Arch)</div>
+                        <div style="position: relative; display: inline-block; width: 100%;">
+                            <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80" alt="Upper Jaw" class="jaw-image">
+                            <div class="tooth-hotspot" style="top: 80%; left: 16%;" onclick="openToothModal(18)">18</div>
+                            <div class="tooth-hotspot" style="top: 70%; left: 19%;" onclick="openToothModal(17)">17</div>
+                            <div class="tooth-hotspot" style="top: 57%; left: 22%;" onclick="openToothModal(16)">16</div>
+                            <div class="tooth-hotspot" style="top: 44%; left: 26%;" onclick="openToothModal(15)">15</div>
+                            <div class="tooth-hotspot" style="top: 32%; left: 32%;" onclick="openToothModal(14)">14</div>
+                            <div class="tooth-hotspot" style="top: 23%; left: 40%;" onclick="openToothModal(13)">13</div>
+                            <div class="tooth-hotspot" style="top: 17%; left: 47%;" onclick="openToothModal(12)">12</div>
+                            <div class="tooth-hotspot" style="top: 13%; left: 54%;" onclick="openToothModal(11)">11</div>
+                            <div class="tooth-hotspot" style="top: 13%; left: 61%;" onclick="openToothModal(21)">21</div>
+                            <div class="tooth-hotspot" style="top: 17%; left: 68%;" onclick="openToothModal(22)">22</div>
+                            <div class="tooth-hotspot" style="top: 23%; left: 75%;" onclick="openToothModal(23)">23</div>
+                            <div class="tooth-hotspot" style="top: 32%; left: 81%;" onclick="openToothModal(24)">24</div>
+                            <div class="tooth-hotspot" style="top: 44%; left: 86%;" onclick="openToothModal(25)">25</div>
+                            <div class="tooth-hotspot" style="top: 57%; left: 89%;" onclick="openToothModal(26)">26</div>
+                            <div class="tooth-hotspot" style="top: 70%; left: 91%;" onclick="openToothModal(27)">27</div>
+                            <div class="tooth-hotspot" style="top: 80%; left: 93%;" onclick="openToothModal(28)">28</div>
+                        </div>
+                    </div>
 
-<!-- الفك السفلي -->
-<div class="jaw-section">
-<div class="jaw-title">الفك السفلي (Lower Arch)span_1span_1</div>
-<div style="position: relative; display: inline-block; width: 100%;">
-<img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80" alt="Lower Jaw" class="jaw-image">
-<div class="tooth-hotspot" style="top: 20%; left: 16%;" onclick="openToothModal(48)">48</div>
-<div class="tooth-hotspot" style="top: 30%; left: 19%;" onclick="openToothModal(47)">47</div>
-<div class="tooth-hotspot" style="top: 43%; left: 22%;" onclick="openToothModal(46)">46</div>
-<div class="tooth-hotspot" style="top: 56%; left: 26%;" onclick="openToothModal(45)">45</div>
-<div class="tooth-hotspot" style="top: 68%; left: 32%;" onclick="openToothModal(44)">44</div>
-<div class="tooth-hotspot" style="top: 77%; left: 40%;" onclick="openToothModal(43)">43</div>
-<div class="tooth-hotspot" style="top: 83%; left: 47%;" onclick="openToothModal(42)">42</div>
-<div class="tooth-hotspot" style="top: 87%; left: 54%;" onclick="openToothModal(41)">41</div>
-<div class="tooth-hotspot" style="top: 87%; left: 61%;" onclick="openToothModal(31)">31</div>
-<div class="tooth-hotspot" style="top: 83%; left: 68%;" onclick="openToothModal(32)">32</div>
-<div class="tooth-hotspot" style="top: 77%; left: 75%;" onclick="openToothModal(33)">33</div>
-<div class="tooth-hotspot" style="top: 68%; left: 81%;" onclick="openToothModal(34)">34</div>
-<div class="tooth-hotspot" style="top: 56%; left: 86%;" onclick="openToothModal(35)">35</div>
-<div class="tooth-hotspot" style="top: 43%; left: 89%;" onclick="openToothModal(36)">36</div>
-<div class="tooth-hotspot" style="top: 30%; left: 91%;" onclick="openToothModal(37)">37</div>
-<div class="tooth-hotspot" style="top: 20%; left: 93%;" onclick="openToothModal(38)">38</div>
-</div>
-</div>
-</div>
+                    <!-- الفك السفلي -->
+                    <div class="jaw-section">
+                        <div class="jaw-title">الفك السفلي (Lower Arch)</div>
+                        <div style="position: relative; display: inline-block; width: 100%;">
+                            <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=600&q=80" alt="Lower Jaw" class="jaw-image">
+                            <div class="tooth-hotspot" style="top: 20%; left: 16%;" onclick="openToothModal(48)">48</div>
+                            <div class="tooth-hotspot" style="top: 30%; left: 19%;" onclick="openToothModal(47)">47</div>
+                            <div class="tooth-hotspot" style="top: 43%; left: 22%;" onclick="openToothModal(46)">46</div>
+                            <div class="tooth-hotspot" style="top: 56%; left: 26%;" onclick="openToothModal(45)">45</div>
+                            <div class="tooth-hotspot" style="top: 68%; left: 32%;" onclick="openToothModal(44)">44</div>
+                            <div class="tooth-hotspot" style="top: 77%; left: 40%;" onclick="openToothModal(43)">43</div>
+                            <div class="tooth-hotspot" style="top: 83%; left: 47%;" onclick="openToothModal(42)">42</div>
+                            <div class="tooth-hotspot" style="top: 87%; left: 54%;" onclick="openToothModal(41)">41</div>
+                            <div class="tooth-hotspot" style="top: 87%; left: 61%;" onclick="openToothModal(31)">31</div>
+                            <div class="tooth-hotspot" style="top: 83%; left: 68%;" onclick="openToothModal(32)">32</div>
+                            <div class="tooth-hotspot" style="top: 77%; left: 75%;" onclick="openToothModal(33)">33</div>
+                            <div class="tooth-hotspot" style="top: 68%; left: 81%;" onclick="openToothModal(34)">34</div>
+                            <div class="tooth-hotspot" style="top: 56%; left: 86%;" onclick="openToothModal(35)">35</div>
+                            <div class="tooth-hotspot" style="top: 43%; left: 89%;" onclick="openToothModal(36)">36</div>
+                            <div class="tooth-hotspot" style="top: 30%; left: 91%;" onclick="openToothModal(37)">37</div>
+                            <div class="tooth-hotspot" style="top: 20%; left: 93%;" onclick="openToothModal(38)">38</div>
+                        </div>
+                    </div>
+                </div>
 
-<button type="submit" class="btn" style="margin-top: 20px;">حفظ المريض سحابياً</button>
-</form>
-</div>
+                <button type="submit" class="btn" style="margin-top: 20px;">حفظ المريض سحابياً</button>
+            </form>
+        </div>
 
-</div>
+    </div>
 
-<!-- نافذة إدارة السن -->
-<div class="modal" id="tooth-modal">
-<div class="modal-content">
-<div class="modal-header" id="modal-tooth-title">إدارة السن</div>
-<div class="form-group">
-<label for="tooth-status">الحالة السريرية:</label>
-<select id="tooth-status">
-<option value="سليم">سليم</option>
-<option value="تسوس">تسوس</option>
-<option value="حشوة">حشوة</option>
-<option value="علاج-عصب">علاج عصب</option>
-<option value="خلع">مخلوع</option>
-<option value="تلبيسة">تلبيسة</option>
-</select>
-</div>
-<div class="form-group">
-<label for="tooth-notes">ملاحظات:</label>
-<textarea id="tooth-notes" placeholder="ملاحظات السن..."></textarea>
-</div>
-<div class="modal-actions">
-<button class="btn" style="background-color: #64748B;" type="button" onclick="closeToothModal()">إلغاء</button>
-<button class="btn" type="button" onclick="saveToothStatus()">حفظ</button>
-</div>
-</div>
-</div>
+    <!-- نافذة إدارة السن -->
+    <div class="modal" id="tooth-modal">
+        <div class="modal-content">
+            <div class="modal-header" id="modal-tooth-title">إدارة السن</div>
+            <div class="form-group">
+                <label for="tooth-status">الحالة السريرية:</label>
+                <select id="tooth-status">
+                    <option value="سليم">سليم</option>
+                    <option value="تسوس">تسوس</option>
+                    <option value="حشوة">حشوة</option>
+                    <option value="علاج-عصب">علاج عصب</option>
+                    <option value="خلع">مخلوع</option>
+                    <option value="تلبيسة">تلبيسة</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="tooth-notes">ملاحظات:</label>
+                <textarea id="tooth-notes" placeholder="ملاحظات السن..."></textarea>
+            </div>
+            <div class="modal-actions">
+                <button class="btn" style="background-color: #64748B;" type="button" onclick="closeToothModal()">إلغاء</button>
+                <button class="btn" type="button" onclick="saveToothStatus()">حفظ</button>
+            </div>
+        </div>
+    </div>
 
-<script>
-// إعدادات Firebase الخاصة بمشروعك الجديد
-const firebaseConfig = {
-apiKey: "AIzaSyBnMTON0jp18hi_nTAl98QyNEZp1fTnJdQ",
-authDomain: "my-teeth-c573b.firebaseapp.com",
-projectId: "my-teeth-c573b",
-storageBucket: "my-teeth-c573b.firebasestorage.app",
-messagingSenderId: "724884278460",
-appId: "1:724884278460:web:138f4e2401adc9bdf214b9",
-measurementId: "G-9YEN38N46B"
-};
+    <script>
+        // إعدادات Firebase الخاصة بمشروعك
+        const firebaseConfig = {
+            apiKey: "AIzaSyBnMTON0jp18hi_nTAl98QyNEZp1fTnJdQ",
+            authDomain: "my-teeth-c573b.firebaseapp.com",
+            projectId: "my-teeth-c573b",
+            storageBucket: "my-teeth-c573b.firebasestorage.app",
+            messagingSenderId: "724884278460",
+            appId: "1:724884278460:web:138f4e2401adc9bdf214b9",
+            measurementId: "G-9YEN38N46B"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+        let toothData = {};
+        let currentSelectedTooth = null;
+        let currentUser = null;
 
-let toothData = {};
-let currentSelectedTooth = null;
-let currentUser = null;
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                document.getElementById('doctor-display-name').textContent = `د. ${user.email}`;
+                switchTab('patient-section');
+            } else {
+                currentUser = null;
+                switchTab('login-section');
+            }
+        });
 
-auth.onAuthStateChanged((user) => {
-if (user) {
-currentUser = user;
-document.getElementById('doctor-display-name').textContent = د. ${user.email}`;
-switchTab('patient-section');
-} else {
-currentUser = null;
-switchTab('login-section');
-}
-});
+        function handleLogin(event) {
+            event.preventDefault();
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            
+            auth.signInWithEmailAndPassword(email, pass)
+                .then(() => {
+                    // تم تسجيل الدخول بنجاح
+                })
+                .catch((error) => {
+                    alert('خطأ في تسجيل الدخول: ' + error.message);
+                });
+        }
 
-function handleLogin(event) {
-event.preventDefault();
-const email = document.getElementById('login-email').value;
-const pass = document.getElementById('login-pass').value;
+        function handleRegister(event) {
+            event.preventDefault();
+            const email = document.getElementById('reg-email').value;
+            const pass = document.getElementById('reg-pass').value;
 
-auth.signInWithEmailAndPassword(email, pass)
-.then(() => alert('تم تسجيل الدخول بنجاح!'))
-.catch((error) => alert('خطأ في تسجيل الدخول: ' + error.message));
-}
+            auth.createUserWithEmailAndPassword(email, pass)
+                .then(() => {
+                    alert('تم إنشاء الحساب السحابي بنجاح!');
+                })
+                .catch((error) => {
+                    alert('خطأ في التسجيل: ' + error.message);
+                });
+        }
 
-function handleRegister(event) {
-event.preventDefault();
-const email = document.getElementById('reg-email').value;
-const pass = document.getElementById('reg-pass').value;
+        function logout() {
+            auth.signOut().catch((error) => console.log(error));
+        }
 
-auth.createUserWithEmailAndPassword(email, pass)
-.then(() => alert('تم إنشاء الحساب السحابي بنجاح!'))
-.catch((error) => alert('خطأ في التسجيل: ' + error.message));
-}
+        function handlePatientSave(event) {
+            event.preventDefault();
+            if (!currentUser) {
+                alert('الرجاء تسجيل الدخول أولاً');
+                return;
+            }
 
-function logout() {
-auth.signOut().then(() => switchTab('login-section'));
-}
+            const patientData = {
+                doctorId: currentUser.uid,
+                name: document.getElementById('p-name').value,
+                dob: document.getElementById('p-dob').value,
+                gender: document.getElementById('p-gender').value,
+                phone: document.getElementById('p-phone').value,
+                cost: document.getElementById('p-cost').value,
+                history: document.getElementById('p-history').value,
+                teeth: toothData,
+                updatedAt: new Date()
+            };
 
-function handlePatientSave(event) {
-event.preventDefault();
-if (!currentUser) return alert('الرجاء تسجيل الدخول أولاً');
+            db.collection("patients").add(patientData)
+                .then(() => {
+                    alert('تم حفظ بيانات المريض في السحابة بنجاح!');
+                    document.getElementById('p-name').value = '';
+                    document.getElementById('p-dob').value = '';
+                    document.getElementById('p-phone').value = '';
+                    document.getElementById('p-cost').value = '';
+                    document.getElementById('p-history').value = '';
+                    toothData = {};
+                    document.querySelectorAll('.tooth-hotspot').forEach(spot => spot.className = 'tooth-hotspot');
+                })
+                .catch((error) => {
+                    alert('خطأ في الحفظ: ' + error.message);
+                });
+        }
 
-const patientData = {
-doctorId: currentUser.uid,
-name: document.getElementById('p-name').value,
-dob: document.getElementById('p-dob').value,
-gender: document.getElementById('p-gender').value,
-phone: document.getElementById('p-phone').value,
-cost: document.getElementById('p-cost').value,
-history: document.getElementById('p-history').value,
-teeth: toothData,
-updatedAt: new Date()
-};
+        function openToothModal(toothNum) {
+            currentSelectedTooth = toothNum;
+            document.getElementById('modal-tooth-title').textContent = `السن رقم: ${toothNum}`;
+            if (toothData[toothNum]) {
+                document.getElementById('tooth-status').value = toothData[toothNum].status;
+                document.getElementById('tooth-notes').value = toothData[toothNum].notes;
+            } else {
+                document.getElementById('tooth-status').value = 'سليم';
+                document.getElementById('tooth-notes').value = '';
+            }
+            document.getElementById('tooth-modal').classList.add('open');
+        }
 
-db.collection("patients").add(patientData)
-.then(() => alert('تم حفظ بيانات المريض في السحابة بنجاح!'))
-.catch((error) => alert('خطأ في الحفظ: ' + error.message));
-}
+        function closeToothModal() {
+            document.getElementById('tooth-modal').classList.remove('open');
+        }
 
-function openToothModal(toothNum) {
-currentSelectedTooth = toothNum;
-document.getElementById('modal-tooth-title').textContent = السن رقم:${toothNum}`;
-if (toothData[toothNum]) {
-document.getElementById('tooth-status').value = toothData[toothNum].status;
-document.getElementById('tooth-notes').value = toothData[toothNum].notes;
-} else {
-document.getElementById('tooth-status').value = 'سليم';
-document.getElementById('tooth-notes').value = '';
-}
-document.getElementById('tooth-modal').classList.add('open');
-}
+        function saveToothStatus() {
+            const status = document.getElementById('tooth-status').value;
+            const notes = document.getElementById('tooth-notes').value;
+            toothData[currentSelectedTooth] = { status, notes };
+            updateToothVisual(currentSelectedTooth, status);
+            closeToothModal();
+        }
 
-function closeToothModal() {
-document.getElementById('tooth-modal').classList.remove('open');
-}
+        function updateToothVisual(toothNum, status) {
+            const hotspots = document.querySelectorAll('.tooth-hotspot');
+            hotspots.forEach(spot => {
+                if (spot.textContent == toothNum) {
+                    spot.className = 'tooth-hotspot';
+                    if (status !== 'سليم') {
+                        spot.classList.add(`status-${status}`);
+                    }
+                }
+            });
+        }
 
-function saveToothStatus() {
-const status = document.getElementById('tooth-status').value;
-const notes = document.getElementById('tooth-notes').value;
-toothData[currentSelectedTooth] = { status, notes };
-updateToothVisual(currentSelectedTooth, status);
-closeToothModal();
-}
+        function togglePass(id, el) {
+            const input = document.getElementById(id);
+            if (input.type === "password") {
+                input.type = "text";
+                el.textContent = "إخفاء";
+            } else {
+                input.type = "password";
+                el.textContent = "إظهار";
+            }
+        }
 
-function updateToothVisual(toothNum, status) {
-const hotspots = document.querySelectorAll('.tooth-hotspot');
-hotspots.forEach(spot => {
-if (spot.textContent == toothNum) {
-spot.className = 'tooth-hotspot';
-if (status !== 'سليم') {
-spot.classList.add(status-${status});
-}
-}
-});
-}
-
-function togglePass(id, el) {
-const input = document.getElementById(id);
-if (input.type === "password") {
-input.type = "text";
-el.textContent = "إخفاء";
-} else {
-input.type = "password";
-el.textContent = "إظهار";
-}
-}
-
-function switchTab(cardId) {
-document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
-document.getElementById(cardId).classList.add('active');
-}
-</script>
+        function switchTab(cardId) {
+            document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
+            document.getElementById(cardId).classList.add('active');
+        }
+    </script>
 </body>
 </html>
