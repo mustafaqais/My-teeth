@@ -339,7 +339,7 @@
             background: var(--primary-hover);
         }
 
-        /* حاوية قالب الفكين */
+        /* حاوية قالب الفكين الأساسي */
         .real-jaw-container {
             width: 100%;
             max-width: 480px;
@@ -430,6 +430,7 @@
             border-radius: 50%;
         }
 
+        /* صندوق إدارة السن المدمج تحت المخطط */
         .tooth-panel-box {
             background: #FFFFFF;
             border: 2px solid var(--primary);
@@ -532,18 +533,15 @@
             justify-content: center;
         }
 
-        /* لوحة تحكم السن المنظمة والثابتة بأسفل الأداة (تجنباً للتداخل) */
-        .floating-tooth-dropdown {
-            background: #FFFFFF;
-            border: 2px solid var(--primary);
-            border-radius: 14px;
-            padding: 15px;
-            margin-top: 12px;
-            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.15);
+        .advanced-hotspot-editor {
+            background: #F8FAFC;
+            border: 1px solid var(--primary);
+            border-radius: 12px;
+            padding: 12px;
+            margin-top: 15px;
             display: none;
-            text-align: right;
         }
-        .floating-tooth-dropdown.active {
+        .advanced-hotspot-editor.active {
             display: block;
         }
     </style>
@@ -632,8 +630,8 @@
                 </div>
                 <div class="dashboard-tile" onclick="openTemplateManager()">
                     <div class="tile-icon">🖼️</div>
-                    <div class="tile-title">قوالب الفكين</div>
-                    <div class="tile-desc">تغيير الصور وأحجام الأسنان</div>
+                    <div class="tile-title">قالب الفكين</div>
+                    <div class="tile-desc">تغيير الصورة وإحداثيات الأرقام</div>
                 </div>
                 <div class="dashboard-tile" onclick="openPatientsArchive()">
                     <div class="tile-icon">📂</div>
@@ -643,83 +641,65 @@
             </div>
         </div>
 
-        <!-- 4. شاشة إدارة قوالب الفكين -->
+        <!-- 4. شاشة إدارة قالب الفكين الرئيسي -->
         <div class="card" id="template-manager-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
-                <div class="doctor-welcome">🦷 تخصيص قوالب الفكين وأحجام الأسنان</div>
+                <div class="doctor-welcome">🦷 تخصيص قالب الفكين وأحجام الأسنان</div>
             </div>
 
             <div class="card-header" style="margin-bottom: 15px;">
-                <h2>إدارة صور الفكين وأحجام ومواقع الأسنان</h2>
-                <p>انقر على أي سن لتظهر لوحة إعداداته مرتبة تحته مباشرة للتحكم بالطول، العرض، التدوير، والشكل!</p>
+                <h2>صورة الفكين وأحجام ومواقع الأسنان</h2>
+                <p>اسحب أي سن أو انقر عليه للتحكم بحجمه (العرض والارتفاع)، شكله (دائري/مربع/مستطيل)، وزاوية تدويره</p>
             </div>
 
-            <!-- القالب الأول -->
-            <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 14px; padding: 15px; margin-bottom: 20px;">
-                <h4 style="color: var(--primary); font-size: 14px; margin-bottom: 10px;">📌 1. قالب الفكين الأول (الرئيسي)</h4>
-                <div class="form-group">
-                    <label for="global-jaw-file-1">اختر صورة الفكين الأولى:</label>
-                    <input type="file" id="global-jaw-file-1" accept="image/*" onchange="previewGlobalJaw(event, 1)">
-                </div>
-                <div class="real-jaw-container" id="template-jaw-container-1">
-                    <img id="global-preview-img-1" src="" alt="معاينة 1">
-                    <div class="jaw-absolute-overlay" id="template-jaw-grid-1"></div>
-                </div>
-            </div>
-
-            <!-- القالب الثاني (اختياري أسفل الأول) -->
-            <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 14px; padding: 15px; margin-bottom: 15px;">
-                <h4 style="color: var(--primary); font-size: 14px; margin-bottom: 10px;">📌 2. قالب الفكين الثاني (اختياري أسفل الأول)</h4>
-                <div class="form-group">
-                    <label for="global-jaw-file-2">اختر صورة الفكين الثانية (اختياري):</label>
-                    <input type="file" id="global-jaw-file-2" accept="image/*" onchange="previewGlobalJaw(event, 2)">
-                </div>
-                <div class="real-jaw-container" id="template-jaw-container-2" style="display: none;">
-                    <img id="global-preview-img-2" src="" alt="معاينة 2">
-                    <div class="jaw-absolute-overlay" id="template-jaw-grid-2"></div>
-                </div>
+            <div class="form-group">
+                <label for="global-jaw-file">اختر ملف صورة الفكين من جهازك:</label>
+                <input type="file" id="global-jaw-file" accept="image/*" onchange="previewGlobalJaw(event)">
             </div>
 
             <div class="editor-tools-bar" style="margin-top: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم بالأسنان:</span>
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم المتقدمة:</span>
                     <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع السحب والتخصيص</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 10px; border-radius: 8px;">
-                    ✋ **اسحب أي سن بمكانه.** | 👆 **انقر على أي سن لفتح لوحة التحكم الخاصة به بالأسفل.**
+                    ✋ **اسحب أي سن بمكانه.** | 👆 **انقر على أي سن لتعديل حجمه وشكله بدقة.**
                 </div>
             </div>
 
-            <!-- لوحة تحكم السن المنظمة تظهر أسفل أدوات التحكم مباشرة لمنع أي تداخل -->
-            <div class="floating-tooth-dropdown" id="floating-tooth-editor">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
-                    <span id="editor-tooth-title" style="font-size: 13px; font-weight: 700; color: var(--primary);">إعدادات السن</span>
-                    <button type="button" class="btn btn-secondary" style="width: auto; padding: 2px 8px; font-size: 11px; margin: 0;" onclick="closeHotspotEditor()">إغلاق</button>
-                </div>
+            <!-- لوحة التحكم المتقدمة (للتحكم بحجم السن ومربعه) -->
+            <div class="advanced-hotspot-editor" id="hotspot-custom-editor">
+                <h4 id="editor-tooth-title" style="color: var(--primary); font-size: 14px; margin-bottom: 10px;">تخصيص حجم وشكل السن</h4>
                 <div class="form-row">
                     <div class="form-group">
                         <label>عرض السن (Width):</label>
                         <input type="range" min="15" max="80" id="edit-width" oninput="updateSelectedHotspotStyle()">
                     </div>
                     <div class="form-group">
-                        <label>طول/ارتفاع السن (Height):</label>
+                        <label>ارتفاع السن (Height):</label>
                         <input type="range" min="15" max="80" id="edit-height" oninput="updateSelectedHotspotStyle()">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>الشكل (دائري / مربع / مستطيل):</label>
+                        <label>انحناء الحواف (دائري / مربع / مستطيل):</label>
                         <input type="range" min="0" max="40" id="edit-radius" oninput="updateSelectedHotspotStyle()">
                     </div>
                     <div class="form-group">
-                        <label>تدوير السن (Rotation):</label>
+                        <label>التدوير (Rotation الزاوية):</label>
                         <input type="range" min="-180" max="180" id="edit-rotate" oninput="updateSelectedHotspotStyle()">
                     </div>
                 </div>
+                <button class="btn btn-secondary" type="button" style="padding: 6px; font-size: 12px;" onclick="closeHotspotEditor()">إغلاق اللوحة</button>
             </div>
 
-            <button type="button" class="btn" onclick="saveGlobalJawTemplates()" style="margin-top: 15px;">اعتماد القوالب والتعديلات للعيادة</button>
+            <div class="real-jaw-container" id="template-jaw-container" style="margin-top: 15px;">
+                <img id="global-preview-img" src="" alt="معاينة قالب الفكين">
+                <div class="jaw-absolute-overlay" id="template-jaw-grid"></div>
+            </div>
+
+            <button type="button" class="btn" onclick="saveGlobalJawTemplate()">اعتماد قالب الفكين والتخصيصات للعيادة</button>
         </div>
 
         <!-- 5. أرشيف ملفات المرضى -->
@@ -796,7 +776,7 @@
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>مخطط الأسنان التشريعي</h2>
-                <p>انقر على أي سن لإدارة حالته وتوثيق صوره</p>
+                <p>انقر على أي سن لفتح لوحة التحكم الخاصة به بالأسفل</p>
             </div>
 
             <div class="smart-chart-container">
@@ -809,16 +789,12 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- قالب الفكين الأول للمريض -->
-                <div class="real-jaw-container" id="jaw-container-box-1">
-                    <img id="active-jaw-img-1" src="" alt="قالب 1">
-                    <div class="jaw-absolute-overlay" id="jaw-grid-1"></div>
-                </div>
-
-                <!-- قالب الفكين الثاني للمريض -->
-                <div class="real-jaw-container" id="jaw-container-box-2" style="display: none;">
-                    <img id="active-jaw-img-2" src="" alt="قالب 2">
-                    <div class="jaw-absolute-overlay" id="jaw-grid-2"></div>
+                <!-- عرض القالب النظيف الخاص بالمريض -->
+                <div class="real-jaw-container" id="jaw-container-box">
+                    <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
+                    <div class="jaw-absolute-overlay" id="jaw-grid">
+                        <!-- توزيع أرقام الأسنان -->
+                    </div>
                 </div>
             </div>
 
@@ -889,19 +865,12 @@
         const db = firebase.firestore();
 
         let toothData = {};
-        
-        let globalJawImage1 = localStorage.getItem('clinic_global_jaw_1') || "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80";
-        let globalJawImage2 = localStorage.getItem('clinic_global_jaw_2') || "";
-
-        let hotspotPositions1 = JSON.parse(localStorage.getItem('clinic_jaw_positions_1')) || getDefaultPositions();
-        let hotspotPositions2 = JSON.parse(localStorage.getItem('clinic_jaw_positions_2')) || getDefaultPositions();
-
-        let hotspotStyles1 = JSON.parse(localStorage.getItem('clinic_jaw_styles_1')) || {};
-        let hotspotStyles2 = JSON.parse(localStorage.getItem('clinic_jaw_styles_2')) || {};
-
+        let globalJawImage = localStorage.getItem('clinic_global_jaw') || "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80";
+        let hotspotPositions = JSON.parse(localStorage.getItem('clinic_jaw_positions')) || getDefaultPositions();
+        let hotspotStyles = JSON.parse(localStorage.getItem('clinic_jaw_styles')) || {};
         let isEditMode = false;
         let currentSelectedTooth = null;
-        let editingHotspotTooth = null; 
+        let editingHotspotTooth = null;
         let currentUser = null;
         let temporaryPatientInfo = {};
         let editingPatientId = null;
@@ -927,12 +896,8 @@
             return pos;
         }
 
-        function getToothStyle(templateIndex, num) {
-            if (templateIndex === 1) {
-                return hotspotStyles1[num] || { width: 28, height: 28, radius: 6, rotate: 0 };
-            } else {
-                return hotspotStyles2[num] || { width: 28, height: 28, radius: 6, rotate: 0 };
-            }
+        function getToothStyle(num) {
+            return hotspotStyles[num] || { width: 28, height: 28, radius: 6, rotate: 0 };
         }
 
         function applyStyleToElement(element, styleObj) {
@@ -940,175 +905,102 @@
             element.style.height = styleObj.height + 'px';
             element.style.borderRadius = styleObj.radius + 'px';
             element.style.transform = `translate(-50%, -50%) rotate(${styleObj.rotate}deg)`;
+            // حجم رقم السن بداخل المربع يتناسب ديناميكياً مع حجم المربع نفسه
             element.style.fontSize = (Math.min(styleObj.width, styleObj.height) * 0.42) + 'px';
         }
 
         function renderJawGrid() {
-            // شاشة المريض (المخطط)
-            const grid1 = document.getElementById('jaw-grid-1');
-            if (grid1) {
-                grid1.innerHTML = '';
-                const activeImg1 = document.getElementById('active-jaw-img-1');
-                if (activeImg1 && globalJawImage1) activeImg1.src = globalJawImage1;
+            // 1. شاشة المريض
+            const grid = document.getElementById('jaw-grid');
+            if (grid) {
+                grid.innerHTML = '';
+                const activeImg = document.getElementById('active-jaw-img');
+                if (activeImg && globalJawImage) activeImg.src = globalJawImage;
 
                 allTeeth.forEach(num => {
                     const hotspot = document.createElement('div');
                     hotspot.className = 'tooth-hotspot';
-                    hotspot.id = `hotspot-1-${num}`;
+                    hotspot.id = `hotspot-${num}`;
                     hotspot.textContent = num;
                     
-                    let p = hotspotPositions1[num] || { x: 50, y: 50 };
-                    let st = getToothStyle(1, num);
+                    let p = hotspotPositions[num] || { x: 50, y: 50 };
+                    let st = getToothStyle(num);
 
                     hotspot.style.left = p.x + '%';
                     hotspot.style.top = p.y + '%';
                     applyStyleToElement(hotspot, st);
 
-                    hotspot.onclick = () => openToothPanel(num);
-                    grid1.appendChild(hotspot);
+                    hotspot.onclick = (e) => {
+                        openToothPanel(num);
+                    };
+
+                    grid.appendChild(hotspot);
                 });
             }
 
-            const containerBox2 = document.getElementById('jaw-container-box-2');
-            const grid2 = document.getElementById('jaw-grid-2');
-            if (containerBox2 && grid2) {
-                if (globalJawImage2 && globalJawImage2.trim() !== "") {
-                    containerBox2.style.display = 'block';
-                    grid2.innerHTML = '';
-                    const activeImg2 = document.getElementById('active-jaw-img-2');
-                    if (activeImg2) activeImg2.src = globalJawImage2;
-
-                    allTeeth.forEach(num => {
-                        const hotspot = document.createElement('div');
-                        hotspot.className = 'tooth-hotspot';
-                        hotspot.id = `hotspot-2-${num}`;
-                        hotspot.textContent = num;
-                        
-                        let p = hotspotPositions2[num] || { x: 50, y: 50 };
-                        let st = getToothStyle(2, num);
-
-                        hotspot.style.left = p.x + '%';
-                        hotspot.style.top = p.y + '%';
-                        applyStyleToElement(hotspot, st);
-
-                        hotspot.onclick = () => openToothPanel(num);
-                        grid2.appendChild(hotspot);
-                    });
-                } else {
-                    containerBox2.style.display = 'none';
-                }
-            }
-
-            // شاشة إدارة وصناعة القوالب
-            const templateGrid1 = document.getElementById('template-jaw-grid-1');
-            if (templateGrid1) {
-                templateGrid1.innerHTML = '';
-                const previewImg1 = document.getElementById('global-preview-img-1');
-                if (previewImg1 && globalJawImage1) previewImg1.src = globalJawImage1;
+            // 2. شاشة قالب الفكين (مع إمكانية النقر والتخصيص الفردي)
+            const templateGrid = document.getElementById('template-jaw-grid');
+            if (templateGrid) {
+                templateGrid.innerHTML = '';
+                const previewImg = document.getElementById('global-preview-img');
+                if (previewImg && globalJawImage) previewImg.src = globalJawImage;
 
                 allTeeth.forEach(num => {
                     const hotspot = document.createElement('div');
                     hotspot.className = 'tooth-hotspot';
                     hotspot.textContent = num;
                     
-                    let p = hotspotPositions1[num] || { x: 50, y: 50 };
-                    let st = getToothStyle(1, num);
+                    let p = hotspotPositions[num] || { x: 50, y: 50 };
+                    let st = getToothStyle(num);
 
                     hotspot.style.left = p.x + '%';
                     hotspot.style.top = p.y + '%';
                     applyStyleToElement(hotspot, st);
 
-                    enableTemplateDrag(hotspot, 1, num);
+                    enableTemplateDrag(hotspot, num);
 
                     hotspot.onclick = (e) => {
                         e.stopPropagation();
-                        if (isEditMode) openHotspotEditor(1, num);
+                        if (isEditMode) {
+                            openHotspotEditor(num);
+                        }
                     };
-                    templateGrid1.appendChild(hotspot);
+
+                    templateGrid.appendChild(hotspot);
                 });
-            }
-
-            const container2 = document.getElementById('template-jaw-container-2');
-            const templateGrid2 = document.getElementById('template-jaw-grid-2');
-            if (container2 && templateGrid2) {
-                if (globalJawImage2 && globalJawImage2.trim() !== "") {
-                    container2.style.display = 'block';
-                    templateGrid2.innerHTML = '';
-                    const previewImg2 = document.getElementById('global-preview-img-2');
-                    if (previewImg2) previewImg2.src = globalJawImage2;
-
-                    allTeeth.forEach(num => {
-                        const hotspot = document.createElement('div');
-                        hotspot.className = 'tooth-hotspot';
-                        hotspot.textContent = num;
-                        
-                        let p = hotspotPositions2[num] || { x: 50, y: 50 };
-                        let st = getToothStyle(2, num);
-
-                        hotspot.style.left = p.x + '%';
-                        hotspot.style.top = p.y + '%';
-                        applyStyleToElement(hotspot, st);
-
-                        enableTemplateDrag(hotspot, 2, num);
-
-                        hotspot.onclick = (e) => {
-                            e.stopPropagation();
-                            if (isEditMode) openHotspotEditor(2, num);
-                        };
-                        templateGrid2.appendChild(hotspot);
-                    });
-                } else {
-                    container2.style.display = 'none';
-                }
             }
         }
 
-        function openHotspotEditor(templateIndex, num) {
-            editingHotspotTooth = `${templateIndex}-${num}`;
-            let st = getToothStyle(templateIndex, num);
-            document.getElementById('editor-tooth-title').textContent = `إعدادات السن رقم ${num} (قالب ${templateIndex})`;
+        function openHotspotEditor(num) {
+            editingHotspotTooth = num;
+            let st = getToothStyle(num);
+            document.getElementById('editor-tooth-title').textContent = `تخصيص حجم وشكل السن رقم: ${num}`;
             document.getElementById('edit-width').value = st.width;
             document.getElementById('edit-height').value = st.height;
             document.getElementById('edit-radius').value = st.radius;
             document.getElementById('edit-rotate').value = st.rotate;
             
-            // إظهار لوحة التحكم مرتبة وثابتة أسفل شريط الأدوات لمنع التداخل تماماً
-            const dropdown = document.getElementById('floating-tooth-editor');
-            if (dropdown) {
-                dropdown.classList.add('active');
-                dropdown.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-            }
+            document.getElementById('hotspot-custom-editor').classList.add('active');
         }
 
         function closeHotspotEditor() {
             editingHotspotTooth = null;
-            document.getElementById('floating-tooth-editor').classList.remove('active');
+            document.getElementById('hotspot-custom-editor').classList.remove('active');
         }
 
         function updateSelectedHotspotStyle() {
             if (!editingHotspotTooth) return;
-            let parts = editingHotspotTooth.split('-');
-            let templateIndex = parseInt(parts[0]);
-            let num = parseInt(parts[1]);
-
             let w = parseInt(document.getElementById('edit-width').value);
             let h = parseInt(document.getElementById('edit-height').value);
             let r = parseInt(document.getElementById('edit-radius').value);
             let rot = parseInt(document.getElementById('edit-rotate').value);
 
-            let newStyle = { width: w, height: h, radius: r, rotate: rot };
-
-            if (templateIndex === 1) {
-                hotspotStyles1[num] = newStyle;
-                localStorage.setItem('clinic_jaw_styles_1', JSON.stringify(hotspotStyles1));
-            } else {
-                hotspotStyles2[num] = newStyle;
-                localStorage.setItem('clinic_jaw_styles_2', JSON.stringify(hotspotStyles2));
-            }
+            hotspotStyles[editingHotspotTooth] = { width: w, height: h, radius: r, rotate: rot };
+            localStorage.setItem('clinic_jaw_styles', JSON.stringify(hotspotStyles));
             renderJawGrid();
         }
 
-        function enableTemplateDrag(element, templateIndex, toothNum) {
+        function enableTemplateDrag(element, toothNum) {
             let activeTouchId = null;
 
             element.addEventListener('pointerdown', (e) => {
@@ -1117,7 +1009,7 @@
                 element.setPointerCapture(e.pointerId);
                 activeTouchId = e.pointerId;
 
-                let container = document.getElementById(`template-jaw-container-${templateIndex}`);
+                let container = document.getElementById('template-jaw-container');
                 if (!container) return;
 
                 function onPointerMove(ev) {
@@ -1130,9 +1022,7 @@
                     x = Math.max(2, Math.min(98, x));
                     y = Math.max(2, Math.min(98, y));
 
-                    let posObj = templateIndex === 1 ? hotspotPositions1 : hotspotPositions2;
-                    posObj[toothNum] = { x: x, y: y };
-
+                    hotspotPositions[toothNum] = { x: x, y: y };
                     element.style.left = x + '%';
                     element.style.top = y + '%';
                 }
@@ -1140,13 +1030,7 @@
                 function onPointerUp(ev) {
                     if (ev.pointerId !== activeTouchId) return;
                     element.releasePointerCapture(ev.pointerId);
-                    
-                    if (templateIndex === 1) {
-                        localStorage.setItem('clinic_jaw_positions_1', JSON.stringify(hotspotPositions1));
-                    } else {
-                        localStorage.setItem('clinic_jaw_positions_2', JSON.stringify(hotspotPositions2));
-                    }
-
+                    localStorage.setItem('clinic_jaw_positions', JSON.stringify(hotspotPositions));
                     element.removeEventListener('pointermove', onPointerMove);
                     element.removeEventListener('pointerup', onPointerUp);
                 }
@@ -1234,35 +1118,25 @@
             switchTab('template-manager-section');
         }
 
-        function previewGlobalJaw(event, index) {
+        function previewGlobalJaw(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    if (index === 1) {
-                        globalJawImage1 = e.target.result;
-                    } else {
-                        globalJawImage2 = e.target.result;
-                    }
+                    globalJawImage = e.target.result;
                     renderJawGrid();
                 }
                 reader.readAsDataURL(file);
             }
         }
 
-        function saveGlobalJawTemplates() {
-            if (!globalJawImage1) {
-                alert('الرجاء اختيار صورة الفكين الأولى على الأقل');
+        function saveGlobalJawTemplate() {
+            if (!globalJawImage) {
+                alert('الرجاء اختيار صورة أولاً');
                 return;
             }
-            localStorage.setItem('clinic_global_jaw_1', globalJawImage1);
-            if (globalJawImage2) {
-                localStorage.setItem('clinic_global_jaw_2', globalJawImage2);
-            } else {
-                localStorage.removeItem('clinic_global_jaw_2');
-            }
-
-            alert('تم اعتماد القوالب والتعديلات بنجاح!');
+            localStorage.setItem('clinic_global_jaw', globalJawImage);
+            alert('تم اعتماد قالب الفكين والتخصيصات للعيادة بنجاح!');
             switchTab('dashboard-section');
             renderJawGrid();
         }
@@ -1479,7 +1353,10 @@
             const status = document.getElementById('tooth-status').value;
             const notes = document.getElementById('tooth-notes').value;
             
-            (toothData[currentSelectedTooth] ||= { imagesBefore: [], imagesAfter: [] }).status = status;
+            if (!toothData[currentSelectedTooth]) {
+                toothData[currentSelectedTooth] = { imagesBefore: [], imagesAfter: [] };
+            }
+            toothData[currentSelectedTooth].status = status;
             toothData[currentSelectedTooth].notes = notes;
 
             updateToothVisual(currentSelectedTooth, status);
@@ -1487,15 +1364,13 @@
         }
 
         function updateToothVisual(toothNum, status) {
-            [1, 2].forEach(templateIdx => {
-                const hotspot = document.getElementById(`hotspot-${templateIdx}-${toothNum}`);
-                if (hotspot) {
-                    hotspot.className = 'tooth-hotspot';
-                    if (status !== 'سليم') {
-                        hotspot.classList.add(`status-${status}`);
-                    }
+            const hotspot = document.getElementById(`hotspot-${toothNum}`);
+            if (hotspot) {
+                hotspot.className = 'tooth-hotspot';
+                if (status !== 'سليم') {
+                    hotspot.classList.add(`status-${status}`);
                 }
-            });
+            }
         }
 
         function togglePass(id, el) {
