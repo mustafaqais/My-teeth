@@ -365,12 +365,12 @@
             pointer-events: none;
         }
 
-        /* السن الحر مع التحكم الفردي الكامل للجهات والزوايا */
+        /* السن الحر بإحداثيات صندوق مستقل تماماً */
         .tooth-hotspot {
             position: absolute;
             background: var(--status-healthy);
             border: 1.5px dashed rgba(255, 255, 255, 0.9);
-            border-radius: 6px;
+            border-radius: 4px;
             cursor: move;
             display: flex;
             justify-content: center;
@@ -379,7 +379,6 @@
             color: #FFFFFF;
             text-shadow: 0 1px 3px rgba(0,0,0,0.9);
             pointer-events: auto;
-            transform: translate(-50%, -50%);
             user-select: none;
             touch-action: none;
         }
@@ -389,7 +388,7 @@
             background: rgba(14, 165, 233, 0.25);
         }
 
-        /* نقاط التحكم الـ 8 المستقلة تماماً */
+        /* 8 نقاط تحكم مستقلة تماماً للجهات والزوايا */
         .resize-handle {
             position: absolute;
             width: 10px;
@@ -405,7 +404,7 @@
             display: block;
         }
 
-        /* إخفاء باقي النقاط أثناء السحب لرؤية صافية تماماً */
+        /* إخفاء باقي النقاط أثناء سحب أي نقطة لرؤية صافية تماماً */
         .tooth-hotspot.is-resizing .resize-handle {
             display: none !important;
         }
@@ -693,18 +692,18 @@
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
-                <h2>مخطط الأسنان بالتعديل الهندسي المستقل</h2>
-                <p>كل نقطة للأطراف أو الزوايا تتحرك بشكل مستقل تماماً وتختفي باقي النقاط عند السحب لرؤية صافية!</p>
+                <h2>مخطط الأسنان بالتعديل الهندسي المستقل كلياً</h2>
+                <p>كل نقطة أو زاوية تسحبها تتمدد وحدها بشكل مستقل تماماً، مع رؤية صافية لحظية!</p>
             </div>
 
             <!-- شريط أدوات تحكم الطبيب -->
             <div class="editor-tools-bar">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم بالزوايا والأطراف:</span>
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم المستقل تماماً:</span>
                     <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع التعديل المستقل</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 8px; border-radius: 8px;">
-                    ✨ **مفعل:** اسحب أي زاوية أو طرف لتتحرك وحدها تماماً بدقة تامة!
+                    ✨ **مفعل:** اسحب أي طرف أو زاوية لتتحرك وحدها تماماً دون أن تأثر على باقي الأطراف!
                 </div>
             </div>
 
@@ -722,7 +721,7 @@
                 <div class="real-jaw-container" id="jaw-container-box">
                     <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
                     <div class="jaw-absolute-overlay" id="jaw-grid">
-                        <!-- توزيع الأسنان الحر الهندسي -->
+                        <!-- توزيع الأسنان الحر المستقل كلياً -->
                     </div>
                 </div>
             </div>
@@ -775,8 +774,7 @@
 
         let toothData = {};
         let globalJawImage = localStorage.getItem('clinic_global_jaw') || "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80";
-        let hotspotPositions = JSON.parse(localStorage.getItem('clinic_jaw_positions')) || getDefaultPositions();
-        let hotspotDims = JSON.parse(localStorage.getItem('clinic_jaw_dims')) || {};
+        let hotspotBoxes = JSON.parse(localStorage.getItem('clinic_jaw_boxes')) || getDefaultBoxes();
         let isEditMode = false;
         let currentSelectedTooth = null;
         let currentUser = null;
@@ -788,20 +786,20 @@
             48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38
         ];
 
-        function getDefaultPositions() {
-            let pos = {};
+        function getDefaultBoxes() {
+            let boxes = {};
             let upper = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
             let lower = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
             
             upper.forEach((num, i) => {
-                let x = 12 + (i * 5.2);
-                pos[num] = { x: x, y: 25 };
+                let x = 9 + (i * 5.2);
+                boxes[num] = { x1: x, y1: 21, x2: x + 4.8, y2: 29 };
             });
             lower.forEach((num, i) => {
-                let x = 12 + (i * 5.2);
-                pos[num] = { x: x, y: 75 };
+                let x = 9 + (i * 5.2);
+                boxes[num] = { x1: x, y1: 71, x2: x + 4.8, y2: 79 };
             });
-            return pos;
+            return boxes;
         }
 
         function renderJawGrid() {
@@ -829,22 +827,13 @@
                 hotspot.id = `hotspot-${num}`;
                 hotspot.textContent = num;
                 
-                let p = hotspotPositions[num] || { x: 50, y: 50 };
-                let dim = hotspotDims[num] || { w: 26, h: 26, pt: 0, pb: 0, pr: 0, pl: 0 };
+                let box = hotspotBoxes[num] || { x1: 10, y1: 10, x2: 15, y2: 15 };
 
-                hotspot.style.left = p.x + '%';
-                hotspot.style.top = p.y + '%';
-                
-                let baseW = dim.w;
-                let baseH = dim.h;
-                let pr = dim.pr || 0;
-                let pl = dim.pl || 0;
-                let pt = dim.pt || 0;
-                let pb = dim.pb || 0;
-
-                hotspot.style.width = (baseW + pr + pl) + 'px';
-                hotspot.style.height = (baseH + pt + pb) + 'px';
-                hotspot.style.fontSize = (Math.min(baseW, baseH) * 0.45) + 'px';
+                hotspot.style.left = box.x1 + '%';
+                hotspot.style.top = box.y1 + '%';
+                hotspot.style.width = (box.x2 - box.x1) + '%';
+                hotspot.style.height = (box.y2 - box.y1) + '%';
+                hotspot.style.fontSize = '10px';
 
                 // إنشاء 8 نقاط تحكم مستقلة تماماً (أطراف وزوايا)
                 const handles = ['top', 'bottom', 'right', 'left', 'ne', 'nw', 'se', 'sw'];
@@ -852,10 +841,10 @@
                     const hDiv = document.createElement('div');
                     hDiv.className = `resize-handle handle-${hType}`;
                     hotspot.appendChild(hDiv);
-                    setupTrueIndependentHandle(hDiv, hotspot, num, hType);
+                    setupTrueIndependentBoxHandle(hDiv, hotspot, num, hType);
                 });
 
-                enableFullDrag(hotspot, num);
+                enableBoxDrag(hotspot, num);
 
                 hotspot.onclick = (e) => {
                     e.stopPropagation();
@@ -875,7 +864,8 @@
             });
         }
 
-        function enableFullDrag(element, toothNum) {
+        // تحريك السن بالكامل من المنتصف
+        function enableBoxDrag(element, toothNum) {
             let container = document.getElementById('jaw-container-box');
             if (!container) return;
 
@@ -884,24 +874,36 @@
                 e.preventDefault();
                 element.setPointerCapture(e.pointerId);
                 let activeId = e.pointerId;
+                let startX = e.clientX;
+                let startY = e.clientY;
+
+                let box = hotspotBoxes[toothNum];
+                let origX1 = box.x1;
+                let origY1 = box.y1;
+                let origX2 = box.x2;
+                let origY2 = box.y2;
+                let w = origX2 - origX1;
+                let h = origY2 - origY1;
 
                 function onMove(ev) {
                     if (ev.pointerId !== activeId) return;
                     let rect = container.getBoundingClientRect();
-                    let x = ((ev.clientX - rect.left) / rect.width) * 100;
-                    let y = ((ev.clientY - rect.top) / rect.height) * 100;
-                    x = Math.max(2, Math.min(98, x));
-                    y = Math.max(2, Math.min(98, y));
+                    let dx = ((ev.clientX - startX) / rect.width) * 100;
+                    let dy = ((ev.clientY - startY) / rect.height) * 100;
 
-                    hotspotPositions[toothNum] = { x: x, y: y };
-                    element.style.left = x + '%';
-                    element.style.top = y + '%';
+                    let newX1 = Math.max(1, Math.min(95 - w, origX1 + dx));
+                    let newY1 = Math.max(1, Math.min(95 - h, origY1 + dy));
+
+                    hotspotBoxes[toothNum] = { x1: newX1, y1: newY1, x2: newX1 + w, y2: newY1 + h };
+
+                    element.style.left = hotspotBoxes[toothNum].x1 + '%';
+                    element.style.top = hotspotBoxes[toothNum].y1 + '%';
                 }
 
                 function onUp(ev) {
                     if (ev.pointerId !== activeId) return;
                     element.releasePointerCapture(ev.pointerId);
-                    localStorage.setItem('clinic_jaw_positions', JSON.stringify(hotspotPositions));
+                    localStorage.setItem('clinic_jaw_boxes', JSON.stringify(hotspotBoxes));
                     element.removeEventListener('pointermove', onMove);
                     element.removeEventListener('pointerup', onUp);
                 }
@@ -911,71 +913,71 @@
             });
         }
 
-        // تحكم هندسي حقيقي ومستقل تماماً لكل طرف وزاوية على حدة
-        function setupTrueIndependentHandle(handle, element, toothNum, direction) {
+        // تحكم هندسي حقيقي ومستقل بنسبة 100% لكل طرف أو زاوية
+        function setupTrueIndependentBoxHandle(handle, element, toothNum, direction) {
             handle.addEventListener('pointerdown', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
                 handle.setPointerCapture(e.pointerId);
                 let activeId = e.pointerId;
-                let startX = e.clientX;
-                let startY = e.clientY;
                 
-                let dim = hotspotDims[toothNum] || { w: 26, h: 26, pt: 0, pb: 0, pr: 0, pl: 0 };
-                let startPr = dim.pr || 0;
-                let startPl = dim.pl || 0;
-                let startPt = dim.pt || 0;
-                let startPb = dim.pb || 0;
-                let startW = dim.w;
-                let startH = dim.h;
+                let container = document.getElementById('jaw-container-box');
+                if (!container) return;
+
+                let box = hotspotBoxes[toothNum];
+                let origX1 = box.x1;
+                let origY1 = box.y1;
+                let origX2 = box.x2;
+                let origY2 = box.y2;
 
                 element.classList.add('is-resizing');
 
                 function onResizeMove(ev) {
                     if (ev.pointerId !== activeId) return;
-                    let dx = ev.clientX - startX;
-                    let dy = ev.clientY - startY;
+                    let rect = container.getBoundingClientRect();
+                    let curX = ((ev.clientX - rect.left) / rect.width) * 100;
+                    let curY = ((ev.clientY - rect.top) / rect.height) * 100;
 
-                    let newPr = startPr;
-                    let newPl = startPl;
-                    let newPt = startPt;
-                    let newPb = startPb;
+                    let x1 = origX1;
+                    let y1 = origY1;
+                    let x2 = origX2;
+                    let y2 = origY2;
 
-                    // الجهات الأربع الرئيسية
-                    if (direction === 'right')  newPr = Math.max(-10, Math.min(35, startPr + dx));
-                    if (direction === 'left')   newPl = Math.max(-10, Math.min(35, startPl - dx));
-                    if (direction === 'bottom') newPb = Math.max(-10, Math.min(35, startPb + dy));
-                    if (direction === 'top')    newPt = Math.max(-10, Math.min(35, startPt - dy));
+                    if (direction === 'right')  { x2 = Math.max(x1 + 1, Math.min(99, curX)); }
+                    if (direction === 'left')   { x1 = Math.max(1, Math.min(x2 - 1, curX)); }
+                    if (direction === 'bottom') { y2 = Math.max(y1 + 1, Math.min(99, curY)); }
+                    if (direction === 'top')    { y1 = Math.max(1, Math.min(y2 - 1, curY)); }
 
-                    // الزوايا الأربع (تتحرك أفقياً وعمودياً معاً بشكل مستقل)
                     if (direction === 'ne') {
-                        newPr = Math.max(-10, Math.min(35, startPr + dx));
-                        newPt = Math.max(-10, Math.min(35, startPt - dy));
+                        x2 = Math.max(x1 + 1, Math.min(99, curX));
+                        y1 = Math.max(1, Math.min(y2 - 1, curY));
                     }
                     if (direction === 'nw') {
-                        newPl = Math.max(-10, Math.min(35, startPl - dx));
-                        newPt = Math.max(-10, Math.min(35, startPt - dy));
+                        x1 = Math.max(1, Math.min(x2 - 1, curX));
+                        y1 = Math.max(1, Math.min(y2 - 1, curY));
                     }
                     if (direction === 'se') {
-                        newPr = Math.max(-10, Math.min(35, startPr + dx));
-                        newPb = Math.max(-10, Math.min(35, startPb + dy));
+                        x2 = Math.max(x1 + 1, Math.min(99, curX));
+                        y2 = Math.max(y1 + 1, Math.min(99, curY));
                     }
                     if (direction === 'sw') {
-                        newPl = Math.max(-10, Math.min(35, startPl - dx));
-                        newPb = Math.max(-10, Math.min(35, startPb + dy));
+                        x1 = Math.max(1, Math.min(x2 - 1, curX));
+                        y2 = Math.max(y1 + 1, Math.min(99, curY));
                     }
 
-                    hotspotDims[toothNum] = { w: startW, h: startH, pr: newPr, pl: newPl, pt: newPt, pb: newPb };
+                    hotspotBoxes[toothNum] = { x1, y1, x2, y2 };
 
-                    element.style.width = (startW + newPr + newPl) + 'px';
-                    element.style.height = (startH + newPt + newPb) + 'px';
+                    element.style.left = x1 + '%';
+                    element.style.top = y1 + '%';
+                    element.style.width = (x2 - x1) + '%';
+                    element.style.height = (y2 - y1) + '%';
                 }
 
                 function onResizeUp(ev) {
                     if (ev.pointerId !== activeId) return;
                     handle.releasePointerCapture(ev.pointerId);
                     element.classList.remove('is-resizing');
-                    localStorage.setItem('clinic_jaw_dims', JSON.stringify(hotspotDims));
+                    localStorage.setItem('clinic_jaw_boxes', JSON.stringify(hotspotBoxes));
                     handle.removeEventListener('pointermove', onResizeMove);
                     handle.removeEventListener('pointerup', onResizeUp);
                 }
