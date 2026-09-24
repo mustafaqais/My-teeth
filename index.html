@@ -369,8 +369,14 @@
         }
 
         /* أرقام الأسنان */
-        .tooth-badge {
+        .tooth-badge-wrapper {
             position: absolute;
+            transform: translate(-50%, -50%);
+            pointer-events: auto;
+            z-index: 20;
+        }
+
+        .tooth-badge {
             background: var(--status-healthy);
             border: 1.5px solid rgba(255, 255, 255, 0.9);
             border-radius: 50%;
@@ -380,19 +386,53 @@
             font-weight: 900;
             color: #FFFFFF;
             text-shadow: 0 1px 2px rgba(0,0,0,0.9);
-            transform: translate(-50%, -50%);
-            pointer-events: auto;
             cursor: pointer;
             user-select: none;
             touch-action: none;
-            z-index: 20;
+            width: 100%;
+            height: 100%;
         }
 
         .edit-mode-active .tooth-badge {
             border: 2px solid #FACC15;
-            background: rgba(250, 204, 21, 0.5);
+            background: rgba(250, 204, 21, 0.6);
             cursor: move;
-            box-shadow: 0 0 8px rgba(250, 204, 21, 0.8);
+            box-shadow: 0 0 8px rgba(250, 204, 21, 0.9);
+        }
+
+        /* أزرار التحكم السريعة للتكبير والتصغير (تظهر فقط أثناء وضع التعديل لتدعم الموبايل والآيباد) */
+        .resize-controls {
+            display: none;
+            position: absolute;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0F172A;
+            border: 1px solid #FACC15;
+            border-radius: 8px;
+            padding: 2px 4px;
+            gap: 4px;
+            z-index: 30;
+            white-space: nowrap;
+        }
+
+        .edit-mode-active .tooth-badge-wrapper.selected-badge .resize-controls {
+            display: flex;
+        }
+
+        .resize-btn {
+            background: #FACC15;
+            color: #0F172A;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .tooth-badge.status-تسوس { background-color: var(--status-caries) !important; border-color: #EF4444; }
@@ -568,7 +608,7 @@
             </div>
         </div>
 
-        <!-- 4. شاشة إدارة قالب الفكين العام (تعديل سهل وحر بالكامل للأرقام والحجم) -->
+        <!-- 4. شاشة إدارة قالب الفكين العام (تدعم اللمس، الموبايل، الآيباد، والحاسبة) -->
         <div class="card" id="template-manager-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
@@ -577,7 +617,7 @@
 
             <div class="card-header" style="margin-bottom: 15px;">
                 <h2>إدارة صورة الفكين وتعديل أرقام الأسنان</h2>
-                <p>اختر الصورة، وفعل وضع التعديل لتحريك كل رقم وحجمه (تكبير/تصغير) بحرية تامة وبكل سهولة!</p>
+                <p>اختر الصورة، وفعل وضع التعديل لتحريك وتكبير/تصغير الأرقام بسهولة عبر اللمس أو الماوس!</p>
             </div>
 
             <div class="form-group">
@@ -585,14 +625,14 @@
                 <input type="file" id="global-jaw-file" accept="image/*" onchange="previewGlobalJaw(event)">
             </div>
 
-            <!-- شريط أدوات التحكم السهل -->
+            <!-- شريط الأدوات الداعم لجميع الأجهزة -->
             <div class="editor-tools-bar">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم بالحرية التامة:</span>
-                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleTemplateEditMode()" id="template-edit-btn">🔓 تفعيل وضع التعديل الحر</button>
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">تحكم متوافق مع الموبايل والآيباد والحاسبة:</span>
+                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleTemplateEditMode()" id="template-edit-btn">🔓 تفعيل وضع تعديل الأرقام</button>
                 </div>
                 <div id="template-instructions" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px; background: #FFF; padding: 6px; border-radius: 6px;">
-                    ✨ **مفعل:** اسحب أي رقم لمكانه بدقة، واستخدم عجلة الماوس (أو تمرير الأصابع) فوق الرقم لتكبره أو تصغره بحرية تامة على حدة!
+                    ✨ **مفعل:** المس واحبب أي رقم لمكانه. اضغط عليه لتظهر أزرار التكبير (+) والتصغير (-) العلوية لضبط حجمه بدقة على أي جهاز!
                 </div>
             </div>
 
@@ -671,7 +711,7 @@
             </form>
         </div>
 
-        <!-- 7. شاشة المخطط الطبي للمراجع (ثابت، جاهز، وبأحجام ومواقع دقيقة) -->
+        <!-- 7. شاشة المخطط الطبي للمراجع -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
@@ -680,7 +720,7 @@
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>مخطط أسنان المراجع (جاهز للاستخدام الفوري)</h2>
-                <p>انقر مباشرة على أي سن لتسجيل حالته السريرية (تسوس، حشوة، عصب، إلخ) بكل سهولة وسرعة!</p>
+                <p>انقر مباشرة على أي سن لتسجيل حالته السريرية (تسوس، حشوة، عصب، إلخ) بكل سهولة!</p>
             </div>
 
             <div class="smart-chart-container">
@@ -778,7 +818,7 @@
             return confs;
         }
 
-        // رندر شاشة تعديل القالب والأرقام (للطبيب داخل أيقونة قالب الفكين)
+        // رندر شاشة تعديل القالب والأرقام (متوافقة مع اللمس والموبايل)
         function renderTemplateGrid() {
             const grid = document.getElementById('template-jaw-grid');
             if (!grid) return;
@@ -795,34 +835,81 @@
             if (globalJawImage && previewImg) previewImg.src = globalJawImage;
 
             allTeeth.forEach(num => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'tooth-badge-wrapper';
+                wrapper.id = `wrapper-${num}`;
+                
+                let cfg = toothConfigs[num] || { x: 50, y: 50, size: 26 };
+                wrapper.style.left = cfg.x + '%';
+                wrapper.style.top = cfg.y + '%';
+                wrapper.style.width = cfg.size + 'px';
+                wrapper.style.height = cfg.size + 'px';
+
                 const badge = document.createElement('div');
                 badge.className = 'tooth-badge';
                 badge.textContent = num;
-                
-                let cfg = toothConfigs[num] || { x: 50, y: 50, size: 26 };
-                badge.style.left = cfg.x + '%';
-                badge.style.top = cfg.y + '%';
-                badge.style.width = cfg.size + 'px';
-                badge.style.height = cfg.size + 'px';
                 badge.style.fontSize = (cfg.size * 0.4) + 'px';
 
-                setupBadgeDrag(badge, num);
-                setupBadgeWheelResize(badge, num);
+                // أزرار تكبير وتصصغير لكل رقم تدعم الموبايل والآيباد باللمس المباشر
+                const controls = document.createElement('div');
+                controls.className = 'resize-controls';
+                
+                const btnPlus = document.createElement('button');
+                btnPlus.className = 'resize-btn';
+                btnPlus.textContent = '+';
+                btnPlus.onclick = (e) => {
+                    e.stopPropagation();
+                    resizeTooth(num, 3);
+                };
 
-                grid.appendChild(badge);
+                const btnMinus = document.createElement('button');
+                btnMinus.className = 'resize-btn';
+                btnMinus.textContent = '-';
+                btnMinus.onclick = (e) => {
+                    e.stopPropagation();
+                    resizeTooth(num, -3);
+                };
+
+                controls.appendChild(btnMinus);
+                controls.appendChild(btnPlus);
+                wrapper.appendChild(controls);
+                wrapper.appendChild(badge);
+
+                setupWrapperDrag(wrapper, num);
+
+                wrapper.onclick = (e) => {
+                    if (!isTemplateEditMode) return;
+                    e.stopPropagation();
+                    document.querySelectorAll('.tooth-badge-wrapper').forEach(w => w.classList.remove('selected-badge'));
+                    wrapper.classList.add('selected-badge');
+                };
+
+                grid.appendChild(wrapper);
             });
         }
 
-        // تحريك الرقم بحرية تامة وبدون قيود
-        function setupBadgeDrag(badge, toothNum) {
+        function resizeTooth(toothNum, amount) {
+            if (!toothConfigs[toothNum]) toothConfigs[toothNum] = { x: 50, y: 50, size: 26 };
+            toothConfigs[toothNum].size = Math.max(16, Math.min(60, toothConfigs[toothNum].size + amount));
+            renderTemplateGrid();
+            // حافظ على اختيار نفس العنصر بعد التحديث
+            const w = document.getElementById(`wrapper-${toothNum}`);
+            if (w) w.classList.add('selected-badge');
+        }
+
+        // تحريك سلس جداً باللمس (موبايل/آيباد) وبالماوس (حاسبة)
+        function setupWrapperDrag(wrapper, toothNum) {
             let container = document.getElementById('template-container-box');
             if (!container) return;
 
-            badge.addEventListener('pointerdown', (e) => {
+            wrapper.addEventListener('pointerdown', (e) => {
                 if (!isTemplateEditMode) return;
+                // إذا تم النقر على أزرار + أو - لا نبدأ السحب
+                if (e.target.classList.contains('resize-btn')) return;
+                
                 e.stopPropagation();
                 e.preventDefault();
-                badge.setPointerCapture(e.pointerId);
+                wrapper.setPointerCapture(e.pointerId);
                 let activeId = e.pointerId;
 
                 function onMove(ev) {
@@ -837,35 +924,20 @@
                     toothConfigs[toothNum].x = x;
                     toothConfigs[toothNum].y = y;
 
-                    badge.style.left = x + '%';
-                    badge.style.top = y + '%';
+                    wrapper.style.left = x + '%';
+                    wrapper.style.top = y + '%';
                 }
 
                 function onUp(ev) {
                     if (ev.pointerId !== activeId) return;
-                    badge.releasePointerCapture(ev.pointerId);
-                    badge.removeEventListener('pointermove', onMove);
-                    badge.removeEventListener('pointerup', onUp);
+                    wrapper.releasePointerCapture(ev.pointerId);
+                    wrapper.removeEventListener('pointermove', onMove);
+                    wrapper.removeEventListener('pointerup', onUp);
                 }
 
-                badge.addEventListener('pointermove', onMove);
-                badge.addEventListener('pointerup', onUp);
+                wrapper.addEventListener('pointermove', onMove);
+                wrapper.addEventListener('pointerup', onUp);
             });
-        }
-
-        // تكبير وتصغير سهل وسريع لكل رقم على حدة باستخدام عجلة الماوس أو اللمس
-        function setupBadgeWheelResize(badge, toothNum) {
-            badge.addEventListener('wheel', (e) => {
-                if (!isTemplateEditMode) return;
-                e.preventDefault();
-                let cfg = toothConfigs[toothNum] || { x: 50, y: 50, size: 26 };
-                let delta = e.deltaY < 0 ? 2 : -2;
-                cfg.size = Math.max(16, Math.min(60, cfg.size + delta));
-
-                badge.style.width = cfg.size + 'px';
-                badge.style.height = cfg.size + 'px';
-                badge.style.fontSize = (cfg.size * 0.4) + 'px';
-            }, { passive: false });
         }
 
         function toggleTemplateEditMode() {
@@ -880,7 +952,7 @@
                 if (instructions) instructions.style.display = "block";
             } else {
                 if (btn) {
-                    btn.textContent = "🔓 تفعيل وضع التعديل الحر";
+                    btn.textContent = "🔓 تفعيل وضع تعديل الأرقام";
                     btn.style.background = "var(--primary)";
                 }
                 if (instructions) instructions.style.display = "none";
@@ -898,18 +970,21 @@
             if (globalJawImage && activeImg) activeImg.src = globalJawImage;
 
             allTeeth.forEach(num => {
+                const wrapper = document.createElement('div');
+                wrapper.className = 'tooth-badge-wrapper';
+                
+                let cfg = toothConfigs[num] || { x: 50, y: 50, size: 26 };
+                wrapper.style.left = cfg.x + '%';
+                wrapper.style.top = cfg.y + '%';
+                wrapper.style.width = cfg.size + 'px';
+                wrapper.style.height = cfg.size + 'px';
+
                 const badge = document.createElement('div');
                 badge.className = 'tooth-badge';
                 badge.textContent = num;
-                
-                let cfg = toothConfigs[num] || { x: 50, y: 50, size: 26 };
-                badge.style.left = cfg.x + '%';
-                badge.style.top = cfg.y + '%';
-                badge.style.width = cfg.size + 'px';
-                badge.style.height = cfg.size + 'px';
                 badge.style.fontSize = (cfg.size * 0.4) + 'px';
 
-                badge.onclick = (e) => {
+                wrapper.onclick = (e) => {
                     e.stopPropagation();
                     openToothModal(num);
                 };
@@ -918,7 +993,8 @@
                     badge.classList.add(`status-${toothData[num].status}`);
                 }
 
-                grid.appendChild(badge);
+                wrapper.appendChild(badge);
+                grid.appendChild(wrapper);
             });
         }
 
