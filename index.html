@@ -8,13 +8,10 @@
     <!-- استيراد أرقى الخطوط العربية الحديثة -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 
-    <!-- استيراد مكتبات Firebase و Three.js ومحمل النماذج ثلاثية الأبعاد GLTFLoader -->
+    <!-- استيراد مكتبات Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
     <style>
         :root {
@@ -27,12 +24,12 @@
             --input-bg: #F8FAFC;
             --border-color: #E2E8F0;
             
-            --status-healthy: #FFFFFF;
-            --status-caries: #EF4444;
-            --status-filled: #3B82F6;
-            --status-rct: #F59E0B;
-            --status-missing: #94A3B8;
-            --status-crown: #EAB308;
+            --status-healthy: rgba(255, 255, 255, 0.1);
+            --status-caries: rgba(239, 68, 68, 0.6);
+            --status-filled: rgba(59, 130, 246, 0.6);
+            --status-rct: rgba(245, 158, 11, 0.6);
+            --status-missing: rgba(148, 163, 184, 0.6);
+            --status-crown: rgba(234, 179, 8, 0.6);
         }
 
         * {
@@ -71,22 +68,6 @@
 
         .card.active {
             display: block;
-        }
-
-        .card::before {
-            content: "🦷";
-            position: absolute;
-            bottom: -20px;
-            left: -20px;
-            font-size: 140px;
-            opacity: 0.03;
-            pointer-events: none;
-            z-index: 0;
-        }
-
-        .card > * {
-            position: relative;
-            z-index: 1;
         }
 
         .card-header {
@@ -358,57 +339,63 @@
             background: var(--primary-hover);
         }
 
-        /* حاوية العرض الحقيقي ثلاثي الأبعاد 3D Canvas للفك المطابق للصورة */
-        #canvas-container {
+        /* حاوية الصورة الواقعية للفكين مع أزرار تفاعلية فوقها */
+        .real-jaw-container {
             width: 100%;
-            height: 340px;
-            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
-            border-radius: 16px;
+            max-width: 420px;
+            margin: 0 auto 15px auto;
             position: relative;
+            background: #1E293B;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: inset 0 4px 15px rgba(0,0,0,0.3);
-            margin-bottom: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            text-align: center;
         }
 
-        .canvas-hint {
+        .real-jaw-container img {
+            width: 100%;
+            display: block;
+            opacity: 0.9;
+        }
+
+        /* شبكة تحديد الأسنان فوق الصورة الحقيقية بدقة */
+        .jaw-overlay-grid {
             position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(15, 23, 42, 0.75);
-            color: #F8FAFC;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            pointer-events: none;
-            backdrop-filter: blur(4px);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(4, 1fr);
+            padding: 15px;
+            gap: 4px;
         }
 
-        .quick-teeth-panel {
-            display: flex;
-            gap: 5px;
-            overflow-x: auto;
-            padding-bottom: 10px;
-            margin-bottom: 15px;
-        }
-
-        .quick-tooth-pill {
-            background: #F1F5F9;
-            border: 1px solid var(--border-color);
-            padding: 6px 12px;
-            border-radius: 8px;
-            font-size: 12px;
-            font-weight: 700;
+        .tooth-hotspot {
+            background: var(--status-healthy);
+            border: 1px dashed rgba(255,255,255,0.4);
+            border-radius: 6px;
             cursor: pointer;
-            white-space: nowrap;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 9px;
+            font-weight: bold;
+            color: white;
             transition: all 0.2s;
         }
 
-        .quick-tooth-pill:hover, .quick-tooth-pill.selected {
-            background: var(--primary);
-            color: white;
-            border-color: var(--primary);
+        .tooth-hotspot:hover {
+            background: rgba(14, 165, 233, 0.4);
+            border-color: #0EA5E9;
         }
+
+        .tooth-hotspot.status-تسوس { background-color: var(--status-caries); border: 1px solid #EF4444; }
+        .tooth-hotspot.status-حشوة { background-color: var(--status-filled); border: 1px solid #3B82F6; }
+        .tooth-hotspot.status-علاج-عصب { background-color: var(--status-rct); border: 1px solid #F59E0B; }
+        .tooth-hotspot.status-خلع { background-color: var(--status-missing); border: 1px solid #94A3B8; }
+        .tooth-hotspot.status-تلبيسة { background-color: var(--status-crown); border: 1px solid #EAB308; }
 
         .chart-legend {
             display: flex;
@@ -553,7 +540,7 @@
                 <div class="dashboard-tile" onclick="openNewPatientForm()">
                     <div class="tile-icon">➕</div>
                     <div class="tile-title">مريض جديد</div>
-                    <div class="tile-desc">فتح ملف ومخطط ثلاثي الأبعاد</div>
+                    <div class="tile-desc">فتح ملف ومخطط طبي واقعي</div>
                 </div>
                 <div class="dashboard-tile" onclick="openPatientsArchive()">
                     <div class="tile-icon">📂</div>
@@ -563,7 +550,7 @@
             </div>
         </div>
 
-        <!-- 4. شاشة عرض أرشيف ملفات المرضى السابقين -->
+        <!-- 4. أرشيف ملفات المرضى -->
         <div class="card" id="patients-archive-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
@@ -577,12 +564,12 @@
 
             <div class="form-group">
                 <div class="patients-list" id="patients-list-container">
-                    <p style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">جاري جلب السجلات السحابية...</p>
+                    <p style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">جاري تحميل السجلات من السحابة...</p>
                 </div>
             </div>
         </div>
 
-        <!-- 5. شاشة إدخال معلومات المريض الجديد أو التعديل عليه -->
+        <!-- 5. شاشة معلومات المريض -->
         <div class="card" id="patient-info-section">
             <div class="clinic-topbar">
                 <a onclick="backToDashboard()" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
@@ -624,25 +611,25 @@
                     <textarea id="p-history" placeholder="الأمراض المزمنة والحساسية..."></textarea>
                 </div>
 
-                <button type="submit" class="btn" style="margin-top: 15px;">الانتقال للمجسم ثلاثي الأبعاد الواقعي &larr;</button>
+                <button type="submit" class="btn" style="margin-top: 15px;">الانتقال للمخطط الطبي الواقعي &larr;</button>
             </form>
         </div>
 
-        <!-- 6. شاشة العرض الحقيقي ثلاثي الأبعاد للفك المطابق للصورة والحفظ السحابي -->
+        <!-- 6. شاشة المخطط الطبي بالصورة الواقعية الحقيقية -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
-                <div class="doctor-welcome">🦷 محرك الفك الواقعي 3D</div>
+                <div class="doctor-welcome">🦷 المخطط الطبي الواقعي</div>
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
-                <h2 id="chart-patient-title">مخطط الأسنان ثلاثي الأبعاد</h2>
-                <p>قم بتدوير نموذج الفك الواقعي أو اختر السن</p>
+                <h2 id="chart-patient-title">مخطط الأسنان التشريعي</h2>
+                <p>انقر مباشرة على السن في صورة الفكين لتحديد حالته</p>
             </div>
 
             <div class="smart-chart-container">
                 <div class="chart-legend">
-                    <div class="legend-item"><div class="legend-color" style="background:#FFF5EE; border:1px solid #CBD5E1"></div>سليم (طبيعي)</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#E2E8F0"></div>سليم</div>
                     <div class="legend-item"><div class="legend-color" style="background:#EF4444"></div>تسوس</div>
                     <div class="legend-item"><div class="legend-color" style="background:#3B82F6"></div>حشوة</div>
                     <div class="legend-item"><div class="legend-color" style="background:#F59E0B"></div>عصب</div>
@@ -650,13 +637,13 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- شاشة العرض الحقيقي 3D للفك الواقعي المطابق للصورة -->
-                <div id="canvas-container">
-                    <div class="canvas-hint">اسحب للتدوير 3D أو انقر على أي سن بالموديل التشريحي</div>
+                <!-- عرض الصورة الحقيقية للفكين مع نقاط تفاعلية فوق الأسنان -->
+                <div class="real-jaw-container">
+                    <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80" alt="قالب الفكين التشريعي">
+                    <div class="jaw-overlay-grid" id="jaw-grid">
+                        <!-- يتم توزيع النقاط التفاعلية للأسنان برمجياً فوق الصورة -->
+                    </div>
                 </div>
-
-                <label style="margin-bottom: 5px;">أو اختر رقم السن مباشرة للتعديل:</label>
-                <div class="quick-teeth-panel" id="quick-teeth-panel"></div>
             </div>
 
             <button type="button" class="btn" onclick="savePatientToCloud()" style="margin-top: 10px;">حفظ المريض والبيانات سحابياً</button>
@@ -716,144 +703,21 @@
             48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38
         ];
 
-        // محرك عرض النموذج التشريحي الواقعي ثلاثي الأبعاد 3D
-        let scene, camera, renderer, controls;
-        let anatomicalModelGroup;
-        let toothMeshes3D = {};
-
-        function init3DViewer() {
-            const container = document.getElementById('canvas-container');
-            container.innerHTML = '<div class="canvas-hint">اسحب للتدوير 3D أو انقر على الفك الواقعي</div>';
-
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
-            camera.position.set(0, 7, 12);
-
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(container.clientWidth, container.clientHeight);
-            renderer.setPixelRatio(window.devicePixelRatio);
-            container.appendChild(renderer.domElement);
-
-            controls = new THREE.OrbitControls(camera, renderer.domElement);
-            controls.enableDamping = true;
-            controls.dampingFactor = 0.05;
-
-            // إضاءة طبية احترافية تحاكي إضاءة عيادات الأسنان
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
-            scene.add(ambientLight);
-
-            const directionalLight1 = new THREE.DirectionalLight(0xffffff, 0.9);
-            directionalLight1.position.set(0, 15, 10);
-            scene.add(directionalLight1);
-
-            const directionalLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
-            directionalLight2.position.set(0, -10, -10);
-            scene.add(directionalLight2);
-
-            // بناء نموذج الفك التشريحي الواقعي (قاعدة لثة وردية + أسنان مقوسة بدقة مطابقة للصورة)
-            buildRealisticAnatomicalModel();
-
-            renderer.domElement.addEventListener('click', onCanvasClick);
-            animate3D();
-        }
-
-        function buildRealisticAnatomicalModel() {
-            anatomicalModelGroup = new THREE.Group();
-            toothMeshes3D = {};
-
-            // 1. قاعدة اللثة العلوية والسفلية (اللون الوردي الواقعي)
-            const gumMaterial = new THREE.MeshStandardMaterial({ color: 0xE27A88, roughness: 0.4 });
-            
-            const upperGumGeo = new THREE.CylinderGeometry(5.2, 5.5, 0.8, 32, 1, true, 0, Math.PI);
-            const upperGum = new THREE.Mesh(upperGumGeo, gumMaterial);
-            upperGum.position.set(0, 1.5, -0.5);
-            upperGum.rotation.x = Math.PI;
-            anatomicalModelGroup.add(upperGum);
-
-            const lowerGumGeo = new THREE.CylinderGeometry(5.0, 5.3, 0.8, 32, 1, true, 0, Math.PI);
-            const lowerGum = new THREE.Mesh(lowerGumGeo, gumMaterial);
-            lowerGum.position.set(0, -1.5, -0.5);
-            anatomicalModelGroup.add(lowerGum);
-
-            // 2. الأسنان التشريحية المجسمة بدقة مطابقة للأقواس الطبية
-            const toothGeo = new THREE.BoxGeometry(0.7, 1.0, 0.6);
-
-            // الفك العلوي (18 إلى 28)
-            allTeeth.slice(0, 16).forEach((num, index) => {
-                const angle = (index - 7.5) * 0.19;
-                const x = Math.sin(angle) * 4.8;
-                const z = Math.cos(angle) * 4.8 - 1.2;
-                const y = 1.6;
-
-                const material = new THREE.MeshStandardMaterial({ color: 0xFFF5EE, roughness: 0.2 });
-                const mesh = new THREE.Mesh(toothGeo, material);
-                mesh.position.set(x, y, z);
-                mesh.rotation.y = -angle;
-                mesh.userData = { toothNum: num };
-
-                anatomicalModelGroup.add(mesh);
-                toothMeshes3D[num] = mesh;
-            });
-
-            // الفك السفلي (48 إلى 38)
-            allTeeth.slice(16).forEach((num, index) => {
-                const angle = (index - 7.5) * 0.19;
-                const x = Math.sin(angle) * 4.6;
-                const z = Math.cos(angle) * 4.6 - 1.2;
-                const y = -1.6;
-
-                const material = new THREE.MeshStandardMaterial({ color: 0xFFF5EE, roughness: 0.2 });
-                const mesh = new THREE.Mesh(toothGeo, material);
-                mesh.position.set(x, y, z);
-                mesh.rotation.y = -angle;
-                mesh.userData = { toothNum: num };
-
-                anatomicalModelGroup.add(mesh);
-                toothMeshes3D[num] = mesh;
-            });
-
-            scene.add(anatomicalModelGroup);
-            updateAllTeethVisuals3D();
-        }
-
-        function animate3D() {
-            requestAnimationFrame(animate3D);
-            if (controls) controls.update();
-            if (renderer && scene && camera) renderer.render(scene, camera);
-        }
-
-        function onCanvasClick(event) {
-            const rect = renderer.domElement.getBoundingClientRect();
-            const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
-            const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
-
-            const raycaster = new THREE.Raycaster();
-            raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
-
-            const intersects = raycaster.intersectObjects(anatomicalModelGroup.children);
-            if (intersects.length > 0) {
-                const clickedMesh = intersects[0].object;
-                if (clickedMesh.userData && clickedMesh.userData.toothNum) {
-                    openToothModal(clickedMesh.userData.toothNum);
-                }
-            }
-        }
-
-        function renderQuickTeethPanel() {
-            const panel = document.getElementById('quick-teeth-panel');
-            panel.innerHTML = '';
+        function renderJawGrid() {
+            const grid = document.getElementById('jaw-grid');
+            grid.innerHTML = '';
             allTeeth.forEach(num => {
-                const pill = document.createElement('div');
-                pill.className = 'quick-tooth-pill';
-                pill.id = `pill-${num}`;
-                pill.textContent = `سن ${num}`;
-                pill.onclick = () => openToothModal(num);
-                panel.appendChild(pill);
+                const hotspot = document.createElement('div');
+                hotspot.className = 'tooth-hotspot';
+                hotspot.id = `hotspot-${num}`;
+                hotspot.textContent = num;
+                hotspot.onclick = () => openToothModal(num);
+                grid.appendChild(hotspot);
             });
         }
 
         document.addEventListener("DOMContentLoaded", () => {
-            renderQuickTeethPanel();
+            renderJawGrid();
         });
 
         auth.onAuthStateChanged((user) => {
@@ -897,6 +761,7 @@
             document.getElementById('p-phone').value = '';
             document.getElementById('p-history').value = '';
             toothData = {};
+            renderJawGrid();
             switchTab('patient-info-section');
         }
 
@@ -957,14 +822,14 @@
                     document.getElementById('p-history').value = data.history || '';
                     toothData = data.teeth || {};
                     
+                    renderJawGrid();
+                    for (let toothNum in toothData) {
+                        updateToothVisual(toothNum, toothData[toothNum].status);
+                    }
+
                     temporaryPatientInfo = { name: data.name, gender: data.gender, age: data.age, phone: data.phone, history: data.history };
                     document.getElementById('chart-patient-title').textContent = `مخطط أسنان: ${data.name}`;
                     switchTab('patient-chart-section');
-                    
-                    setTimeout(() => {
-                        if (!renderer) init3DViewer();
-                        updateAllTeethVisuals3D();
-                    }, 200);
                 }
             });
         }
@@ -980,11 +845,6 @@
             };
             document.getElementById('chart-patient-title').textContent = `مخطط أسنان: ${temporaryPatientInfo.name}`;
             switchTab('patient-chart-section');
-
-            setTimeout(() => {
-                if (!renderer) init3DViewer();
-                updateAllTeethVisuals3D();
-            }, 200);
         }
 
         function savePatientToCloud() {
@@ -1038,34 +898,18 @@
             const status = document.getElementById('tooth-status').value;
             const notes = document.getElementById('tooth-notes').value;
             toothData[currentSelectedTooth] = { status, notes };
-            updateToothVisual3D(currentSelectedTooth, status);
+            updateToothVisual(currentSelectedTooth, status);
             closeToothModal();
         }
 
-        function updateToothVisual3D(toothNum, status) {
-            if (toothMeshes3D[toothNum]) {
-                let colorHex = 0xFFF5EE;
-                if (status === 'تسوس') colorHex = 0xEF4444;
-                else if (status === 'حشوة') colorHex = 0x3B82F6;
-                else if (status === 'علاج-عصب') colorHex = 0xF59E0B;
-                else if (status === 'خلع') colorHex = 0x94A3B8;
-                else if (status === 'تلبيسة') colorHex = 0xEAB308;
-
-                toothMeshes3D[toothNum].material.color.setHex(colorHex);
+        function updateToothVisual(toothNum, status) {
+            const hotspot = document.getElementById(`hotspot-${toothNum}`);
+            if (hotspot) {
+                hotspot.className = 'tooth-hotspot';
+                if (status !== 'سليم') {
+                    hotspot.classList.add(`status-${status}`);
+                }
             }
-
-            const pill = document.getElementById(`pill-${toothNum}`);
-            if (pill) {
-                if (status !== 'سليم') pill.style.borderColor = '#0EA5E9';
-                else pill.style.borderColor = '#E2E8F0';
-            }
-        }
-
-        function updateAllTeethVisuals3D() {
-            allTeeth.forEach(num => {
-                const status = toothData[num] ? toothData[num].status : 'سليم';
-                updateToothVisual3D(num, status);
-            });
         }
 
         function togglePass(id, el) {
