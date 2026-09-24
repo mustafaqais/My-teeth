@@ -447,7 +447,6 @@
             display: block;
         }
 
-        /* تصميم قسم قبل وبعد بشكل عمودي وأنيق جداً للموبايل */
         .tooth-ba-section {
             background: #F8FAFC;
             border: 1px solid var(--border-color);
@@ -478,7 +477,6 @@
             gap: 6px;
         }
 
-        /* زر تحميل مخصص ومرتب */
         .custom-file-upload {
             display: inline-block;
             background: #E0F2FE;
@@ -623,7 +621,7 @@
                 <div class="dashboard-tile" onclick="openTemplateManager()">
                     <div class="tile-icon">🖼️</div>
                     <div class="tile-title">قالب الفكين</div>
-                    <div class="tile-desc">تغيير الصورة الرئيسية</div>
+                    <div class="tile-desc">تغيير الصورة وإحداثيات الأرقام</div>
                 </div>
                 <div class="dashboard-tile" onclick="openPatientsArchive()">
                     <div class="tile-icon">📂</div>
@@ -633,16 +631,16 @@
             </div>
         </div>
 
-        <!-- 4. شاشة إدارة قالب الفكين الرئيسي -->
+        <!-- 4. شاشة إدارة قالب الفكين الرئيسي (تم نقل أداة الضبط والإحداثيات إلى هنا) -->
         <div class="card" id="template-manager-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
-                <div class="doctor-welcome">🦷 قالب الفكين العام</div>
+                <div class="doctor-welcome">🦷 قالب الفكين العام وإحداثيات الأرقام</div>
             </div>
 
             <div class="card-header" style="margin-bottom: 15px;">
-                <h2>صورة الفكين الرئيسية للعيادة</h2>
-                <p>اختر صورة فكين معتمدة لتظهر تلقائياً لكل المرضى</p>
+                <h2>صورة الفكين الرئيسية وإحداثيات الأرقام</h2>
+                <p>اختر الصورة وعدل أماكن الأرقام وأحجامها لتنطبق على كل المرضى</p>
             </div>
 
             <div class="form-group">
@@ -650,11 +648,28 @@
                 <input type="file" id="global-jaw-file" accept="image/*" onchange="previewGlobalJaw(event)">
             </div>
 
-            <div class="real-jaw-container" style="margin-top: 15px;">
-                <img id="global-preview-img" src="" alt="معاينة قالب الفكين">
+            <!-- أداة تحكم الإحداثيات أصبحت هنا فقط -->
+            <div class="editor-tools-bar" style="margin-top: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة ضبط إحداثيات وأحجام الأرقام:</span>
+                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع السحب والتحكم</button>
+                </div>
+                <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 10px; border-radius: 8px;">
+                    ✋ **اسحب أي رقم بإصبعك أو الماوس إلى مكانه الصحيح فوق السن.**<br>
+                    🔍 **لتصغير أو تكبير أي رقم:** انقر عليه نقرة مزدوجة (Double Click)، أو استخدِم الشريط لتعديل الكل:
+                    <div style="display: flex; gap: 10px; margin-top: 8px; justify-content: center; align-items: center;">
+                        <label>الحجم العام:</label>
+                        <input type="range" id="hotspot-size-range" min="15" max="50" value="28" oninput="updateAllHotspotSize(this.value)">
+                    </div>
+                </div>
             </div>
 
-            <button type="button" class="btn" onclick="saveGlobalJawTemplate()">اعتماد كقالب رئيسي للعيادة</button>
+            <div class="real-jaw-container" id="template-jaw-container" style="margin-top: 15px;">
+                <img id="global-preview-img" src="" alt="معاينة قالب الفكين">
+                <div class="jaw-absolute-overlay" id="template-jaw-grid"></div>
+            </div>
+
+            <button type="button" class="btn" onclick="saveGlobalJawTemplate()">اعتماد قالب الفكين والإحداثيات للعيادة</button>
         </div>
 
         <!-- 5. أرشيف ملفات المرضى -->
@@ -722,32 +737,16 @@
             </form>
         </div>
 
-        <!-- 7. شاشة المخطط الطبي -->
+        <!-- 7. شاشة المخطط الطبي للمريض (خالية من أزرار التعديل ونظيفة تماماً) -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
-                <div class="doctor-welcome">🦷 المخطط الطبي التفاعلي</div>
+                <div class="doctor-welcome">🦷 المخطط الطبي للمريض</div>
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>مخطط الأسنان التشريعي</h2>
                 <p>انقر على أي سن لفتح لوحة التحكم الخاصة به بالأسفل</p>
-            </div>
-
-            <!-- شريط أدوات تحكم الطبيب -->
-            <div class="editor-tools-bar">
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة ضبط إحداثيات الأرقام:</span>
-                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع السحب والتحكم</button>
-                </div>
-                <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 10px; border-radius: 8px;">
-                    ✋ **اسحب أي رقم بإصبعك أو الماوس إلى أي مكان.**<br>
-                    🔍 **لتصغير أو تكبير أي رقم:** انقر عليه نقرة مزدوجة (Double Click)، أو استخدِم الشريط لتعديل الكل:
-                    <div style="display: flex; gap: 10px; margin-top: 8px; justify-content: center; align-items: center;">
-                        <label>الحجم العام:</label>
-                        <input type="range" id="hotspot-size-range" min="15" max="50" value="28" oninput="updateAllHotspotSize(this.value)">
-                    </div>
-                </div>
             </div>
 
             <div class="smart-chart-container">
@@ -760,7 +759,7 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- عرض القالب مع النقاط القابلة للسحب -->
+                <!-- عرض القالب النظيف الخاص بالمريض -->
                 <div class="real-jaw-container" id="jaw-container-box">
                     <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
                     <div class="jaw-absolute-overlay" id="jaw-grid">
@@ -769,7 +768,7 @@
                 </div>
             </div>
 
-            <!-- صندوق إدارة السن (مقسم بشكل عمودي واحترافي) -->
+            <!-- صندوق إدارة السن (قبل وبعد) -->
             <div class="tooth-panel-box" id="tooth-panel">
                 <div class="card-header" style="margin-bottom: 10px;">
                     <h3 id="panel-tooth-title" style="font-size: 16px; color: var(--primary);">إدارة السن</h3>
@@ -790,11 +789,10 @@
                     <textarea id="tooth-notes" placeholder="ملاحظات العلاج والحشوة..."></textarea>
                 </div>
 
-                <!-- قسم صور قبل وبعد مقسم بشكل عمودي احترافي -->
+                <!-- قسم صور قبل وبعد لكل سن -->
                 <div class="tooth-ba-section">
                     <label style="font-weight: 700; color: var(--text-main); margin-bottom: 8px; display: block;">📸 توثيق السن (الأشعة والصور):</label>
                     
-                    <!-- بطاقة قبل العلاج -->
                     <div class="tooth-ba-card">
                         <div class="tooth-ba-title">📥 صور (قبل العلاج)</div>
                         <label for="input-before-file" class="custom-file-upload">➕ إضافَة صور قبل العلاج</label>
@@ -802,7 +800,6 @@
                         <div class="tooth-images-grid" id="tooth-before-images"></div>
                     </div>
 
-                    <!-- بطاقة بعد العلاج -->
                     <div class="tooth-ba-card">
                         <div class="tooth-ba-title">📤 صور (بعد العلاج)</div>
                         <label for="input-after-file" class="custom-file-upload">➕ إضافَة صور بعد العلاج</label>
@@ -868,46 +865,66 @@
             return pos;
         }
 
+        // دالة رسم شبكة الأسنان (تخدم شاشة المريض وشاشة قالب الفكين)
         function renderJawGrid() {
+            // 1. رسم شاشة المريض (تفاعلية للعلاج)
             const grid = document.getElementById('jaw-grid');
-            if (!grid) return;
-            grid.innerHTML = '';
+            if (grid) {
+                grid.innerHTML = '';
+                const activeImg = document.getElementById('active-jaw-img');
+                if (activeImg && globalJawImage) activeImg.src = globalJawImage;
 
-            const activeImg = document.getElementById('active-jaw-img');
-            const previewImg = document.getElementById('global-preview-img');
-            if (globalJawImage) {
-                if (activeImg) activeImg.src = globalJawImage;
-                if (previewImg) previewImg.src = globalJawImage;
+                allTeeth.forEach(num => {
+                    const hotspot = document.createElement('div');
+                    hotspot.className = 'tooth-hotspot';
+                    hotspot.id = `hotspot-${num}`;
+                    hotspot.textContent = num;
+                    
+                    let p = hotspotPositions[num] || { x: 50, y: 50 };
+                    let size = hotspotSizes[num] || 28;
+
+                    hotspot.style.left = p.x + '%';
+                    hotspot.style.top = p.y + '%';
+                    hotspot.style.width = size + 'px';
+                    hotspot.style.height = size + 'px';
+                    hotspot.style.fontSize = (size * 0.4) + 'px';
+
+                    hotspot.onclick = (e) => {
+                        openToothPanel(num);
+                    };
+
+                    grid.appendChild(hotspot);
+                });
             }
 
-            allTeeth.forEach(num => {
-                const hotspot = document.createElement('div');
-                hotspot.className = 'tooth-hotspot';
-                hotspot.id = `hotspot-${num}`;
-                hotspot.textContent = num;
-                
-                let p = hotspotPositions[num] || { x: 50, y: 50 };
-                let size = hotspotSizes[num] || 28;
+            // 2. رسم شاشة قالب الفكين (مخصصة للتحكم بالإحداثيات والسحب)
+            const templateGrid = document.getElementById('template-jaw-grid');
+            if (templateGrid) {
+                templateGrid.innerHTML = '';
+                const previewImg = document.getElementById('global-preview-img');
+                if (previewImg && globalJawImage) previewImg.src = globalJawImage;
 
-                hotspot.style.left = p.x + '%';
-                hotspot.style.top = p.y + '%';
-                hotspot.style.width = size + 'px';
-                hotspot.style.height = size + 'px';
-                hotspot.style.fontSize = (size * 0.4) + 'px';
+                allTeeth.forEach(num => {
+                    const hotspot = document.createElement('div');
+                    hotspot.className = 'tooth-hotspot';
+                    hotspot.textContent = num;
+                    
+                    let p = hotspotPositions[num] || { x: 50, y: 50 };
+                    let size = hotspotSizes[num] || 28;
 
-                enableDrag(hotspot, num);
+                    hotspot.style.left = p.x + '%';
+                    hotspot.style.top = p.y + '%';
+                    hotspot.style.width = size + 'px';
+                    hotspot.style.height = size + 'px';
+                    hotspot.style.fontSize = (size * 0.4) + 'px';
 
-                hotspot.onclick = (e) => {
-                    if (!isEditMode) {
-                        openToothPanel(num);
-                    }
-                };
-
-                grid.appendChild(hotspot);
-            });
+                    enableTemplateDrag(hotspot, num);
+                    templateGrid.appendChild(hotspot);
+                });
+            }
         }
 
-        function enableDrag(element, toothNum) {
+        function enableTemplateDrag(element, toothNum) {
             let activeTouchId = null;
 
             element.addEventListener('pointerdown', (e) => {
@@ -916,7 +933,7 @@
                 element.setPointerCapture(e.pointerId);
                 activeTouchId = e.pointerId;
 
-                let container = document.getElementById('jaw-container-box');
+                let container = document.getElementById('template-jaw-container');
                 if (!container) return;
 
                 function onPointerMove(ev) {
@@ -1037,6 +1054,7 @@
         }
 
         function openTemplateManager() {
+            renderJawGrid();
             switchTab('template-manager-section');
         }
 
@@ -1046,8 +1064,7 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     globalJawImage = e.target.result;
-                    const previewImg = document.getElementById('global-preview-img');
-                    if (previewImg) previewImg.src = globalJawImage;
+                    renderJawGrid();
                 }
                 reader.readAsDataURL(file);
             }
@@ -1059,7 +1076,7 @@
                 return;
             }
             localStorage.setItem('clinic_global_jaw', globalJawImage);
-            alert('تم اعتماد قالب الفكين الرئيسي للعيادة بنجاح!');
+            alert('تم اعتماد قالب الفكين الرئيسي والإحداثيات للعيادة بنجاح!');
             switchTab('dashboard-section');
             renderJawGrid();
         }
@@ -1267,7 +1284,7 @@
         function removeToothImage(type, index) {
             let targetArray = type === 'before' ? 'imagesBefore' : 'imagesAfter';
             if (toothData[currentSelectedTooth] && toothData[currentSelectedTooth][targetArray]) {
-                toothData[currentSelectedTooth][targetArray].splice(index, 1);
+                toothData[currentSetSelectedTooth = currentSelectedTooth][targetArray].splice(index, 1);
                 renderToothImages();
             }
         }
