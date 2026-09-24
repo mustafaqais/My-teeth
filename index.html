@@ -339,7 +339,7 @@
             background: var(--primary-hover);
         }
 
-        /* حاوية قالب الفكين الأساسي */
+        /* حاوية قالب الفكين */
         .real-jaw-container {
             width: 100%;
             max-width: 480px;
@@ -430,7 +430,6 @@
             border-radius: 50%;
         }
 
-        /* صندوق إدارة السن المدمج تحت المخطط */
         .tooth-panel-box {
             background: #FFFFFF;
             border: 2px solid var(--primary);
@@ -641,7 +640,7 @@
             </div>
         </div>
 
-        <!-- 4. شاشة إدارة قوالب الفكين (الأولى والثانية) -->
+        <!-- 4. شاشة إدارة قوالب الفكين -->
         <div class="card" id="template-manager-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
@@ -650,72 +649,72 @@
 
             <div class="card-header" style="margin-bottom: 15px;">
                 <h2>إدارة صور الفكين وأحجام ومواقع الأسنان</h2>
-                <p>قم برفع وتخصيص الفكين (الصورة الأولى رئيسية، والثانية اختيارية أسفلها بنظام مستقل تماماً)</p>
+                <p>اسحب أي سن أو انقر عليه لتعديل الطول، العرض، التدوير، والشكل (دائري، مربع، مستطيل)</p>
             </div>
 
-            <!-- قالب الفكين الأول -->
+            <!-- القالب الأول -->
             <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 14px; padding: 15px; margin-bottom: 20px;">
                 <h4 style="color: var(--primary); font-size: 14px; margin-bottom: 10px;">📌 1. قالب الفكين الأول (الرئيسي)</h4>
                 <div class="form-group">
-                    <label for="global-jaw-file-1">اختر ملف صورة الفكين الأولى:</label>
+                    <label for="global-jaw-file-1">اختر صورة الفكين الأولى:</label>
                     <input type="file" id="global-jaw-file-1" accept="image/*" onchange="previewGlobalJaw(event, 1)">
                 </div>
                 <div class="real-jaw-container" id="template-jaw-container-1">
-                    <img id="global-preview-img-1" src="" alt="معاينة الفكين 1">
+                    <img id="global-preview-img-1" src="" alt="معاينة 1">
                     <div class="jaw-absolute-overlay" id="template-jaw-grid-1"></div>
                 </div>
             </div>
 
-            <!-- قالب الفكين الثاني (اختياري ومستقل) -->
+            <!-- القالب الثاني (اختياري أسفل الأول) -->
             <div style="background: #F8FAFC; border: 1px solid var(--border-color); border-radius: 14px; padding: 15px; margin-bottom: 15px;">
                 <h4 style="color: var(--primary); font-size: 14px; margin-bottom: 10px;">📌 2. قالب الفكين الثاني (اختياري أسفل الأول)</h4>
                 <div class="form-group">
-                    <label for="global-jaw-file-2">اختر ملف صورة الفكين الثانية (اختياري):</label>
+                    <label for="global-jaw-file-2">اختر صورة الفكين الثانية (اختياري):</label>
                     <input type="file" id="global-jaw-file-2" accept="image/*" onchange="previewGlobalJaw(event, 2)">
                 </div>
                 <div class="real-jaw-container" id="template-jaw-container-2" style="display: none;">
-                    <img id="global-preview-img-2" src="" alt="معاينة الفكين 2">
+                    <img id="global-preview-img-2" src="" alt="معاينة 2">
                     <div class="jaw-absolute-overlay" id="template-jaw-grid-2"></div>
                 </div>
             </div>
 
             <div class="editor-tools-bar" style="margin-top: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم المتقدمة:</span>
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم بالأسنان:</span>
                     <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع السحب والتخصيص</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 10px; border-radius: 8px;">
-                    ✋ **اسحب أي سن بمكانه.** | 👆 **انقر على أي سن لتعديل حجمه وشكله بدقة.**
+                    ✋ **اسحب أي سن بمكانه.** | 👆 **انقر على أي سن لفتح لوحة الطول، العرض، التدوير، والشكل.**
                 </div>
             </div>
 
-            <!-- لوحة التحكم المتقدمة (للتحكم بحجم السن ومربعه) -->
+            <!-- لوحة التحكم المتقدمة (الطول والعرض والتدوير والانحناء) -->
             <div class="advanced-hotspot-editor" id="hotspot-custom-editor">
-                <h4 id="editor-tooth-title" style="color: var(--primary); font-size: 14px; margin-bottom: 10px;">تخصيص حجم وشكل السن</h4>
+                <h4 id="editor-tooth-title" style="color: var(--primary); font-size: 14px; margin-bottom: 10px;">تخصيص السن</h4>
                 <div class="form-row">
                     <div class="form-group">
                         <label>عرض السن (Width):</label>
                         <input type="range" min="15" max="80" id="edit-width" oninput="updateSelectedHotspotStyle()">
                     </div>
                     <div class="form-group">
-                        <label>ارتفاع السن (Height):</label>
+                        <label>طول/ارتفاع السن (Height):</label>
                         <input type="range" min="15" max="80" id="edit-height" oninput="updateSelectedHotspotStyle()">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>انحناء الحواف:</label>
+                        <label>الشكل (دائري 🔄 / مربع 🔲 / مستطيل):</label>
                         <input type="range" min="0" max="40" id="edit-radius" oninput="updateSelectedHotspotStyle()">
                     </div>
                     <div class="form-group">
-                        <label>التدوير (Rotation الزاوية):</label>
+                        <label>تدوير السن (Rotation الزاوية):</label>
                         <input type="range" min="-180" max="180" id="edit-rotate" oninput="updateSelectedHotspotStyle()">
                     </div>
                 </div>
                 <button class="btn btn-secondary" type="button" style="padding: 6px; font-size: 12px;" onclick="closeHotspotEditor()">إغلاق اللوحة</button>
             </div>
 
-            <button type="button" class="btn" onclick="saveGlobalJawTemplates()" style="margin-top: 15px;">اعتماد قوالب الفكين والتخصيصات للعيادة</button>
+            <button type="button" class="btn" onclick="saveGlobalJawTemplates()" style="margin-top: 15px;">اعتماد القوالب والتعديلات للعيادة</button>
         </div>
 
         <!-- 5. أرشيف ملفات المرضى -->
@@ -807,13 +806,13 @@
 
                 <!-- قالب الفكين الأول للمريض -->
                 <div class="real-jaw-container" id="jaw-container-box-1">
-                    <img id="active-jaw-img-1" src="" alt="قالب الفكين 1">
+                    <img id="active-jaw-img-1" src="" alt="قالب 1">
                     <div class="jaw-absolute-overlay" id="jaw-grid-1"></div>
                 </div>
 
-                <!-- قالب الفكين الثاني للمريض (يظهر فقط إذا كانت الصورة الثانية موجودة) -->
+                <!-- قالب الفكين الثاني للمريض (يظهر فقط إذا كانت الصورة الثانية مفعلة) -->
                 <div class="real-jaw-container" id="jaw-container-box-2" style="display: none;">
-                    <img id="active-jaw-img-2" src="" alt="قالب الفكين 2">
+                    <img id="active-jaw-img-2" src="" alt="قالب 2">
                     <div class="jaw-absolute-overlay" id="jaw-grid-2"></div>
                 </div>
             </div>
@@ -886,7 +885,6 @@
 
         let toothData = {};
         
-        // قوالب الصور والإعدادات منفصلة تماماً (قالب 1 وقالب 2)
         let globalJawImage1 = localStorage.getItem('clinic_global_jaw_1') || "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80";
         let globalJawImage2 = localStorage.getItem('clinic_global_jaw_2') || "";
 
@@ -898,7 +896,7 @@
 
         let isEditMode = false;
         let currentSelectedTooth = null;
-        let editingHotspotTooth = null; // صيغة: "1-18" أو "2-18" لتحديد القالب والسن بدقة
+        let editingHotspotTooth = null; 
         let currentUser = null;
         let temporaryPatientInfo = {};
         let editingPatientId = null;
@@ -941,8 +939,7 @@
         }
 
         function renderJawGrid() {
-            // 1. شاشة المريض (المخطط)
-            // القالب الأول
+            // شاشة المريض (المخطط)
             const grid1 = document.getElementById('jaw-grid-1');
             if (grid1) {
                 grid1.innerHTML = '';
@@ -967,7 +964,6 @@
                 });
             }
 
-            // القالب الثاني (يعرض فقط إذا كانت الصورة موجودة)
             const containerBox2 = document.getElementById('jaw-container-box-2');
             const grid2 = document.getElementById('jaw-grid-2');
             if (containerBox2 && grid2) {
@@ -998,8 +994,7 @@
                 }
             }
 
-            // 2. شاشة إدارة وصناعة القوالب
-            // القالب 1
+            // شاشة إدارة وصناعة القوالب
             const templateGrid1 = document.getElementById('template-jaw-grid-1');
             if (templateGrid1) {
                 templateGrid1.innerHTML = '';
@@ -1028,7 +1023,6 @@
                 });
             }
 
-            // القالب 2
             const container2 = document.getElementById('template-jaw-container-2');
             const templateGrid2 = document.getElementById('template-jaw-grid-2');
             if (container2 && templateGrid2) {
@@ -1258,7 +1252,7 @@
                 localStorage.removeItem('clinic_global_jaw_2');
             }
 
-            alert('تم اعتماد قوالب الفكين والتخصيصات للعيادة بنجاح!');
+            alert('تم اعتماد القوالب والتعديلات بنجاح!');
             switchTab('dashboard-section');
             renderJawGrid();
         }
@@ -1486,7 +1480,6 @@
         }
 
         function updateToothVisual(toothNum, status) {
-            // تحديث السن في كلا القالبين إن وجدا
             [1, 2].forEach(templateIdx => {
                 const hotspot = document.getElementById(`hotspot-${templateIdx}-${toothNum}`);
                 if (hotspot) {
