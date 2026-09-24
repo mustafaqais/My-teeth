@@ -22,7 +22,7 @@
             --input-bg: #F8FAFC;
             --border-color: #E2E8F0;
             
-            --status-healthy: rgba(255, 255, 255, 0.28);
+            --status-healthy: rgba(255, 255, 255, 0.35);
             --status-caries: rgba(239, 68, 68, 0.85);
             --status-filled: rgba(59, 130, 246, 0.85);
             --status-rct: rgba(245, 158, 11, 0.85);
@@ -365,7 +365,7 @@
             pointer-events: none;
         }
 
-        /* السن الحر بنظام النقاط الحرة (Polygon) */
+        /* السن الحر بنظام النقاط الحرة (Polygon) مع ظهور الأرقام بوضوح */
         .tooth-polygon {
             position: absolute;
             top: 0;
@@ -378,7 +378,7 @@
         .tooth-shape-area {
             position: absolute;
             background: var(--status-healthy);
-            border: 1.5px dashed rgba(255, 255, 255, 0.9);
+            border: 1.5px solid rgba(255, 255, 255, 0.9);
             pointer-events: auto;
             display: flex;
             justify-content: center;
@@ -392,10 +392,10 @@
 
         .edit-mode-active .tooth-shape-area {
             border: 2px solid #38BDF8;
-            background: rgba(14, 165, 233, 0.25);
+            background: rgba(14, 165, 233, 0.3);
         }
 
-        /* نقاط التحكم الأربع المستقلة تماماً للزوايا الحرة */
+        /* نقاط التحكم الأربع للزوايا الحرة */
         .vertex-handle {
             position: absolute;
             width: 12px;
@@ -414,7 +414,7 @@
             display: block;
         }
 
-        /* إخفاء باقي النقاط أثناء سحب نقطة معينة لرؤية صافية تماماً */
+        /* إخفاء باقي النقاط أثناء السحب لرؤية صافية */
         .tooth-polygon.is-vertex-moving .vertex-handle {
             display: none !important;
         }
@@ -689,18 +689,18 @@
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
-                <h2>مخطط الأسنان بنظام النقاط الركنية الحرة (Polygon)</h2>
-                <p>كل زاوية تتحرك بشكل مستقل تماماً لتشكيل السن بحرية مطلقة ومطابقة تامة للصورة!</p>
+                <h2>مخطط الأسنان مع الأرقام والتحكم الحر</h2>
+                <p>تظهر أرقام الأسنان بوضوح تام داخل كل سن، ويمكنك تفعيل وضع التعديل لتشكيل زوايا السن بحرية مطلقة!</p>
             </div>
 
             <!-- شريط أدوات تحكم الطبيب -->
             <div class="editor-tools-bar">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التعديل الحر للزوايا:</span>
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم بالزوايا والأرقام:</span>
                     <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع التعديل الحر</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 8px; border-radius: 8px;">
-                    ✨ **مفعل:** انقر على أي سن، واسحب أي زاوية صفراء لتتحرك وحدها تماماً لتشكيل انحناء السن بدقة!
+                    ✨ **مفعل:** انقر على أي سن لتظهر نقاطه الصفراء، واسحب أي زاوية لتتحرك وحدها تماماً مع ظهور الأرقام بوضوح!
                 </div>
             </div>
 
@@ -714,11 +714,11 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- عرض القالب مع الأسنان الحرة -->
+                <!-- عرض القالب مع الأسنان والأرقام الظاهرة -->
                 <div class="real-jaw-container" id="jaw-container-box">
                     <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
                     <div class="jaw-absolute-overlay" id="jaw-grid">
-                        <!-- توزيع الأسنان الحر بنظام الزوايا المستقلة -->
+                        <!-- توزيع الأسنان مع الأرقام الظاهرة -->
                     </div>
                 </div>
             </div>
@@ -828,7 +828,6 @@
                 if (previewImg) previewImg.src = globalJawImage;
             }
 
-shape_loop:
             allTeeth.forEach(num => {
                 const polyWrapper = document.createElement('div');
                 polyWrapper.className = 'tooth-polygon';
@@ -841,7 +840,6 @@ shape_loop:
                     bl: {x: 10, y: 15}
                 };
 
-                // حساب أصغر إحداثي وأكبر إحداثي لإنشاء عنصر السن
                 let minX = Math.min(p.tl.x, p.tr.x, p.br.x, p.bl.x);
                 let minY = Math.min(p.tl.y, p.tr.y, p.br.y, p.bl.y);
                 let maxX = Math.max(p.tl.x, p.tr.x, p.br.x, p.bl.x);
@@ -849,13 +847,12 @@ shape_loop:
 
                 const shapeDiv = document.createElement('div');
                 shapeDiv.className = 'tooth-shape-area';
-                shapeDiv.textContent = num;
+                shapeDiv.textContent = num; // ضمان ظهور رقم السن بوضوح
                 shapeDiv.style.left = minX + '%';
                 shapeDiv.style.top = minY + '%';
-                shapeDiv.style.width = (maxX - minX) + '%';
-                shapeDiv.style.height = (maxY - minY) + '%';
+                shapeDiv.style.width = Math.max(maxX - minX, 3) + '%';
+                shapeDiv.style.height = Math.max(maxY - minY, 3) + '%';
                 
-                // تطبيق قص المضلع الحر (clip-path) ليتخذ شكل الزوايا المحددة بدقة 100%
                 let relTlX = p.tl.x - minX;
                 let relTlY = p.tl.y - minY;
                 let relTrX = p.tr.x - minX;
@@ -866,9 +863,9 @@ shape_loop:
                 let relBlY = p.bl.y - minY;
 
                 shapeDiv.style.clipPath = `polygon(${relTlX}% ${relTlY}%, ${relTrX}% ${relTrY}%, ${relBrX}% ${relBrY}%, ${relBlX}% ${relBlY}%)`;
-                shapeDiv.style.fontSize = '10px';
+                shapeDiv.style.fontSize = '11px';
 
-                // إنشاء 4 نقاط تحكم حرة للزوايا الأربع (تتحرك بشكل مستقل تماماً)
+                // إنشاء 4 نقاط تحكم حرة للزوايا الأربع
                 const corners = [
                     {key: 'tl', x: p.tl.x, y: p.tl.y},
                     {key: 'tr', x: p.tr.x, y: p.tr.y},
@@ -906,7 +903,6 @@ shape_loop:
             });
         }
 
-        // تحريك زاوية واحدة محددة بشكل مستقل تماماً عن باقي الزوايا
         function setupVertexDrag(handle, wrapper, toothNum, cornerKey) {
             let container = document.getElementById('jaw-container-box');
             if (!container) return;
@@ -930,12 +926,9 @@ shape_loop:
 
                     if (!toothPolygons[toothNum]) return;
                     
-                    // تحديث إحداثيات هذه الزاوية فقط بشكل مستقل تماماً
                     toothPolygons[toothNum][cornerKey] = { x: curX, y: curY };
 
-                    // إعادة رسم الشبكة فوراً لتحديث شكل المضلع والزاوية بسلاسة
                     renderJawGrid();
-                    // الحفاظ على تحديد السن الحالي أثناء السحب
                     const currentWrapper = document.getElementById(`polygon-${toothNum}`);
                     if (currentWrapper) currentWrapper.classList.add('selected-poly', 'is-vertex-moving');
                 }
