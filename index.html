@@ -390,8 +390,9 @@
 
         .edit-mode-active .tooth-badge {
             border: 2px solid #FACC15;
-            background: rgba(250, 204, 21, 0.4);
+            background: rgba(250, 204, 21, 0.5);
             cursor: move;
+            box-shadow: 0 0 8px rgba(250, 204, 21, 0.8);
         }
 
         .tooth-badge.status-تسوس { background-color: var(--status-caries) !important; border-color: #EF4444; }
@@ -567,7 +568,7 @@
             </div>
         </div>
 
-        <!-- 4. شاشة إدارة قالب الفكين العام (مع خاصية تحريك وتكبير/تصغير كل رقم على حدة) -->
+        <!-- 4. شاشة إدارة قالب الفكين العام (تعديل سهل وحر بالكامل للأرقام والحجم) -->
         <div class="card" id="template-manager-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
@@ -576,7 +577,7 @@
 
             <div class="card-header" style="margin-bottom: 15px;">
                 <h2>إدارة صورة الفكين وتعديل أرقام الأسنان</h2>
-                <p>اختر الصورة، وفعل وضع التعديل لتحريك كل رقم وحجمه (تكبير/تصغير) بشكل مستقل تماماً!</p>
+                <p>اختر الصورة، وفعل وضع التعديل لتحريك كل رقم وحجمه (تكبير/تصغير) بحرية تامة وبكل سهولة!</p>
             </div>
 
             <div class="form-group">
@@ -584,14 +585,14 @@
                 <input type="file" id="global-jaw-file" accept="image/*" onchange="previewGlobalJaw(event)">
             </div>
 
-            <!-- شريط أدوات التعديل الخاص بالأرقام داخل قالب الفكين -->
+            <!-- شريط أدوات التحكم السهل -->
             <div class="editor-tools-bar">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم بمواقع وأحجام الأرقام:</span>
-                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleTemplateEditMode()" id="template-edit-btn">🔓 تفعيل وضع تعديل الأرقام</button>
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم بالحرية التامة:</span>
+                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleTemplateEditMode()" id="template-edit-btn">🔓 تفعيل وضع التعديل الحر</button>
                 </div>
                 <div id="template-instructions" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 8px; background: #FFF; padding: 6px; border-radius: 6px;">
-                    ✨ **مفعل:** اسحب أي رقم لمكانه، واستخدم عجلة الماوس فوق أي رقم أو اسحبه لتغيير حجمه (تكبير/تصغير) بشكل مستقل تماماً!
+                    ✨ **مفعل:** اسحب أي رقم لمكانه بدقة، واستخدم عجلة الماوس (أو تمرير الأصابع) فوق الرقم لتكبره أو تصغره بحرية تامة على حدة!
                 </div>
             </div>
 
@@ -670,7 +671,7 @@
             </form>
         </div>
 
-        <!-- 7. شاشة المخطط الطبي للمراجع (ثابت وجاهز للاستخدام السريع) -->
+        <!-- 7. شاشة المخطط الطبي للمراجع (ثابت، جاهز، وبأحجام ومواقع دقيقة) -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
@@ -679,7 +680,7 @@
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>مخطط أسنان المراجع (جاهز للاستخدام الفوري)</h2>
-                <p>انقر مباشرة على أي سن لتسجيل حالته السريرية (تسوس، حشوة، عصب، إلخ) بكل سهولة!</p>
+                <p>انقر مباشرة على أي سن لتسجيل حالته السريرية (تسوس، حشوة، عصب، إلخ) بكل سهولة وسرعة!</p>
             </div>
 
             <div class="smart-chart-container">
@@ -692,7 +693,7 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- عرض القالب والأرقام الثابتة للمراجع -->
+                <!-- عرض القالب والأرقام المجهزة للمراجع -->
                 <div class="real-jaw-container" id="patient-jaw-container-box">
                     <img id="patient-jaw-img" src="" alt="قالب الفكين المعتمد">
                     <div class="jaw-absolute-overlay" id="patient-jaw-grid">
@@ -812,7 +813,7 @@
             });
         }
 
-        // تحريك الرقم بشكل مستقل
+        // تحريك الرقم بحرية تامة وبدون قيود
         function setupBadgeDrag(badge, toothNum) {
             let container = document.getElementById('template-container-box');
             if (!container) return;
@@ -852,7 +853,7 @@
             });
         }
 
-        // تكبير وتصغير كل رقم على حدة باستخدام عجلة الماوس أو اللمس
+        // تكبير وتصغير سهل وسريع لكل رقم على حدة باستخدام عجلة الماوس أو اللمس
         function setupBadgeWheelResize(badge, toothNum) {
             badge.addEventListener('wheel', (e) => {
                 if (!isTemplateEditMode) return;
@@ -873,13 +874,13 @@
             let instructions = document.getElementById('template-instructions');
             if (isTemplateEditMode) {
                 if (btn) {
-                    btn.textContent = "🔒 إيقاف وضع تعديل الأرقام والحفظ";
+                    btn.textContent = "🔒 إيقاف وضع التعديل الحر والحفظ";
                     btn.style.background = "#EF4444";
                 }
                 if (instructions) instructions.style.display = "block";
             } else {
                 if (btn) {
-                    btn.textContent = "🔓 تفعيل وضع تعديل الأرقام";
+                    btn.textContent = "🔓 تفعيل وضع التعديل الحر";
                     btn.style.background = "var(--primary)";
                 }
                 if (instructions) instructions.style.display = "none";
