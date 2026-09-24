@@ -5,10 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة أسناني السحابية - عيادات الأسنان</title>
     
-    <!-- استيراد الخطوط العربية الحديثة -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 
-    <!-- استيراد مكتبات Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -367,11 +365,12 @@
             pointer-events: none;
         }
 
+        /* نقطة السن الحرّة المتقدمة */
         .tooth-hotspot {
             position: absolute;
             background: var(--status-healthy);
-            border: 1.5px solid rgba(255, 255, 255, 0.8);
-            border-radius: 6px;
+            border: 1.5px solid rgba(255, 255, 255, 0.85);
+            border-radius: 10px;
             cursor: grab;
             display: flex;
             justify-content: center;
@@ -383,6 +382,7 @@
             transform: translate(-50%, -50%);
             user-select: none;
             touch-action: none;
+            transition: border-color 0.2s, background-color 0.2s;
         }
 
         .tooth-hotspot:active {
@@ -390,16 +390,17 @@
         }
 
         .tooth-hotspot:hover {
-            background: rgba(14, 165, 233, 0.9);
+            background: rgba(14, 165, 233, 0.85);
             border-color: #FFFFFF;
             z-index: 50;
+            box-shadow: 0 0 10px rgba(14,165,233,0.5);
         }
 
-        .tooth-hotspot.status-تسوس { background-color: var(--status-caries); border: 1px solid #EF4444; }
-        .tooth-hotspot.status-حشوة { background-color: var(--status-filled); border: 1px solid #3B82F6; }
-        .tooth-hotspot.status-علاج-عصب { background-color: var(--status-rct); border: 1px solid #F59E0B; }
-        .tooth-hotspot.status-خلع { background-color: var(--status-missing); border: 1px solid #94A3B8; }
-        .tooth-hotspot.status-تلبيسة { background-color: var(--status-crown); border: 1px solid #EAB308; }
+        .tooth-hotspot.status-تسوس { background-color: var(--status-caries); border: 1.5px solid #EF4444; }
+        .tooth-hotspot.status-حشوة { background-color: var(--status-filled); border: 1.5px solid #3B82F6; }
+        .tooth-hotspot.status-علاج-عصب { background-color: var(--status-rct); border: 1.5px solid #F59E0B; }
+        .tooth-hotspot.status-خلع { background-color: var(--status-missing); border: 1.5px solid #94A3B8; }
+        .tooth-hotspot.status-تلبيسة { background-color: var(--status-crown); border: 1.5px solid #EAB308; }
 
         .editor-tools-bar {
             background: #F1F5F9;
@@ -454,7 +455,7 @@
             padding: 25px;
             border-radius: 16px;
             width: 100%;
-            max-width: 380px;
+            max-width: 400px;
             border: 1px solid var(--border-color);
             box-shadow: 0 15px 35px rgba(0,0,0,0.1);
         }
@@ -661,27 +662,23 @@
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
-                <div class="doctor-welcome">🦷 المخطط الطبي التفاعلي</div>
+                <div class="doctor-welcome" id="chart-patient-title">🦷 المخطط الطبي التفاعلي</div>
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
-                <h2>مخطط الأسنان التشريعي</h2>
-                <p>اسحب أي رقم سن وضعه فوق السن المطلوب بدقة</p>
+                <h2>مخطط الأسنان التشريعي الحر</h2>
+                <p>اسحب أي سن، أو انقر عليه نقرة مزدوجة لتخصيص شكل وحجم وعرض السن بدقة تامة فوق الصورة</p>
             </div>
 
             <!-- شريط أدوات تحكم الطبيب -->
             <div class="editor-tools-bar">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة ضبط إحداثيات الأرقام:</span>
-                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع السحب والتحكم</button>
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم الحر بمقاسات وأشكال الأسنان:</span>
+                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع السحب والتحكم الحر</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 10px; border-radius: 8px;">
-                    ✋ **اسحب أي رقم بإصبعك أو الماوس إلى أي مكان.**<br>
-                    🔍 **لتصغير أو تكبير أي رقم:** انقر عليه نقرة مزدوجة (Double Click)، أو استخدِم الشريط لتعديل الكل:
-                    <div style="display: flex; gap: 10px; margin-top: 8px; justify-content: center; align-items: center;">
-                        <label>الحجم العام:</label>
-                        <input type="range" id="hotspot-size-range" min="15" max="50" value="28" oninput="updateAllHotspotSize(this.value)">
-                    </div>
+                    ✋ **اسحب أي سن بإصبعك أو الماوس لمكانه بدقة فوق الفك.**<br>
+                    🔍 **لتخصيص شكل أو عرض سن معين بالذات:** انقر نقرة مزدوجة (Double Click) على السن لفتح لوحة التحكم الخاصة بمقاساته الفردية!
                 </div>
             </div>
 
@@ -695,11 +692,11 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- عرض القالب مع النقاط القابلة للسحب -->
+                <!-- عرض القالب مع الأسنان الحرّة -->
                 <div class="real-jaw-container" id="jaw-container-box">
                     <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
                     <div class="jaw-absolute-overlay" id="jaw-grid">
-                        <!-- توزيع أرقام الأسنان -->
+                        <!-- توزيع أسنان دقيق وحر -->
                     </div>
                 </div>
             </div>
@@ -735,6 +732,29 @@
         </div>
     </div>
 
+    <!-- نافذة التحكم الحر بمقاسات السن الفردي -->
+    <div class="modal" id="tooth-custom-modal">
+        <div class="modal-content">
+            <div class="modal-header" id="custom-modal-title">تخصيص شكل السن بدقة</div>
+            <div class="form-group">
+                <label>عرض السن (Width - px):</label>
+                <input type="number" id="custom-width" min="15" max="80" value="28">
+            </div>
+            <div class="form-group">
+                <label>ارتفاع السن (Height - px):</label>
+                <input type="number" id="custom-height" min="15" max="80" value="28">
+            </div>
+            <div class="form-group">
+                <label>شكل الانحناء (Border Radius - %):</label>
+                <input type="number" id="custom-radius" min="0" max="50" value="30">
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-secondary" type="button" onclick="closeCustomModal()">إلغاء</button>
+                <button class="btn" type="button" onclick="saveCustomToothDimensions()">تطبيق التعديل الحر</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const firebaseConfig = {
             apiKey: "AIzaSyBnMTON0jp18hi_nTAl98QyNEZp1fTnJdQ",
@@ -753,7 +773,7 @@
         let toothData = {};
         let globalJawImage = localStorage.getItem('clinic_global_jaw') || "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80";
         let hotspotPositions = JSON.parse(localStorage.getItem('clinic_jaw_positions')) || getDefaultPositions();
-        let hotspotSizes = JSON.parse(localStorage.getItem('clinic_jaw_sizes')) || {};
+        let hotspotDims = JSON.parse(localStorage.getItem('clinic_jaw_dims')) || {};
         let isEditMode = false;
         let currentSelectedTooth = null;
         let currentUser = null;
@@ -800,21 +820,36 @@
                 hotspot.textContent = num;
                 
                 let p = hotspotPositions[num] || { x: 50, y: 50 };
-                let size = hotspotSizes[num] || 28;
+                let dim = hotspotDims[num] || { w: 28, h: 28, r: 35 };
 
                 hotspot.style.left = p.x + '%';
                 hotspot.style.top = p.y + '%';
-                hotspot.style.width = size + 'px';
-                hotspot.style.height = size + 'px';
-                hotspot.style.fontSize = (size * 0.4) + 'px';
+                hotspot.style.width = dim.w + 'px';
+                hotspot.style.height = dim.h + 'px';
+                hotspot.style.borderRadius = dim.r + '%';
+                hotspot.style.fontSize = (Math.min(dim.w, dim.h) * 0.42) + 'px';
 
                 enableDrag(hotspot, num);
 
+                // النقر المفرد لفتح حالة السن (إذا لم نكن في وضع التعديل)
                 hotspot.onclick = (e) => {
                     if (!isEditMode) {
                         openToothModal(num);
                     }
                 };
+
+                // النقر المزدوج لفتح نافذة التحكم الحر بأبعاد هذا السن بدقة
+                hotspot.ondblclick = (e) => {
+                    e.stopPropagation();
+                    if (isEditMode) {
+                        openCustomModal(num);
+                    }
+                };
+
+                // تطبيق لون الحالة السريرية إن وجدت
+                if (toothData[num] && toothData[num].status !== 'سليم') {
+                    hotspot.classList.add(`status-${toothData[num].status}`);
+                }
 
                 grid.appendChild(hotspot);
             });
@@ -858,15 +893,31 @@
                 element.addEventListener('pointermove', onPointerMove);
                 element.addEventListener('pointerup', onPointerUp);
             });
+        }
 
-            element.ondblclick = (e) => {
-                e.stopPropagation();
-                let currentSize = hotspotSizes[toothNum] || 28;
-                let newSize = currentSize >= 45 ? 20 : currentSize + 5;
-                hotspotSizes[toothNum] = newSize;
-                localStorage.setItem('clinic_jaw_sizes', JSON.stringify(hotspotSizes));
-                renderJawGrid();
-            };
+        function openCustomModal(toothNum) {
+            currentSelectedTooth = toothNum;
+            let dim = hotspotDims[toothNum] || { w: 28, h: 28, r: 35 };
+            document.getElementById('custom-modal-title').textContent = `تخصيص شكل السن رقم: ${toothNum}`;
+            document.getElementById('custom-width').value = dim.w;
+            document.getElementById('custom-height').value = dim.h;
+            document.getElementById('custom-radius').value = dim.r;
+            document.getElementById('tooth-custom-modal').classList.add('open');
+        }
+
+        function closeCustomModal() {
+            document.getElementById('tooth-custom-modal').classList.remove('open');
+        }
+
+        function saveCustomToothDimensions() {
+            let w = parseInt(document.getElementById('custom-width').value) || 28;
+            let h = parseInt(document.getElementById('custom-height').value) || 28;
+            let r = parseInt(document.getElementById('custom-radius').value) || 35;
+
+            hotspotDims[currentSelectedTooth] = { w, h, r };
+            localStorage.setItem('clinic_jaw_dims', JSON.stringify(hotspotDims));
+            closeCustomModal();
+            renderJawGrid();
         }
 
         function toggleEditMode() {
@@ -881,19 +932,11 @@
                 if (controls) controls.style.display = "block";
             } else {
                 if (btn) {
-                    btn.textContent = "🔓 تفعيل وضع السحب والتحكم";
+                    btn.textContent = "🔓 تفعيل وضع السحب والتحكم الحر";
                     btn.style.background = "var(--primary)";
                 }
                 if (controls) controls.style.display = "none";
             }
-            renderJawGrid();
-        }
-
-        function updateAllHotspotSize(val) {
-            allTeeth.forEach(num => {
-                hotspotSizes[num] = parseInt(val);
-            });
-            localStorage.setItem('clinic_jaw_sizes', JSON.stringify(hotspotSizes));
             renderJawGrid();
         }
 
@@ -915,7 +958,6 @@
             event.preventDefault();
             const email = document.getElementById('login-email').value;
             const pass = document.getElementById('login-pass').value;
-            
             auth.signInWithEmailAndPassword(email, pass)
                 .catch((error) => alert('خطأ في تسجيل الدخول: ' + error.message));
         }
@@ -924,7 +966,6 @@
             event.preventDefault();
             const email = document.getElementById('reg-email').value;
             const pass = document.getElementById('reg-pass').value;
-
             auth.createUserWithEmailAndPassword(email, pass)
                 .then(() => alert('تم إنشاء الحساب السحابي بنجاح!'))
                 .catch((error) => alert('خطأ في التسجيل: ' + error.message));
@@ -1038,11 +1079,6 @@
                     toothData = data.teeth || {};
                     
                     renderJawGrid();
-                    for (let toothNum in toothData) {
-                        updateToothVisual(toothNum, toothData[toothNum].status);
-                    }
-
-                    temporaryPatientInfo = { name: data.name, gender: data.gender, age: data.age, phone: data.phone, history: data.history };
                     const chartTitle = document.getElementById('chart-patient-title');
                     if (chartTitle) chartTitle.textContent = `مخطط أسنان: ${data.name}`;
                     switchTab('patient-chart-section');
@@ -1120,18 +1156,8 @@
             const status = document.getElementById('tooth-status').value;
             const notes = document.getElementById('tooth-notes').value;
             toothData[currentSelectedTooth] = { status, notes };
-            updateToothVisual(currentSelectedTooth, status);
+            renderJawGrid();
             closeToothModal();
-        }
-
-        function updateToothVisual(toothNum, status) {
-            const hotspot = document.getElementById(`hotspot-${toothNum}`);
-            if (hotspot) {
-                hotspot.className = 'tooth-hotspot';
-                if (status !== 'سليم') {
-                    hotspot.classList.add(`status-${status}`);
-                }
-            }
         }
 
         function togglePass(id, el) {
