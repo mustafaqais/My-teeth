@@ -372,7 +372,7 @@
             background: var(--status-healthy);
             border: 1.5px solid rgba(255, 255, 255, 0.8);
             border-radius: 6px;
-            cursor: pointer;
+            cursor: grab;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -383,6 +383,10 @@
             transform: translate(-50%, -50%);
             user-select: none;
             touch-action: none;
+        }
+
+        .tooth-hotspot:active {
+            cursor: grabbing;
         }
 
         .tooth-hotspot:hover {
@@ -653,7 +657,7 @@
             </form>
         </div>
 
-        <!-- 7. شاشة المخطط الطبي (مع تحكم حر ومستقل لكل رقم سن سحباً وحجماً) -->
+        <!-- 7. شاشة المخطط الطبي (مع تحكم حر ومستقل بالسحب والحجم لكل رقم سن) -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
@@ -661,22 +665,22 @@
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
-                <h2 id="chart-patient-title">مخطط الأسنان التشريعي</h2>
-                <p>اسحب أي رقم سن وضعه بدقة فوق السن المطلوب</p>
+                <h2>مخطط الأسنان التشريعي</h2>
+                <p>اسحب أي رقم سن وضعه فوق السن المطلوب بدقة</p>
             </div>
 
             <!-- شريط أدوات تحكم الطبيب -->
             <div class="editor-tools-bar">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">وضع تعديل مواقع وحجوم الأرقام:</span>
-                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع التعديل الحر</button>
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة ضبط إحداثيات الأرقام:</span>
+                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع السحب والتحكم</button>
                 </div>
-                <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 8px; border-radius: 8px;">
-                    💡 **كيف تستخدم التعديل:** اسحب أي رقم سن بإصبعك أو الماوس إلى مكانه بدقة فوق الصورة.<br>
-                    لتغيير حجم رقم معين، انقر عليه أو استخدِم شريط الحجم أدناه لتكبير/تصغير الكل:
+                <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 10px; border-radius: 8px;">
+                    ✋ **اسحب أي رقم بإصبعك أو الماوس إلى أي مكان.**<br>
+                    🔍 **لتصبير أو تكبير أي رقم:** انقر عليه نقرة مزدوجة (Double Click) لتتغير مقاسه فوراً، أو استخدِم الشريط لتعديل الكل:
                     <div style="display: flex; gap: 10px; margin-top: 8px; justify-content: center; align-items: center;">
-                        <label>حجم الأرقام العام:</label>
-                        <input type="range" id="hotspot-size-range" min="15" max="45" value="28" oninput="updateAllHotspotSize(this.value)">
+                        <label>الحجم العام:</label>
+                        <input type="range" id="hotspot-size-range" min="15" max="50" value="28" oninput="updateAllHotspotSize(this.value)">
                     </div>
                 </div>
             </div>
@@ -768,13 +772,11 @@
             
             upper.forEach((num, i) => {
                 let x = 12 + (i * 5.2);
-                let y = i < 8 ? 25 : 25;
-                pos[num] = { x: x, y: y };
+                pos[num] = { x: x, y: 25 };
             });
             lower.forEach((num, i) => {
                 let x = 12 + (i * 5.2);
-                let y = i < 8 ? 75 : 75;
-                pos[num] = { x: x, y: y };
+                pos[num] = { x: x, y: 75 };
             });
             return pos;
         }
@@ -803,54 +805,62 @@
                 hotspot.style.height = size + 'px';
                 hotspot.style.fontSize = (size * 0.4) + 'px';
 
-                if (isEditMode) {
-                    makeDraggableAndResizable(hotspot, num);
-                } else {
-                    hotspot.onclick = () => openToothModal(num);
-                }
+                // تفعيل السحب لكل عنصر بشكل مستقل تماماً
+                enableDrag(hotspot, num);
+
+                hotspot.onclick = (e) => {
+                    if (!isEditMode) {
+                        openToothModal(num);
+                    }
+                };
 
                 grid.appendChild(hotspot);
             });
         }
 
-        function makeDraggableAndResizable(element, toothNum) {
-            let isDragging = false;
-            let container = document.getElementById('jaw-container-box');
+        function enableDrag(element, toothNum) {
+            let activeTouchId = null;
 
-            element.onmousedown = element.ontouchstart = (e) => {
-                isDragging = true;
-                e.stopPropagation();
-            };
+            element.addEventListener('pointerdown', (e) => {
+                if (!isEditMode) return;
+                e.preventDefault();
+                element.setPointerCapture(e.pointerId);
+                activeTouchId = e.pointerId;
 
-            window.onmousemove = window.ontouchmove = (e) => {
-                if (!isDragging) return;
-                let rect = container.getBoundingClientRect();
-                let clientX = e.touches ? e.touches[0].clientX : e.clientX;
-                let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+                let container = document.getElementById('jaw-container-box');
 
-                let x = ((clientX - rect.left) / rect.width) * 100;
-                let y = ((clientY - rect.top) / rect.height) * 100;
+                function onPointerMove(ev) {
+                    if (ev.pointerId !== activeTouchId) return;
+                    let rect = container.getBoundingClientRect();
+                    
+                    let x = ((ev.clientX - rect.left) / rect.width) * 100;
+                    let y = ((ev.clientY - rect.top) / rect.height) * 100;
 
-                x = Math.max(2, Math.min(98, x));
-                y = Math.max(2, Math.min(98, y));
+                    x = Math.max(2, Math.min(98, x));
+                    y = Math.max(2, Math.min(98, y));
 
-                hotspotPositions[toothNum] = { x: x, y: y };
-                element.style.left = x + '%';
-                element.style.top = y + '%';
-            };
-
-            window.onmouseup = window.ontouchend = () => {
-                if (isDragging) {
-                    isDragging = false;
-                    localStorage.setItem('clinic_jaw_positions', JSON.stringify(hotspotPositions));
+                    hotspotPositions[toothNum] = { x: x, y: y };
+                    element.style.left = x + '%';
+                    element.style.top = y + '%';
                 }
-            };
 
-            // تكبير وتصغير عند الضغط المزدوج أو النقر لتعديل الحجم الخاص بالسن
+                function onPointerUp(ev) {
+                    if (ev.pointerId !== activeTouchId) return;
+                    element.releasePointerCapture(ev.pointerId);
+                    localStorage.setItem('clinic_jaw_positions', JSON.stringify(hotspotPositions));
+                    element.removeEventListener('pointermove', onPointerMove);
+                    element.removeEventListener('pointerup', onPointerUp);
+                }
+
+                element.addEventListener('pointermove', onPointerMove);
+                element.addEventListener('pointerup', onPointerUp);
+            });
+
+            // تكبير/تصغير خاص بهذا السن عند النقر المزدوج
             element.ondblclick = (e) => {
                 e.stopPropagation();
                 let currentSize = hotspotSizes[toothNum] || 28;
-                let newSize = currentSize >= 40 ? 20 : currentSize + 4;
+                let newSize = currentSize >= 45 ? 20 : currentSize + 5;
                 hotspotSizes[toothNum] = newSize;
                 localStorage.setItem('clinic_jaw_sizes', JSON.stringify(hotspotSizes));
                 renderJawGrid();
@@ -862,11 +872,11 @@
             let btn = document.getElementById('edit-mode-btn');
             let controls = document.getElementById('position-controls');
             if (isEditMode) {
-                btn.textContent = "🔒 إيقاف وضع التعديل والحفظ";
+                btn.textContent = "🔒 إيقاف وضع السحب والحفظ";
                 btn.style.background = "#EF4444";
                 controls.style.display = "block";
             } else {
-                btn.textContent = "🔓 تفعيل وضع التعديل الحر";
+                btn.textContent = "🔓 تفعيل وضع السحب والتحكم";
                 btn.style.background = "var(--primary)";
                 controls.style.display = "none";
             }
@@ -1071,7 +1081,6 @@
         }
 
         function openToothModal(toothNum) {
-            if (isEditMode) return; // إذا كان في وضع التعديل، لا تفتح نافذة السن
             currentSelectedTooth = toothNum;
             document.getElementById('modal-tooth-title').textContent = `إدارة السن رقم: ${toothNum}`;
             if (toothData[toothNum]) {
