@@ -433,43 +433,36 @@
             border-radius: 50%;
         }
 
-        /* نافذة منبثقة متجاوبة ومضبوطة تماماً حتى مع التكبير (Zoom) */
+        /* نافذة إدارة السن (مضمونة ومثبتة في منتصف الشاشة بغض النظر عن الـ Zoom)[span_1](start_span)[span_1](end_span) */
         .modal {
             display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(15, 23, 42, 0.65);
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-            z-index: 99999;
-            backdrop-filter: blur(4px);
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            background-color: rgba(15, 23, 42, 0.75) !important;
+            justify-content: center !important;
+            align-items: center !important;
+            padding: 15px !important;
+            z-index: 999999 !important;
         }
 
         .modal.open { 
-            display: flex; 
+            display: flex !important; 
         }
 
         .modal-content {
             background-color: var(--card-bg);
-            padding: 20px;
+            padding: 22px;
             border-radius: 20px;
-            width: 100%;
-            max-width: 360px;
-            max-height: 90vh;
+            width: 90%;
+            max-width: 340px;
+            max-height: 85vh;
             overflow-y: auto;
             border: 1px solid var(--border-color);
-            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
             position: relative;
-            animation: modalPop 0.2s ease-out;
-        }
-
-        @keyframes modalPop {
-            0% { transform: scale(0.85); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
         }
 
         .modal-header {
@@ -723,7 +716,7 @@
 
     </div>
 
-    <!-- نافذة إدارة السن (مضبوطة لتبقى بحجم طبيعي ومتجاوب مهما كان الزوم) -->
+    <!-- نافذة إدارة السن (موضوعة خارج الحاويات ومتوسطة الشاشة دائماً) -->
     <div class="modal" id="tooth-modal">
         <div class="modal-content">
             <div class="modal-header" id="modal-tooth-title">إدارة السن</div>
