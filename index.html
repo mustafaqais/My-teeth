@@ -433,7 +433,7 @@
             border-radius: 50%;
         }
 
-        /* صندوق إدارة السن المدمج تحت المخطط (مع إمكانية رفع صور متعددة للسن) */
+        /* صندوق إدارة السن المدمج تحت المخطط */
         .tooth-panel-box {
             background: #FFFFFF;
             border: 2px solid var(--primary);
@@ -448,21 +448,41 @@
             display: block;
         }
 
+        /* أقسام صور قبل وبعد لكل سن */
+        .tooth-ba-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
+            background: #F8FAFC;
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+
+        .tooth-ba-column h4 {
+            font-size: 12px;
+            color: var(--primary);
+            margin-bottom: 6px;
+            text-align: center;
+            font-weight: 700;
+        }
+
         .tooth-images-grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-            margin-top: 8px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 6px;
+            margin-top: 6px;
         }
 
         .tooth-img-thumb {
             position: relative;
             width: 100%;
-            height: 70px;
-            border-radius: 8px;
+            height: 60px;
+            border-radius: 6px;
             overflow: hidden;
             border: 1px solid var(--border-color);
-            background: #F8FAFC;
+            background: #FFF;
         }
 
         .tooth-img-thumb img {
@@ -479,9 +499,9 @@
             color: #FFF;
             border: none;
             border-radius: 50%;
-            width: 18px;
-            height: 18px;
-            font-size: 10px;
+            width: 16px;
+            height: 16px;
+            font-size: 9px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -682,7 +702,7 @@
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>مخطط الأسنان التشريعي</h2>
-                <p>انقر على أي سن لفتح لوحة التحكم الخاصة به بالأسفل وإضافة الأشعة</p>
+                <p>انقر على أي سن لفتح لوحة التحكم (قبل وبعد) الخاصة به بالأسفل</p>
             </div>
 
             <!-- شريط أدوات تحكم الطبيب -->
@@ -720,7 +740,7 @@
                 </div>
             </div>
 
-            <!-- صندوق إدارة السن (يحتوي على الحالة، الملاحظات، ورفع صور أشعة متعددة للسن نفسه) -->
+            <!-- صندوق إدارة السن (مقسم إلى صور قبل وبعد لكل سن) -->
             <div class="tooth-panel-box" id="tooth-panel">
                 <div class="card-header" style="margin-bottom: 10px;">
                     <h3 id="panel-tooth-title" style="font-size: 16px; color: var(--primary);">إدارة السن</h3>
@@ -741,12 +761,20 @@
                     <textarea id="tooth-notes" placeholder="ملاحظات العلاج والحشوة..."></textarea>
                 </div>
 
-                <!-- رفع صور متعددة خاصة بهذا السن فقط -->
+                <!-- توثيق صور قبل وبعد للسن (صور متعددة لكل قسم) -->
                 <div class="form-group">
-                    <label>📥 صور وأشعة السن (يمكنك رفع أكثر من صورة):</label>
-                    <input type="file" accept="image/*" multiple onchange="handleToothImagesUpload(event)">
-                    <div class="tooth-images-grid" id="tooth-images-container">
-                        <!-- معاينة صور السن -->
+                    <label>📸 توثيق السن (قبل وبعد العلاج / الأشعة):</label>
+                    <div class="tooth-ba-grid">
+                        <div class="tooth-ba-column">
+                            <h4>📷 قبل العلاج</h4>
+                            <input type="file" accept="image/*" multiple onchange="handleToothImagesUpload(event, 'before')" style="font-size: 11px; padding: 6px;">
+                            <div class="tooth-images-grid" id="tooth-before-images"></div>
+                        </div>
+                        <div class="tooth-ba-column">
+                            <h4>📸 بعد العلاج</h4>
+                            <input type="file" accept="image/*" multiple onchange="handleToothImagesUpload(event, 'after')" style="font-size: 11px; padding: 6px;">
+                            <div class="tooth-images-grid" id="tooth-after-images"></div>
+                        </div>
                     </div>
                 </div>
 
@@ -1124,8 +1152,10 @@
             if (panelTitle) panelTitle.textContent = `إدارة السن رقم: ${toothNum}`;
             
             if (!toothData[toothNum]) {
-                toothData[toothNum] = { status: 'سليم', notes: '', images: [] };
+                toothData[toothNum] = { status: 'سليم', notes: '', imagesBefore: [], imagesAfter: [] };
             }
+            if (!toothData[toothNum].imagesBefore) toothData[toothNum].imagesBefore = [];
+            if (!toothData[toothNum].imagesAfter) toothData[toothNum].imagesAfter = [];
 
             document.getElementById('tooth-status').value = toothData[toothNum].status || 'سليم';
             document.getElementById('tooth-notes').value = toothData[toothNum].notes || '';
@@ -1144,21 +1174,23 @@
             if (panel) panel.classList.remove('active');
         }
 
-        function handleToothImagesUpload(event) {
+        function handleToothImagesUpload(event, type) {
             const files = event.target.files;
             if (!files || files.length === 0) return;
 
             if (!toothData[currentSelectedTooth]) {
-                toothData[currentSelectedTooth] = { status: 'سليم', notes: '', images: [] };
+                toothData[currentSelectedTooth] = { status: 'سليم', notes: '', imagesBefore: [], imagesAfter: [] };
             }
-            if (!toothData[currentSelectedTooth].images) {
-                toothData[currentSelectedTooth].images = [];
+
+            let targetArray = type === 'before' ? 'imagesBefore' : 'imagesAfter';
+            if (!toothData[currentSelectedTooth][targetArray]) {
+                toothData[currentSelectedTooth][targetArray] = [];
             }
 
             Array.from(files).forEach(file => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    toothData[currentSelectedTooth].images.push(e.target.result);
+                    toothData[currentSelectedTooth][targetArray].push(e.target.result);
                     renderToothImages();
                 }
                 reader.readAsDataURL(file);
@@ -1167,26 +1199,42 @@
         }
 
         function renderToothImages() {
-            const container = document.getElementById('tooth-images-container');
-            if (!container) return;
-            container.innerHTML = '';
+            const beforeContainer = document.getElementById('tooth-before-images');
+            const afterContainer = document.getElementById('tooth-after-images');
+            if (!beforeContainer || !afterContainer) return;
 
-            let images = (toothData[currentSelectedTooth] && toothData[currentSelectedTooth].images) ? toothData[currentSelectedTooth].images : [];
+            beforeContainer.innerHTML = '';
+            afterContainer.innerHTML = '';
 
-            images.forEach((imgSrc, index) => {
+            let toothObj = toothData[currentSelectedTooth] || { imagesBefore: [], imagesAfter: [] };
+            let beforeImgs = toothObj.imagesBefore || [];
+            let afterImgs = toothObj.imagesAfter || [];
+
+            beforeImgs.forEach((imgSrc, index) => {
                 const thumb = document.createElement('div');
                 thumb.className = 'tooth-img-thumb';
                 thumb.innerHTML = `
-                    <img src="${imgSrc}" alt="صورة السن">
-                    <button class="tooth-img-delete" type="button" onclick="removeToothImage(${index})">&times;</button>
+                    <img src="${imgSrc}" alt="قبل">
+                    <button class="tooth-img-delete" type="button" onclick="removeToothImage('before', ${index})">&times;</button>
                 `;
-                container.appendChild(thumb);
+                beforeContainer.appendChild(thumb);
+            });
+
+            afterImgs.forEach((imgSrc, index) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'tooth-img-thumb';
+                thumb.innerHTML = `
+                    <img src="${imgSrc}" alt="بعد">
+                    <button class="tooth-img-delete" type="button" onclick="removeToothImage('after', ${index})">&times;</button>
+                `;
+                afterContainer.appendChild(thumb);
             });
         }
 
-        function removeToothImage(index) {
-            if (toothData[currentSelectedTooth] && toothData[currentSelectedTooth].images) {
-                toothData[currentSelectedTooth].images.splice(index, 1);
+        function removeToothImage(type, index) {
+            let targetArray = type === 'before' ? 'imagesBefore' : 'imagesAfter';
+            if (toothData[currentSelectedTooth] && toothData[currentSelectedTooth][targetArray]) {
+                toothData[currentSelectedTooth][targetArray].splice(index, 1);
                 renderToothImages();
             }
         }
@@ -1196,7 +1244,7 @@
             const notes = document.getElementById('tooth-notes').value;
             
             if (!toothData[currentSelectedTooth]) {
-                toothData[currentSelectedTooth] = { images: [] };
+                toothData[currentSelectedTooth] = { imagesBefore: [], imagesAfter: [] };
             }
             toothData[currentSelectedTooth].status = status;
             toothData[currentSelectedTooth].notes = notes;
