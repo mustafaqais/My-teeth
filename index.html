@@ -532,16 +532,14 @@
             justify-content: center;
         }
 
-        /* نافذة منسدلة ذكية تظهر فوراً تحت السن عند النقر عليه في وضع التعديل */
+        /* لوحة تحكم السن المنظمة والثابتة بأسفل الأداة (تجنباً للتداخل) */
         .floating-tooth-dropdown {
-            position: absolute;
             background: #FFFFFF;
             border: 2px solid var(--primary);
-            border-radius: 12px;
-            padding: 12px;
-            width: 240px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
-            z-index: 100;
+            border-radius: 14px;
+            padding: 15px;
+            margin-top: 12px;
+            box-shadow: 0 8px 20px rgba(14, 165, 233, 0.15);
             display: none;
             text-align: right;
         }
@@ -654,7 +652,7 @@
 
             <div class="card-header" style="margin-bottom: 15px;">
                 <h2>إدارة صور الفكين وأحجام ومواقع الأسنان</h2>
-                <p>انقر على أي سن لتفتح لك **قائمة منسدلة فورية بجانبه** للتحكم بالطول، العرض، التدوير، والشكل!</p>
+                <p>انقر على أي سن لتظهر لوحة إعداداته مرتبة تحته مباشرة للتحكم بالطول، العرض، التدوير، والشكل!</p>
             </div>
 
             <!-- القالب الأول -->
@@ -689,31 +687,35 @@
                     <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع السحب والتخصيص</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 10px; border-radius: 8px;">
-                    ✋ **اسحب أي سن بمكانه.** | 👆 **انقر على أي سن لتظهر لك قائمة التحكم الفورية تحته مباشرة!**
+                    ✋ **اسحب أي سن بمكانه.** | 👆 **انقر على أي سن لفتح لوحة التحكم الخاصة به بالأسفل.**
                 </div>
             </div>
 
-            <!-- قائمة منسدلة عائمة تظهر بجانب السن عند النقر عليه -->
+            <!-- لوحة تحكم السن المنظمة تظهر أسفل أدوات التحكم مباشرة لمنع أي تداخل -->
             <div class="floating-tooth-dropdown" id="floating-tooth-editor">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                    <span id="editor-tooth-title" style="font-size: 12px; font-weight: 700; color: var(--primary);">إعدادات السن</span>
-                    <span onclick="closeHotspotEditor()" style="cursor: pointer; font-weight: bold; color: #EF4444; font-size: 14px;">&times;</span>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; border-bottom: 1px solid var(--border-color); padding-bottom: 8px;">
+                    <span id="editor-tooth-title" style="font-size: 13px; font-weight: 700; color: var(--primary);">إعدادات السن</span>
+                    <button type="button" class="btn btn-secondary" style="width: auto; padding: 2px 8px; font-size: 11px; margin: 0;" onclick="closeHotspotEditor()">إغلاق</button>
                 </div>
-                <div class="form-group" style="margin-bottom: 8px;">
-                    <label style="font-size: 10px;">العرض (Width):</label>
-                    <input type="range" min="15" max="80" id="edit-width" oninput="updateSelectedHotspotStyle()">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>عرض السن (Width):</label>
+                        <input type="range" min="15" max="80" id="edit-width" oninput="updateSelectedHotspotStyle()">
+                    </div>
+                    <div class="form-group">
+                        <label>طول/ارتفاع السن (Height):</label>
+                        <input type="range" min="15" max="80" id="edit-height" oninput="updateSelectedHotspotStyle()">
+                    </div>
                 </div>
-                <div class="form-group" style="margin-bottom: 8px;">
-                    <label style="font-size: 10px;">الطول / الارتفاع (Height):</label>
-                    <input type="range" min="15" max="80" id="edit-height" oninput="updateSelectedHotspotStyle()">
-                </div>
-                <div class="form-group" style="margin-bottom: 8px;">
-                    <label style="font-size: 10px;">الشكل (دائري / مربع / مستطيل):</label>
-                    <input type="range" min="0" max="40" id="edit-radius" oninput="updateSelectedHotspotStyle()">
-                </div>
-                <div class="form-group" style="margin-bottom: 4px;">
-                    <label style="font-size: 10px;">التدوير (Rotation):</label>
-                    <input type="range" min="-180" max="180" id="edit-rotate" oninput="updateSelectedHotspotStyle()">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>الشكل (دائري / مربع / مستطيل):</label>
+                        <input type="range" min="0" max="40" id="edit-radius" oninput="updateSelectedHotspotStyle()">
+                    </div>
+                    <div class="form-group">
+                        <label>تدوير السن (Rotation):</label>
+                        <input type="range" min="-180" max="180" id="edit-rotate" oninput="updateSelectedHotspotStyle()">
+                    </div>
                 </div>
             </div>
 
@@ -1020,7 +1022,7 @@
 
                     hotspot.onclick = (e) => {
                         e.stopPropagation();
-                        if (isEditMode) openHotspotEditor(1, num, hotspot);
+                        if (isEditMode) openHotspotEditor(1, num);
                     };
                     templateGrid1.appendChild(hotspot);
                 });
@@ -1051,7 +1053,7 @@
 
                         hotspot.onclick = (e) => {
                             e.stopPropagation();
-                            if (isEditMode) openHotspotEditor(2, num, hotspot);
+                            if (isEditMode) openHotspotEditor(2, num);
                         };
                         templateGrid2.appendChild(hotspot);
                     });
@@ -1061,38 +1063,20 @@
             }
         }
 
-        function openHotspotEditor(templateIndex, num, hotspotElement) {
+        function openHotspotEditor(templateIndex, num) {
             editingHotspotTooth = `${templateIndex}-${num}`;
             let st = getToothStyle(templateIndex, num);
-            document.getElementById('editor-tooth-title').textContent = `السن رقم ${num} (قالب ${templateIndex})`;
+            document.getElementById('editor-tooth-title').textContent = `إعدادات السن رقم ${num} (قالب ${templateIndex})`;
             document.getElementById('edit-width').value = st.width;
             document.getElementById('edit-height').value = st.height;
             document.getElementById('edit-radius').value = st.radius;
             document.getElementById('edit-rotate').value = st.rotate;
             
-            // إظهار النافذة المنسدلة بجوار السن المنقور مباشرة
+            // إظهار لوحة التحكم مرتبة وثابتة أسفل شريط الأدوات لمنع التداخل تماماً
             const dropdown = document.getElementById('floating-tooth-editor');
-            const container = document.getElementById(`template-jaw-container-${templateIndex}`);
-            
-            if (dropdown && container) {
+            if (dropdown) {
                 dropdown.classList.add('active');
-                
-                // حساب مكان السن داخل الحاوية لجعل القائمة تظهر بقربه بدقة
-                let rect = hotspotElement.getBoundingClientRect();
-                let contRect = container.getBoundingClientRect();
-                
-                let topPos = (hotspotElement.offsetTop + hotspotElement.offsetHeight + 5);
-                let leftPos = (hotspotElement.offsetLeft - 100);
-                
-                // التأكد من عدم خروج القائمة عن حدود الحاوية
-                if (leftPos < 10) leftPos = 10;
-                if (leftPos + 240 > contRect.width) leftPos = contRect.width - 250;
-
-                dropdown.style.top = topPos + 'px';
-                dropdown.style.left = leftPos + 'px';
-                
-                // إلحاق النافذة داخل حاوية الصورة نفسها لتبقى ملاصقة لها
-                container.appendChild(dropdown);
+                dropdown.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }
         }
 
