@@ -22,7 +22,7 @@
             --input-bg: #F8FAFC;
             --border-color: #E2E8F0;
             
-            --status-healthy: rgba(255, 255, 255, 0.35);
+            --status-healthy: rgba(255, 255, 255, 0.15);
             --status-caries: rgba(239, 68, 68, 0.85);
             --status-filled: rgba(59, 130, 246, 0.85);
             --status-rct: rgba(245, 158, 11, 0.85);
@@ -365,7 +365,7 @@
             pointer-events: none;
         }
 
-        /* السن الحر بنظام النقاط الحرة (Polygon) مع ظهور الأرقام بوضوح */
+        /* أرقام الأسنان والتحكم الحر بوضوح تام */
         .tooth-polygon {
             position: absolute;
             top: 0;
@@ -378,7 +378,7 @@
         .tooth-shape-area {
             position: absolute;
             background: var(--status-healthy);
-            border: 1.5px solid rgba(255, 255, 255, 0.9);
+            border: 1.5px solid #38BDF8;
             pointer-events: auto;
             display: flex;
             justify-content: center;
@@ -388,18 +388,25 @@
             text-shadow: 0 1px 3px rgba(0,0,0,0.9);
             user-select: none;
             touch-action: none;
+            z-index: 10;
+        }
+
+        /* في الوضع العادي، إظهار الإطار خفيف والأرقام واضحة جداً */
+        .real-jaw-container:not(.edit-mode-active) .tooth-shape-area {
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px dashed rgba(255, 255, 255, 0.5);
         }
 
         .edit-mode-active .tooth-shape-area {
-            border: 2px solid #38BDF8;
-            background: rgba(14, 165, 233, 0.3);
+            border: 2px solid #FACC15;
+            background: rgba(14, 165, 233, 0.35);
         }
 
         /* نقاط التحكم الأربع للزوايا الحرة */
         .vertex-handle {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             background: #FACC15;
             border: 2px solid #0F172A;
             border-radius: 50%;
@@ -408,22 +415,22 @@
             pointer-events: auto;
             transform: translate(-50%, -50%);
             touch-action: none;
+            box-shadow: 0 0 5px rgba(0,0,0,0.5);
         }
 
         .edit-mode-active .tooth-polygon.selected-poly .vertex-handle {
             display: block;
         }
 
-        /* إخفاء باقي النقاط أثناء السحب لرؤية صافية */
         .tooth-polygon.is-vertex-moving .vertex-handle {
             display: none !important;
         }
 
-        .tooth-shape-area.status-تسوس { background-color: var(--status-caries); border-color: #EF4444; }
-        .tooth-shape-area.status-حشوة { background-color: var(--status-filled); border-color: #3B82F6; }
-        .tooth-shape-area.status-علاج-عصب { background-color: var(--status-rct); border-color: #F59E0B; }
-        .tooth-shape-area.status-خلع { background-color: var(--status-missing); border-color: #94A3B8; }
-        .tooth-shape-area.status-تلبيسة { background-color: var(--status-crown); border-color: #EAB308; }
+        .tooth-shape-area.status-تسوس { background-color: var(--status-caries) !important; border-color: #EF4444; }
+        .tooth-shape-area.status-حشوة { background-color: var(--status-filled) !important; border-color: #3B82F6; }
+        .tooth-shape-area.status-علاج-عصب { background-color: var(--status-rct) !important; border-color: #F59E0B; }
+        .tooth-shape-area.status-خلع { background-color: var(--status-missing) !important; border-color: #94A3B8; }
+        .tooth-shape-area.status-تلبيسة { background-color: var(--status-crown) !important; border-color: #EAB308; }
 
         .editor-tools-bar {
             background: #F1F5F9;
@@ -689,8 +696,8 @@
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
-                <h2>مخطط الأسنان مع الأرقام والتحكم الحر</h2>
-                <p>تظهر أرقام الأسنان بوضوح تام داخل كل سن، ويمكنك تفعيل وضع التعديل لتشكيل زوايا السن بحرية مطلقة!</p>
+                <h2>مخطط الأسنان مع ظهور الأرقام بوضوح</h2>
+                <p>تظهر أرقام الأسنان بوضوح فوق الصورة، وفعل وضع التعديل لتحريك الزوايا بحرية تامة!</p>
             </div>
 
             <!-- شريط أدوات تحكم الطبيب -->
@@ -714,7 +721,7 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- عرض القالب مع الأسنان والأرقام الظاهرة -->
+                <!-- عرض القالب مع الأرقام الواضحة فوق الصورة -->
                 <div class="real-jaw-container" id="jaw-container-box">
                     <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
                     <div class="jaw-absolute-overlay" id="jaw-grid">
@@ -847,11 +854,11 @@
 
                 const shapeDiv = document.createElement('div');
                 shapeDiv.className = 'tooth-shape-area';
-                shapeDiv.textContent = num; // ضمان ظهور رقم السن بوضوح
+                shapeDiv.textContent = num; // رقم السن ظاهر بوضوح تام
                 shapeDiv.style.left = minX + '%';
                 shapeDiv.style.top = minY + '%';
-                shapeDiv.style.width = Math.max(maxX - minX, 3) + '%';
-                shapeDiv.style.height = Math.max(maxY - minY, 3) + '%';
+                shapeDiv.style.width = Math.max(maxX - minX, 4) + '%';
+                shapeDiv.style.height = Math.max(maxY - minY, 4) + '%';
                 
                 let relTlX = p.tl.x - minX;
                 let relTlY = p.tl.y - minY;
