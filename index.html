@@ -433,50 +433,19 @@
             border-radius: 50%;
         }
 
-        /* نافذة إدارة السن (مضبوطة تماماً لتبقى في المنتصف وبحجم ثابت ومريح مهما كان الزوم) */
-        .modal {
-            display: none;
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            background-color: rgba(15, 23, 42, 0.75) !important;
-            justify-content: center !important;
-            align-items: center !important;
-            padding: 10px !important;
-            z-index: 9999999 !important;
-        }
-
-        .modal.open { 
-            display: flex !important; 
-        }
-
-        .modal-content {
-            background-color: var(--card-bg);
-            padding: 18px;
+        /* صندوق إدارة السن (مدمج مباشرة وثابت تحت المخطط ليعمل بسلاسة تامة مع الزوم) */
+        .tooth-panel-box {
+            background: #FFFFFF;
+            border: 2px solid var(--primary);
             border-radius: 16px;
-            width: 92%;
-            max-width: 320px;
-            max-height: 80vh;
-            overflow-y: auto;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
-            position: relative;
+            padding: 18px;
+            margin-top: 15px;
+            box-shadow: 0 10px 25px rgba(14, 165, 233, 0.15);
+            display: none;
         }
 
-        .modal-header {
-            font-size: 16px;
-            font-weight: 700;
-            margin-bottom: 10px;
-            text-align: center;
-            color: var(--text-main);
-        }
-
-        .modal-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
+        .tooth-panel-box.active {
+            display: block;
         }
     </style>
 </head>
@@ -673,7 +642,7 @@
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>مخطط الأسنان التشريعي</h2>
-                <p>اسحب أي رقم سن وضعه فوق السن المطلوب بدقة</p>
+                <p>انقر على أي سن لفتح لوحة التحكم الخاصة به بالأسفل</p>
             </div>
 
             <!-- شريط أدوات تحكم الطبيب -->
@@ -711,35 +680,35 @@
                 </div>
             </div>
 
-            <button type="button" class="btn" onclick="savePatientToCloud()" style="margin-top: 10px;">حفظ المريض والبيانات سحابياً</button>
+            <!-- صندوق إدارة السن المدمج تحت المخطط (لا يتأثر أبدأً بتكبير الشاشة) -->
+            <div class="tooth-panel-box" id="tooth-panel">
+                <div class="card-header" style="margin-bottom: 10px;">
+                    <h3 id="panel-tooth-title" style="font-size: 16px; color: var(--primary);">إدارة السن</h3>
+                </div>
+                <div class="form-group">
+                    <label for="tooth-status">الحالة السريرية:</label>
+                    <select id="tooth-status">
+                        <option value="سليم">سليم</option>
+                        <option value="تسوس">تسوس</option>
+                        <option value="حشوة">حشوة</option>
+                        <option value="علاج-عصب">علاج عصب</option>
+                        <option value="خلع">مخلوع</option>
+                        <option value="تلبيسة">تلبيسة</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="tooth-notes">ملاحظات السن:</label>
+                    <textarea id="tooth-notes" placeholder="ملاحظات العلاج والحشوة..."></textarea>
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-secondary" type="button" onclick="closeToothPanel()">إغلاق</button>
+                    <button class="btn" type="button" onclick="saveToothStatus()">حفظ السن</button>
+                </div>
+            </div>
+
+            <button type="button" class="btn" onclick="savePatientToCloud()" style="margin-top: 15px;">حفظ المريض والبيانات سحابياً</button>
         </div>
 
-    </div>
-
-    <!-- نافذة إدارة السن (موضوعة بداخل الجسم الرئيسي وبأبعاد متكيفة) -->
-    <div class="modal" id="tooth-modal">
-        <div class="modal-content">
-            <div class="modal-header" id="modal-tooth-title">إدارة السن</div>
-            <div class="form-group">
-                <label for="tooth-status">الحالة السريرية:</label>
-                <select id="tooth-status">
-                    <option value="سليم">سليم</option>
-                    <option value="تسوس">تسوس</option>
-                    <option value="حشوة">حشوة</option>
-                    <option value="علاج-عصب">علاج عصب</option>
-                    <option value="خلع">مخلوع</option>
-                    <option value="تلبيسة">تلبيسة</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label for="tooth-notes">ملاحظات السن:</label>
-                <textarea id="tooth-notes" placeholder="ملاحظات العلاج والحشوة..."></textarea>
-            </div>
-            <div class="modal-actions">
-                <button class="btn btn-secondary" type="button" onclick="closeToothModal()">إلغاء</button>
-                <button class="btn" type="button" onclick="saveToothStatus()">حفظ السن</button>
-            </div>
-        </div>
     </div>
 
     <script>
@@ -819,7 +788,7 @@
 
                 hotspot.onclick = (e) => {
                     if (!isEditMode) {
-                        openToothModal(num);
+                        openToothPanel(num);
                     }
                 };
 
@@ -1102,10 +1071,10 @@
             }
         }
 
-        function openToothModal(toothNum) {
+        function openToothPanel(toothNum) {
             currentSelectedTooth = toothNum;
-            const modalTitle = document.getElementById('modal-tooth-title');
-            if (modalTitle) modalTitle.textContent = `إدارة السن رقم: ${toothNum}`;
+            const panelTitle = document.getElementById('panel-tooth-title');
+            if (panelTitle) panelTitle.textContent = `إدارة السن رقم: ${toothNum}`;
             
             if (toothData[toothNum]) {
                 document.getElementById('tooth-status').value = toothData[toothNum].status;
@@ -1114,13 +1083,17 @@
                 document.getElementById('tooth-status').value = 'سليم';
                 document.getElementById('tooth-notes').value = '';
             }
-            const modal = document.getElementById('tooth-modal');
-            if (modal) modal.classList.add('open');
+            
+            const panel = document.getElementById('tooth-panel');
+            if (panel) {
+                panel.classList.add('active');
+                panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }
         }
 
-        function closeToothModal() {
-            const modal = document.getElementById('tooth-modal');
-            if (modal) modal.classList.remove('open');
+        function closeToothPanel() {
+            const panel = document.getElementById('tooth-panel');
+            if (panel) panel.classList.remove('active');
         }
 
         function saveToothStatus() {
@@ -1128,7 +1101,7 @@
             const notes = document.getElementById('tooth-notes').value;
             toothData[currentSelectedTooth] = { status, notes };
             updateToothVisual(currentSelectedTooth, status);
-            closeToothModal();
+            closeToothPanel();
         }
 
         function updateToothVisual(toothNum, status) {
