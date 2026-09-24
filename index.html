@@ -365,12 +365,12 @@
             pointer-events: none;
         }
 
-        /* السن الحر مع إمكانية السحب والتحجيم باليد */
+        /* السن الحر مع التحكم الكامل بكل الاتجاهات */
         .tooth-hotspot {
             position: absolute;
             background: var(--status-healthy);
             border: 1.5px dashed rgba(255, 255, 255, 0.9);
-            border-radius: 8px;
+            border-radius: 6px;
             cursor: move;
             display: flex;
             justify-content: center;
@@ -384,17 +384,16 @@
             touch-action: none;
         }
 
-        /* حدود تفاعلية عندما يكون وضع التعديل مفعلاً */
         .edit-mode-active .tooth-hotspot {
             border: 2px solid #38BDF8;
-            background: rgba(14, 165, 233, 0.35);
+            background: rgba(14, 165, 233, 0.3);
         }
 
-        /* مقابض سحب الحواف لتغيير الحجم والشكل كأنك تقص صورة */
+        /* 4 نقاط تحكم أصلية من كل الاتجاهات (أعلى، أسفل، يمين، يسار) */
         .resize-handle {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             background: #FACC15;
             border: 2px solid #0F172A;
             border-radius: 50%;
@@ -406,8 +405,10 @@
             display: block;
         }
 
-        .handle-se { bottom: -6px; right: -6px; cursor: se-resize; }
-        .handle-nw { top: -6px; left: -6px; cursor: nw-resize; }
+        .handle-top    { top: -5px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
+        .handle-bottom { bottom: -5px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
+        .handle-right  { right: -5px; top: 50%; transform: translateY(-50%); cursor: e-resize; }
+        .handle-left   { left: -5px; top: 50%; transform: translateY(-50%); cursor: w-resize; }
 
         .tooth-hotspot:active {
             border-color: #FACC15;
@@ -683,18 +684,18 @@
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
-                <h2>مخطط الأسنان بالتعديل اليدوي الحر</h2>
-                <p>اسحب أي سن لمكانه، أو فعّل وضع التعديل وامسك أطراف السن لتكبيره وتصغيره كأنك تقص صورة بدقة!</p>
+                <h2>مخطط الأسنان بالتعديل الحر الشامل</h2>
+                <p>فعّل التعديل، وانقر على السن لتظهر نقاط التحكم في الاتجاهات الأربعة (أعلى، أسفل، يمين، يسار) لتعديله من أي جهة!</p>
             </div>
 
             <!-- شريط أدوات تحكم الطبيب -->
             <div class="editor-tools-bar">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">التحكم اليدوي الحر للأسنان:</span>
-                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع التحجيم الحر</button>
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التعديل الشامل للأسنان:</span>
+                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع التعديل الحر</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 8px; border-radius: 8px;">
-                    ✨ **وضع التعديل مَفعل:** انقر على أي سن لتظهر نقاط التحكم الصفراء على أطرافه، اسحبها لتغيير عرضه وارتفاعه بحرية تامة فوق صورة السن!
+                    ✨ **وضع التعديل مفعل:** انقر على أي سن لتظهر النقاط الصفراء الأربع حوله (فوق، تحت، يمين، يسار)، واسحب أي نقطة لتوسيع أو تصغير السن من هذا الاتجاه بدقة فائقة!
                 </div>
             </div>
 
@@ -712,7 +713,7 @@
                 <div class="real-jaw-container" id="jaw-container-box">
                     <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
                     <div class="jaw-absolute-overlay" id="jaw-grid">
-                        <!-- توزيع الأسنان الحر -->
+                        <!-- توزيع الأسنان الحر الشامل -->
                     </div>
                 </div>
             </div>
@@ -828,16 +829,24 @@
                 hotspot.style.height = dim.h + 'px';
                 hotspot.style.fontSize = (Math.min(dim.w, dim.h) * 0.45) + 'px';
 
-                // إضافة مقابض تغيير الحجم كأنك تقص صورة
-                const handleSE = document.createElement('div');
-                handleSE.className = 'resize-handle handle-se';
-                hotspot.appendChild(handleSE);
+                // إضافة 4 نقاط تحكم شاملة (أعلى، أسفل، يمين، يسار)
+                const handleTop = document.createElement('div');
+                handleTop.className = 'resize-handle handle-top';
+                hotspot.appendChild(handleTop);
 
-                const handleNW = document.createElement('div');
-                handleNW.className = 'resize-handle handle-nw';
-                hotspot.appendChild(handleNW);
+                const handleBottom = document.createElement('div');
+                handleBottom.className = 'resize-handle handle-bottom';
+                hotspot.appendChild(handleBottom);
 
-                enableFreeDragAndResize(hotspot, num, handleSE, handleNW);
+                const handleRight = document.createElement('div');
+                handleRight.className = 'resize-handle handle-right';
+                hotspot.appendChild(handleRight);
+
+                const handleLeft = document.createElement('div');
+                handleLeft.className = 'resize-handle handle-left';
+                hotspot.appendChild(handleLeft);
+
+                enableOmniDirectionalResize(hotspot, num, handleTop, handleBottom, handleRight, handleLeft);
 
                 hotspot.onclick = (e) => {
                     e.stopPropagation();
@@ -857,11 +866,11 @@
             });
         }
 
-        function enableFreeDragAndResize(element, toothNum, handleSE, handleNW) {
+        function enableOmniDirectionalResize(element, toothNum, topH, botH, rightH, leftH) {
             let container = document.getElementById('jaw-container-box');
             if (!container) return;
 
-            // سحب السن وتغيير مكانه بالكامل
+            // سحب السن لتغيير مكانه بالكامل
             element.addEventListener('pointerdown', (e) => {
                 if (!isEditMode || e.target.classList.contains('resize-handle')) return;
                 e.preventDefault();
@@ -893,42 +902,54 @@
                 element.addEventListener('pointerup', onUp);
             });
 
-            // سحب مقبض التحجيم (الحجم الحر مثل قص الصور)
-            handleSE.addEventListener('pointerdown', (e) => {
-                e.stopPropagation();
-                e.preventDefault();
-                handleSE.setPointerCapture(e.pointerId);
-                let activeId = e.pointerId;
-                let startX = e.clientX;
-                let startY = e.clientY;
-                let dim = hotspotDims[toothNum] || { w: 26, h: 26 };
-                let startW = dim.w;
-                let startH = dim.h;
+            // دالة عامة لتعديل الحجم من أي جهة (يمين، يسار، أعلى، أسفل)
+            function setupHandle(handle, direction) {
+                handle.addEventListener('pointerdown', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    handle.setPointerCapture(e.pointerId);
+                    let activeId = e.pointerId;
+                    let startX = e.clientX;
+                    let startY = e.clientY;
+                    let dim = hotspotDims[toothNum] || { w: 26, h: 26 };
+                    let startW = dim.w;
+                    let startH = dim.h;
 
-                function onResizeMove(ev) {
-                    if (ev.pointerId !== activeId) return;
-                    let dx = ev.clientX - startX;
-                    let dy = ev.clientY - startY;
-                    let newW = Math.max(15, Math.min(70, startW + dx));
-                    let newH = Math.max(15, Math.min(70, startH + dy));
+                    function onResizeMove(ev) {
+                        if (ev.pointerId !== activeId) return;
+                        let dx = ev.clientX - startX;
+                        let dy = ev.clientY - startY;
+                        let newW = startW;
+                        let newH = startH;
 
-                    hotspotDims[toothNum] = { w: newW, h: newH };
-                    element.style.width = newW + 'px';
-                    element.style.height = newH + 'px';
-                    element.style.fontSize = (Math.min(newW, newH) * 0.45) + 'px';
-                }
+                        if (direction === 'right') newW = Math.max(15, Math.min(70, startW + dx));
+                        if (direction === 'left')  newW = Math.max(15, Math.min(70, startW - dx));
+                        if (direction === 'bottom') newH = Math.max(15, Math.min(70, startH + dy));
+                        if (direction === 'top')    newH = Math.max(15, Math.min(70, startH - dy));
 
-                function onResizeUp(ev) {
-                    if (ev.pointerId !== activeId) return;
-                    handleSE.releasePointerCapture(ev.pointerId);
-                    localStorage.setItem('clinic_jaw_dims', JSON.stringify(hotspotDims));
-                    handleSE.removeEventListener('pointermove', onResizeMove);
-                    handleSE.removeEventListener('pointerup', onResizeUp);
-                }
+                        hotspotDims[toothNum] = { w: newW, h: newH };
+                        element.style.width = newW + 'px';
+                        element.style.height = newH + 'px';
+                        element.style.fontSize = (Math.min(newW, newH) * 0.45) + 'px';
+                    }
 
-                handleSE.addEventListener('pointermove', onResizeMove);
-                handleSE.addEventListener('pointerup', onResizeUp);
-            });
+                    function onResizeUp(ev) {
+                        if (ev.pointerId !== activeId) return;
+                        handle.releasePointerCapture(ev.pointerId);
+                        localStorage.setItem('clinic_jaw_dims', JSON.stringify(hotspotDims));
+                        handle.removeEventListener('pointermove', onResizeMove);
+                        handle.removeEventListener('pointerup', onResizeUp);
+                    }
+
+                    handle.addEventListener('pointermove', onResizeMove);
+                    handle.addEventListener('pointerup', onResizeUp);
+                });
+            }
+
+            setupHandle(rightH, 'right');
+            setupHandle(leftH, 'left');
+            setupHandle(botH, 'bottom');
+            setupHandle(topH, 'top');
         }
 
         function toggleEditMode() {
@@ -937,13 +958,13 @@
             let controls = document.getElementById('position-controls');
             if (isEditMode) {
                 if (btn) {
-                    btn.textContent = "🔒 إيقاف وضع التحجيم الحر والحفظ";
+                    btn.textContent = "🔒 إيقاف وضع التعديل والحفظ";
                     btn.style.background = "#EF4444";
                 }
                 if (controls) controls.style.display = "block";
             } else {
                 if (btn) {
-                    btn.textContent = "🔓 تفعيل وضع التحجيم الحر";
+                    btn.textContent = "🔓 تفعيل وضع التعديل الحر";
                     btn.style.background = "var(--primary)";
                 }
                 if (controls) controls.style.display = "none";
