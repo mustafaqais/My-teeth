@@ -22,7 +22,7 @@
             --input-bg: #F8FAFC;
             --border-color: #E2E8F0;
             
-            --status-healthy: rgba(255, 255, 255, 0.25);
+            --status-healthy: rgba(255, 255, 255, 0.28);
             --status-caries: rgba(239, 68, 68, 0.85);
             --status-filled: rgba(59, 130, 246, 0.85);
             --status-rct: rgba(245, 158, 11, 0.85);
@@ -365,68 +365,65 @@
             pointer-events: none;
         }
 
-        /* السن الحر بإحداثيات صندوق مستقل تماماً */
-        .tooth-hotspot {
+        /* السن الحر بنظام النقاط الحرة (Polygon) */
+        .tooth-polygon {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .tooth-shape-area {
             position: absolute;
             background: var(--status-healthy);
             border: 1.5px dashed rgba(255, 255, 255, 0.9);
-            border-radius: 4px;
-            cursor: move;
+            pointer-events: auto;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: 900;
             color: #FFFFFF;
             text-shadow: 0 1px 3px rgba(0,0,0,0.9);
-            pointer-events: auto;
             user-select: none;
             touch-action: none;
         }
 
-        .edit-mode-active .tooth-hotspot {
+        .edit-mode-active .tooth-shape-area {
             border: 2px solid #38BDF8;
             background: rgba(14, 165, 233, 0.25);
         }
 
-        /* 8 نقاط تحكم مستقلة تماماً للجهات والزوايا */
-        .resize-handle {
+        /* نقاط التحكم الأربع المستقلة تماماً للزوايا الحرة */
+        .vertex-handle {
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: 12px;
+            height: 12px;
             background: #FACC15;
             border: 2px solid #0F172A;
             border-radius: 50%;
             display: none;
-            z-index: 60;
+            z-index: 70;
+            pointer-events: auto;
+            transform: translate(-50%, -50%);
+            touch-action: none;
         }
 
-        .edit-mode-active .tooth-hotspot.selected-for-resize .resize-handle {
+        .edit-mode-active .tooth-polygon.selected-poly .vertex-handle {
             display: block;
         }
 
-        /* إخفاء باقي النقاط أثناء سحب أي نقطة لرؤية صافية تماماً */
-        .tooth-hotspot.is-resizing .resize-handle {
+        /* إخفاء باقي النقاط أثناء سحب نقطة معينة لرؤية صافية تماماً */
+        .tooth-polygon.is-vertex-moving .vertex-handle {
             display: none !important;
         }
-        .tooth-hotspot.is-resizing {
-            border: 2px solid #FACC15 !important;
-            background: rgba(250, 204, 21, 0.4) !important;
-        }
 
-        .handle-top    { top: -5px; left: 50%; transform: translateX(-50%); cursor: n-resize; }
-        .handle-bottom { bottom: -5px; left: 50%; transform: translateX(-50%); cursor: s-resize; }
-        .handle-right  { right: -5px; top: 50%; transform: translateY(-50%); cursor: e-resize; }
-        .handle-left   { left: -5px; top: 50%; transform: translateY(-50%); cursor: w-resize; }
-        .handle-ne     { top: -5px; right: -5px; cursor: ne-resize; }
-        .handle-nw     { top: -5px; left: -5px; cursor: nw-resize; }
-        .handle-se     { bottom: -5px; right: -5px; cursor: se-resize; }
-        .handle-sw     { bottom: -5px; left: -5px; cursor: sw-resize; }
-
-        .tooth-hotspot.status-تسوس { background-color: var(--status-caries); border-color: #EF4444; }
-        .tooth-hotspot.status-حشوة { background-color: var(--status-filled); border-color: #3B82F6; }
-        .tooth-hotspot.status-علاج-عصب { background-color: var(--status-rct); border-color: #F59E0B; }
-        .tooth-hotspot.status-خلع { background-color: var(--status-missing); border-color: #94A3B8; }
-        .tooth-hotspot.status-تلبيسة { background-color: var(--status-crown); border-color: #EAB308; }
+        .tooth-shape-area.status-تسوس { background-color: var(--status-caries); border-color: #EF4444; }
+        .tooth-shape-area.status-حشوة { background-color: var(--status-filled); border-color: #3B82F6; }
+        .tooth-shape-area.status-علاج-عصب { background-color: var(--status-rct); border-color: #F59E0B; }
+        .tooth-shape-area.status-خلع { background-color: var(--status-missing); border-color: #94A3B8; }
+        .tooth-shape-area.status-تلبيسة { background-color: var(--status-crown); border-color: #EAB308; }
 
         .editor-tools-bar {
             background: #F1F5F9;
@@ -692,18 +689,18 @@
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
-                <h2>مخطط الأسنان بالتعديل الهندسي المستقل كلياً</h2>
-                <p>كل نقطة أو زاوية تسحبها تتمدد وحدها بشكل مستقل تماماً، مع رؤية صافية لحظية!</p>
+                <h2>مخطط الأسنان بنظام النقاط الركنية الحرة (Polygon)</h2>
+                <p>كل زاوية تتحرك بشكل مستقل تماماً لتشكيل السن بحرية مطلقة ومطابقة تامة للصورة!</p>
             </div>
 
             <!-- شريط أدوات تحكم الطبيب -->
             <div class="editor-tools-bar">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم المستقل تماماً:</span>
-                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع التعديل المستقل</button>
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التعديل الحر للزوايا:</span>
+                    <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع التعديل الحر</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 8px; border-radius: 8px;">
-                    ✨ **مفعل:** اسحب أي طرف أو زاوية لتتحرك وحدها تماماً دون أن تأثر على باقي الأطراف!
+                    ✨ **مفعل:** انقر على أي سن، واسحب أي زاوية صفراء لتتحرك وحدها تماماً لتشكيل انحناء السن بدقة!
                 </div>
             </div>
 
@@ -721,7 +718,7 @@
                 <div class="real-jaw-container" id="jaw-container-box">
                     <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
                     <div class="jaw-absolute-overlay" id="jaw-grid">
-                        <!-- توزيع الأسنان الحر المستقل كلياً -->
+                        <!-- توزيع الأسنان الحر بنظام الزوايا المستقلة -->
                     </div>
                 </div>
             </div>
@@ -774,7 +771,7 @@
 
         let toothData = {};
         let globalJawImage = localStorage.getItem('clinic_global_jaw') || "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80";
-        let hotspotBoxes = JSON.parse(localStorage.getItem('clinic_jaw_boxes')) || getDefaultBoxes();
+        let toothPolygons = JSON.parse(localStorage.getItem('clinic_jaw_polygons')) || getDefaultPolygons();
         let isEditMode = false;
         let currentSelectedTooth = null;
         let currentUser = null;
@@ -786,20 +783,30 @@
             48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38
         ];
 
-        function getDefaultBoxes() {
-            let boxes = {};
+        function getDefaultPolygons() {
+            let polys = {};
             let upper = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
             let lower = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
             
             upper.forEach((num, i) => {
                 let x = 9 + (i * 5.2);
-                boxes[num] = { x1: x, y1: 21, x2: x + 4.8, y2: 29 };
+                polys[num] = {
+                    tl: {x: x, y: 21},
+                    tr: {x: x + 4.8, y: 21},
+                    br: {x: x + 4.8, y: 29},
+                    bl: {x: x, y: 29}
+                };
             });
             lower.forEach((num, i) => {
                 let x = 9 + (i * 5.2);
-                boxes[num] = { x1: x, y1: 71, x2: x + 4.8, y2: 79 };
+                polys[num] = {
+                    tl: {x: x, y: 71},
+                    tr: {x: x + 4.8, y: 71},
+                    br: {x: x + 4.8, y: 79},
+                    bl: {x: x, y: 79}
+                };
             });
-            return boxes;
+            return polys;
         }
 
         function renderJawGrid() {
@@ -821,169 +828,129 @@
                 if (previewImg) previewImg.src = globalJawImage;
             }
 
+shape_loop:
             allTeeth.forEach(num => {
-                const hotspot = document.createElement('div');
-                hotspot.className = 'tooth-hotspot';
-                hotspot.id = `hotspot-${num}`;
-                hotspot.textContent = num;
+                const polyWrapper = document.createElement('div');
+                polyWrapper.className = 'tooth-polygon';
+                polyWrapper.id = `polygon-${num}`;
+
+                let p = toothPolygons[num] || {
+                    tl: {x: 10, y: 10},
+                    tr: {x: 15, y: 10},
+                    br: {x: 15, y: 15},
+                    bl: {x: 10, y: 15}
+                };
+
+                // حساب أصغر إحداثي وأكبر إحداثي لإنشاء عنصر السن
+                let minX = Math.min(p.tl.x, p.tr.x, p.br.x, p.bl.x);
+                let minY = Math.min(p.tl.y, p.tr.y, p.br.y, p.bl.y);
+                let maxX = Math.max(p.tl.x, p.tr.x, p.br.x, p.bl.x);
+                let maxY = Math.max(p.tl.y, p.tr.y, p.br.y, p.bl.y);
+
+                const shapeDiv = document.createElement('div');
+                shapeDiv.className = 'tooth-shape-area';
+                shapeDiv.textContent = num;
+                shapeDiv.style.left = minX + '%';
+                shapeDiv.style.top = minY + '%';
+                shapeDiv.style.width = (maxX - minX) + '%';
+                shapeDiv.style.height = (maxY - minY) + '%';
                 
-                let box = hotspotBoxes[num] || { x1: 10, y1: 10, x2: 15, y2: 15 };
+                // تطبيق قص المضلع الحر (clip-path) ليتخذ شكل الزوايا المحددة بدقة 100%
+                let relTlX = p.tl.x - minX;
+                let relTlY = p.tl.y - minY;
+                let relTrX = p.tr.x - minX;
+                let relTrY = p.tr.y - minY;
+                let relBrX = p.br.x - minX;
+                let relBrY = p.br.y - minY;
+                let relBlX = p.bl.x - minX;
+                let relBlY = p.bl.y - minY;
 
-                hotspot.style.left = box.x1 + '%';
-                hotspot.style.top = box.y1 + '%';
-                hotspot.style.width = (box.x2 - box.x1) + '%';
-                hotspot.style.height = (box.y2 - box.y1) + '%';
-                hotspot.style.fontSize = '10px';
+                shapeDiv.style.clipPath = `polygon(${relTlX}% ${relTlY}%, ${relTrX}% ${relTrY}%, ${relBrX}% ${relBrY}%, ${relBlX}% ${relBlY}%)`;
+                shapeDiv.style.fontSize = '10px';
 
-                // إنشاء 8 نقاط تحكم مستقلة تماماً (أطراف وزوايا)
-                const handles = ['top', 'bottom', 'right', 'left', 'ne', 'nw', 'se', 'sw'];
-                handles.forEach(hType => {
-                    const hDiv = document.createElement('div');
-                    hDiv.className = `resize-handle handle-${hType}`;
-                    hotspot.appendChild(hDiv);
-                    setupTrueIndependentBoxHandle(hDiv, hotspot, num, hType);
+                // إنشاء 4 نقاط تحكم حرة للزوايا الأربع (تتحرك بشكل مستقل تماماً)
+                const corners = [
+                    {key: 'tl', x: p.tl.x, y: p.tl.y},
+                    {key: 'tr', x: p.tr.x, y: p.tr.y},
+                    {key: 'br', x: p.br.x, y: p.br.y},
+                    {key: 'bl', x: p.bl.x, y: p.bl.y}
+                ];
+
+                corners.forEach(corner => {
+                    const handle = document.createElement('div');
+                    handle.className = `vertex-handle handle-${corner.key}`;
+                    handle.style.left = corner.x + '%';
+                    handle.style.top = corner.y + '%';
+                    polyWrapper.appendChild(handle);
+
+                    setupVertexDrag(handle, polyWrapper, num, corner.key);
                 });
 
-                enableBoxDrag(hotspot, num);
+                polyWrapper.appendChild(shapeDiv);
 
-                hotspot.onclick = (e) => {
+                polyWrapper.onclick = (e) => {
                     e.stopPropagation();
                     if (!isEditMode) {
                         openToothModal(num);
                     } else {
-                        document.querySelectorAll('.tooth-hotspot').forEach(h => h.classList.remove('selected-for-resize'));
-                        hotspot.classList.add('selected-for-resize');
+                        document.querySelectorAll('.tooth-polygon').forEach(w => w.classList.remove('selected-poly'));
+                        polyWrapper.classList.add('selected-poly');
                     }
                 };
 
                 if (toothData[num] && toothData[num].status !== 'سليم') {
-                    hotspot.classList.add(`status-${toothData[num].status}`);
+                    shapeDiv.classList.add(`status-${toothData[num].status}`);
                 }
 
-                grid.appendChild(hotspot);
+                grid.appendChild(polyWrapper);
             });
         }
 
-        // تحريك السن بالكامل من المنتصف
-        function enableBoxDrag(element, toothNum) {
+        // تحريك زاوية واحدة محددة بشكل مستقل تماماً عن باقي الزوايا
+        function setupVertexDrag(handle, wrapper, toothNum, cornerKey) {
             let container = document.getElementById('jaw-container-box');
             if (!container) return;
 
-            element.addEventListener('pointerdown', (e) => {
-                if (!isEditMode || e.target.classList.contains('resize-handle')) return;
-                e.preventDefault();
-                element.setPointerCapture(e.pointerId);
-                let activeId = e.pointerId;
-                let startX = e.clientX;
-                let startY = e.clientY;
-
-                let box = hotspotBoxes[toothNum];
-                let origX1 = box.x1;
-                let origY1 = box.y1;
-                let origX2 = box.x2;
-                let origY2 = box.y2;
-                let w = origX2 - origX1;
-                let h = origY2 - origY1;
-
-                function onMove(ev) {
-                    if (ev.pointerId !== activeId) return;
-                    let rect = container.getBoundingClientRect();
-                    let dx = ((ev.clientX - startX) / rect.width) * 100;
-                    let dy = ((ev.clientY - startY) / rect.height) * 100;
-
-                    let newX1 = Math.max(1, Math.min(95 - w, origX1 + dx));
-                    let newY1 = Math.max(1, Math.min(95 - h, origY1 + dy));
-
-                    hotspotBoxes[toothNum] = { x1: newX1, y1: newY1, x2: newX1 + w, y2: newY1 + h };
-
-                    element.style.left = hotspotBoxes[toothNum].x1 + '%';
-                    element.style.top = hotspotBoxes[toothNum].y1 + '%';
-                }
-
-                function onUp(ev) {
-                    if (ev.pointerId !== activeId) return;
-                    element.releasePointerCapture(ev.pointerId);
-                    localStorage.setItem('clinic_jaw_boxes', JSON.stringify(hotspotBoxes));
-                    element.removeEventListener('pointermove', onMove);
-                    element.removeEventListener('pointerup', onUp);
-                }
-
-                element.addEventListener('pointermove', onMove);
-                element.addEventListener('pointerup', onUp);
-            });
-        }
-
-        // تحكم هندسي حقيقي ومستقل بنسبة 100% لكل طرف أو زاوية
-        function setupTrueIndependentBoxHandle(handle, element, toothNum, direction) {
             handle.addEventListener('pointerdown', (e) => {
                 e.stopPropagation();
                 e.preventDefault();
                 handle.setPointerCapture(e.pointerId);
                 let activeId = e.pointerId;
-                
-                let container = document.getElementById('jaw-container-box');
-                if (!container) return;
 
-                let box = hotspotBoxes[toothNum];
-                let origX1 = box.x1;
-                let origY1 = box.y1;
-                let origX2 = box.x2;
-                let origY2 = box.y2;
+                wrapper.classList.add('is-vertex-moving');
 
-                element.classList.add('is-resizing');
-
-                function onResizeMove(ev) {
+                function onMove(ev) {
                     if (ev.pointerId !== activeId) return;
                     let rect = container.getBoundingClientRect();
                     let curX = ((ev.clientX - rect.left) / rect.width) * 100;
                     let curY = ((ev.clientY - rect.top) / rect.height) * 100;
 
-                    let x1 = origX1;
-                    let y1 = origY1;
-                    let x2 = origX2;
-                    let y2 = origY2;
+                    curX = Math.max(1, Math.min(99, curX));
+                    curY = Math.max(1, Math.min(99, curY));
 
-                    if (direction === 'right')  { x2 = Math.max(x1 + 1, Math.min(99, curX)); }
-                    if (direction === 'left')   { x1 = Math.max(1, Math.min(x2 - 1, curX)); }
-                    if (direction === 'bottom') { y2 = Math.max(y1 + 1, Math.min(99, curY)); }
-                    if (direction === 'top')    { y1 = Math.max(1, Math.min(y2 - 1, curY)); }
+                    if (!toothPolygons[toothNum]) return;
+                    
+                    // تحديث إحداثيات هذه الزاوية فقط بشكل مستقل تماماً
+                    toothPolygons[toothNum][cornerKey] = { x: curX, y: curY };
 
-                    if (direction === 'ne') {
-                        x2 = Math.max(x1 + 1, Math.min(99, curX));
-                        y1 = Math.max(1, Math.min(y2 - 1, curY));
-                    }
-                    if (direction === 'nw') {
-                        x1 = Math.max(1, Math.min(x2 - 1, curX));
-                        y1 = Math.max(1, Math.min(y2 - 1, curY));
-                    }
-                    if (direction === 'se') {
-                        x2 = Math.max(x1 + 1, Math.min(99, curX));
-                        y2 = Math.max(y1 + 1, Math.min(99, curY));
-                    }
-                    if (direction === 'sw') {
-                        x1 = Math.max(1, Math.min(x2 - 1, curX));
-                        y2 = Math.max(y1 + 1, Math.min(99, curY));
-                    }
-
-                    hotspotBoxes[toothNum] = { x1, y1, x2, y2 };
-
-                    element.style.left = x1 + '%';
-                    element.style.top = y1 + '%';
-                    element.style.width = (x2 - x1) + '%';
-                    element.style.height = (y2 - y1) + '%';
+                    // إعادة رسم الشبكة فوراً لتحديث شكل المضلع والزاوية بسلاسة
+                    renderJawGrid();
+                    // الحفاظ على تحديد السن الحالي أثناء السحب
+                    const currentWrapper = document.getElementById(`polygon-${toothNum}`);
+                    if (currentWrapper) currentWrapper.classList.add('selected-poly', 'is-vertex-moving');
                 }
 
-                function onResizeUp(ev) {
+                function onUp(ev) {
                     if (ev.pointerId !== activeId) return;
                     handle.releasePointerCapture(ev.pointerId);
-                    element.classList.remove('is-resizing');
-                    localStorage.setItem('clinic_jaw_boxes', JSON.stringify(hotspotBoxes));
-                    handle.removeEventListener('pointermove', onResizeMove);
-                    handle.removeEventListener('pointerup', onResizeUp);
+                    wrapper.classList.remove('is-vertex-moving');
+                    localStorage.setItem('clinic_jaw_polygons', JSON.stringify(toothPolygons));
+                    handle.removeEventListener('pointermove', onMove);
+                    handle.removeEventListener('pointerup', onUp);
                 }
 
-                handle.addEventListener('pointermove', onResizeMove);
-                handle.addEventListener('pointerup', onResizeUp);
+                handle.addEventListener('pointermove', onMove);
+                handle.addEventListener('pointerup', onUp);
             });
         }
 
@@ -999,7 +966,7 @@
                 if (controls) controls.style.display = "block";
             } else {
                 if (btn) {
-                    btn.textContent = "🔓 تفعيل وضع التعديل المستقل";
+                    btn.textContent = "🔓 تفعيل وضع التعديل الحر";
                     btn.style.background = "var(--primary)";
                 }
                 if (controls) controls.style.display = "none";
