@@ -24,7 +24,7 @@
             --input-bg: #F8FAFC;
             --border-color: #E2E8F0;
             
-            --status-healthy: #E2E8F0;
+            --status-healthy: #FFFFFF;
             --status-caries: #EF4444;
             --status-filled: #3B82F6;
             --status-rct: #F59E0B;
@@ -36,7 +36,6 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            /* اعتماد أرقى الخطوط العربية الحديثة */
             font-family: 'Cairo', 'Tajawal', sans-serif;
         }
 
@@ -52,7 +51,7 @@
 
         .app-container {
             width: 100%;
-            max-width: 650px;
+            max-width: 680px;
         }
 
         .card {
@@ -71,7 +70,6 @@
             display: block;
         }
 
-        /* اللوجو الخلفي المخفي (Watermark) ليعطي طابعاً احترافياً بحتاً */
         .card::before {
             content: "🦷";
             position: absolute;
@@ -93,7 +91,6 @@
             margin-bottom: 25px;
         }
 
-        /* اللوجو البارز الفاخر */
         .clinic-logo {
             width: 75px;
             height: 75px;
@@ -272,7 +269,6 @@
             background: rgba(239, 68, 68, 0.15);
         }
 
-        /* لوحة الأيقونات الرئيسية الفاخرة */
         .dashboard-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -315,7 +311,6 @@
             font-weight: 500;
         }
 
-        /* قائمة سجلات المرضى السابقين */
         .patients-list {
             margin-top: 15px;
             max-height: 380px;
@@ -366,7 +361,7 @@
             background: var(--primary-hover);
         }
 
-        /* مخطط الأسنان الذكي */
+        /* تعديلات المخطط ثلاثي الأبعاد 3D المتطور */
         .smart-chart-container {
             margin-top: 15px;
             border-top: 1px dashed var(--border-color);
@@ -398,46 +393,51 @@
 
         .arch-wrapper {
             margin-bottom: 20px;
-            background: #F1F5F9;
-            padding: 15px 10px;
-            border-radius: 14px;
+            background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+            padding: 18px 12px;
+            border-radius: 18px;
             border: 1px solid var(--border-color);
+            box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
         }
 
         .arch-title {
             font-size: 13px;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 12px;
+            margin-bottom: 14px;
             text-align: center;
         }
 
         .teeth-grid {
             display: flex;
             justify-content: center;
-            gap: 4px;
+            gap: 6px;
             flex-wrap: wrap;
         }
 
+        /* تصميم زر السن ثلاثي الأبعاد 3D بمؤثرات مجسمة وظلال فاخرة */
         .tooth-btn {
-            width: 34px;
-            height: 48px;
+            width: 36px;
+            height: 52px;
             background-color: var(--status-healthy);
-            border: 2px solid var(--border-color);
-            border-radius: 6px;
+            border: 1px solid #CBD5E1;
+            border-radius: 10px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             align-items: center;
-            padding: 4px 2px;
+            padding: 5px 2px;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             color: var(--text-main);
+            /* تأثير العمق الثلاثي الأبعاد 3D */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04), inset 0 -2px 3px rgba(0, 0, 0, 0.05);
         }
 
         .tooth-btn:hover {
-            transform: scale(1.1);
+            transform: translateY(-4px) scale(1.08);
             border-color: var(--primary);
+            box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.2), 0 4px 6px -2px rgba(14, 165, 233, 0.1);
         }
 
         .tooth-num {
@@ -447,14 +447,16 @@
         }
 
         .tooth-icon {
-            font-size: 14px;
+            font-size: 15px;
+            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
         }
 
-        .tooth-btn.status-تسوس { background-color: var(--status-caries); color: white; border-color: #fca5a5; }
-        .tooth-btn.status-حشوة { background-color: var(--status-filled); color: white; border-color: #93c5fd; }
-        .tooth-btn.status-علاج-عصب { background-color: var(--status-rct); color: white; border-color: #fde68a; }
-        .tooth-btn.status-خلع { background-color: var(--status-missing); color: white; border-color: #cbd5e1; opacity: 0.6; }
-        .tooth-btn.status-تلبيسة { background-color: var(--status-crown); color: white; border-color: #fef08a; }
+        /* تلوين الحالات بتأثير التوهج ثلاثي الأبعاد */
+        .tooth-btn.status-تسوس { background: linear-gradient(135deg, #EF4444, #DC2626); color: white; border-color: #B91C1C; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4), inset 0 2px 3px rgba(255,255,255,0.3); }
+        .tooth-btn.status-حشوة { background: linear-gradient(135deg, #3B82F6, #2563EB); color: white; border-color: #1D4ED8; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4), inset 0 2px 3px rgba(255,255,255,0.3); }
+        .tooth-btn.status-علاج-عصب { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border-color: #B45309; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4), inset 0 2px 3px rgba(255,255,255,0.3); }
+        .tooth-btn.status-خلع { background: linear-gradient(135deg, #94A3B8, #64748B); color: white; border-color: #475569; opacity: 0.7; box-shadow: inset 0 2px 3px rgba(0,0,0,0.2); }
+        .tooth-btn.status-تلبيسة { background: linear-gradient(135deg, #EAB308, #CA8A04); color: white; border-color: #A16207; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4), inset 0 2px 3px rgba(255,255,255,0.3); }
 
         .modal {
             display: none;
@@ -647,25 +649,25 @@
                     <textarea id="p-history" placeholder="الأمراض المزمنة والحساسية..."></textarea>
                 </div>
 
-                <button type="submit" class="btn" style="margin-top: 15px;">الانتقال لمخطط الأسنان الذكي &larr;</button>
+                <button type="submit" class="btn" style="margin-top: 15px;">الانتقال لمخطط الأسنان ثلاثي الأبعاد 3D &larr;</button>
             </form>
         </div>
 
-        <!-- 6. شاشة مخطط الأسنان التفاعلي والحفظ السحابي النهائي -->
+        <!-- 6. شاشة مخطط الأسنان ثلاثي الأبعاد 3D والحفظ السحابي النهائي -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
-                <div class="doctor-welcome">🦷 مخطط الأسنان الذكي</div>
+                <div class="doctor-welcome">🦷 مخطط الأسنان 3D</div>
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
-                <h2 id="chart-patient-title">مخطط الأسنان</h2>
+                <h2 id="chart-patient-title">مخطط الأسنان المجسم</h2>
                 <p>اضغط على السن لتحديد حالته السريرية</p>
             </div>
 
             <div class="smart-chart-container">
                 <div class="chart-legend">
-                    <div class="legend-item"><div class="legend-color" style="background:#E2E8F0"></div>سليم</div>
+                    <div class="legend-item"><div class="legend-color" style="background:#FFFFFF; border:1px solid #CBD5E1"></div>سليم</div>
                     <div class="legend-item"><div class="legend-color" style="background:#EF4444"></div>تسوس</div>
                     <div class="legend-item"><div class="legend-color" style="background:#3B82F6"></div>حشوة</div>
                     <div class="legend-item"><div class="legend-color" style="background:#F59E0B"></div>عصب</div>
@@ -673,15 +675,15 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- الفك العلوي -->
+                <!-- الفك العلوي ثلاثي الأبعاد -->
                 <div class="arch-wrapper">
-                    <div class="arch-title">الفك العلوي (Upper Arch)</div>
+                    <div class="arch-title">الفك العلوي (Upper Arch 3D)</div>
                     <div class="teeth-grid" id="upper-arch-grid"></div>
                 </div>
 
-                <!-- الفك السفلي -->
+                <!-- الفك السفلي ثلاثي الأبعاد -->
                 <div class="arch-wrapper">
-                    <div class="arch-title">الفك السفلي (Lower Arch)</div>
+                    <div class="arch-title">الفك السفلي (Lower Arch 3D)</div>
                     <div class="teeth-grid" id="lower-arch-grid"></div>
                 </div>
             </div>
