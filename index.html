@@ -533,7 +533,6 @@
             justify-content: center;
         }
 
-        /* لوحة التحكم الجانبية أو العائمة لتعديل السن المحدد في وضع التعديل */
         .advanced-hotspot-editor {
             background: #F8FAFC;
             border: 1px solid var(--primary);
@@ -642,7 +641,7 @@
             </div>
         </div>
 
-        <!-- 4. شاشة إدارة قالب الفكين الرئيسي (مع إعدادات الشكل والتطويل والتدوير لكل رقم) -->
+        <!-- 4. شاشة إدارة قالب الفكين الرئيسي -->
         <div class="card" id="template-manager-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
@@ -651,7 +650,7 @@
 
             <div class="card-header" style="margin-bottom: 15px;">
                 <h2>صورة الفكين وإحداثيات وأشكال الأرقام</h2>
-                <p>اسحب أي رقم أو انقر عليه لتخصيص طوله، عرضه، شكله (دائري/مربع/مستطيل)، وتدويره</p>
+                <p>اسحب أي رقم أو انقر عليه لتخصيص حجم الخط، العرض، الارتفاع، الاستدارة، والتدوير</p>
             </div>
 
             <div class="form-group">
@@ -665,11 +664,11 @@
                     <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع السحب والتخصيص</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 10px; border-radius: 8px;">
-                    ✋ **اسحب أي رقم بمكانـه.** | 👆 **انقر على أي رقم لتعديل شكله الفردي (طول، عرض، تدوير، استدارة).**
+                    ✋ **اسحب أي رقم بمكانه.** | 👆 **انقر على أي رقم لتعديل شكله وحجم خطه بدقة.**
                 </div>
             </div>
 
-            <!-- لوحة التحكم الخاصة بتعديل السن عند النقر عليه في وضع التعديل -->
+            <!-- لوحة التحكم المتقدمة (تشمل حجم الخط) -->
             <div class="advanced-hotspot-editor" id="hotspot-custom-editor">
                 <h4 id="editor-tooth-title" style="color: var(--primary); font-size: 14px; margin-bottom: 10px;">تخصيص شكل ورقم السن</h4>
                 <div class="form-row">
@@ -684,13 +683,17 @@
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>انحناء الحواف (دائري / مربع / مستطيل):</label>
-                        <input type="range" min="0" max="50" id="edit-radius" oninput="updateSelectedHotspotStyle()">
+                        <label>حجم رقم السن (Font Size):</label>
+                        <input type="range" min="8" max="28" id="edit-fontsize" oninput="updateSelectedHotspotStyle()">
                     </div>
                     <div class="form-group">
-                        <label>التدوير (Rotation الزاوية):</label>
-                        <input type="range" min="-180" max="180" id="edit-rotate" oninput="updateSelectedHotspotStyle()">
+                        <label>انحناء الحواف (استدارة الزوايا):</label>
+                        <input type="range" min="0" max="50" id="edit-radius" oninput="updateSelectedHotspotStyle()">
                     </div>
+                </div>
+                <div class="form-group">
+                    <label>التدوير (Rotation الزاوية):</label>
+                    <input type="range" min="-180" max="180" id="edit-rotate" oninput="updateSelectedHotspotStyle()">
                 </div>
                 <button class="btn btn-secondary" type="button" style="padding: 6px; font-size: 12px;" onclick="closeHotspotEditor()">إغلاق اللوحة</button>
             </div>
@@ -898,7 +901,7 @@
         }
 
         function getToothStyle(num) {
-            return hotspotStyles[num] || { width: 28, height: 28, radius: 6, rotate: 0 };
+            return hotspotStyles[num] || { width: 28, height: 28, radius: 6, rotate: 0, fontSize: 12 };
         }
 
         function applyStyleToElement(element, styleObj) {
@@ -906,7 +909,7 @@
             element.style.height = styleObj.height + 'px';
             element.style.borderRadius = styleObj.radius + 'px';
             element.style.transform = `translate(-50%, -50%) rotate(${styleObj.rotate}deg)`;
-            element.style.fontSize = (Math.min(styleObj.width, styleObj.height) * 0.4) + 'px';
+            element.style.fontSize = (styleObj.fontSize || 12) + 'px';
         }
 
         function renderJawGrid() {
@@ -974,9 +977,10 @@
         function openHotspotEditor(num) {
             editingHotspotTooth = num;
             let st = getToothStyle(num);
-            document.getElementById('editor-tooth-title').textContent = `تخصيص شكل السن رقم: ${num}`;
+            document.getElementById('editor-tooth-title').textContent = `تخصيص شكل وحجم السن رقم: ${num}`;
             document.getElementById('edit-width').value = st.width;
             document.getElementById('edit-height').value = st.height;
+            document.getElementById('edit-fontsize').value = st.fontSize || 12;
             document.getElementById('edit-radius').value = st.radius;
             document.getElementById('edit-rotate').value = st.rotate;
             
@@ -992,10 +996,11 @@
             if (!editingHotspotTooth) return;
             let w = parseInt(document.getElementById('edit-width').value);
             let h = parseInt(document.getElementById('edit-height').value);
+            let fs = parseInt(document.getElementById('edit-fontsize').value);
             let r = parseInt(document.getElementById('edit-radius').value);
             let rot = parseInt(document.getElementById('edit-rotate').value);
 
-            hotspotStyles[editingHotspotTooth] = { width: w, height: h, radius: r, rotate: rot };
+            hotspotStyles[editingHotspotTooth] = { width: w, height: h, fontSize: fs, radius: r, rotate: rot };
             localStorage.setItem('clinic_jaw_styles', JSON.stringify(hotspotStyles));
             renderJawGrid();
         }
