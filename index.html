@@ -24,12 +24,12 @@
             --input-bg: #F8FAFC;
             --border-color: #E2E8F0;
             
-            --status-healthy: rgba(255, 255, 255, 0.15);
-            --status-caries: rgba(239, 68, 68, 0.75);
-            --status-filled: rgba(59, 130, 246, 0.75);
-            --status-rct: rgba(245, 158, 11, 0.75);
-            --status-missing: rgba(148, 163, 184, 0.75);
-            --status-crown: rgba(234, 179, 8, 0.75);
+            --status-healthy: rgba(255, 255, 255, 0.25);
+            --status-caries: rgba(239, 68, 68, 0.8);
+            --status-filled: rgba(59, 130, 246, 0.8);
+            --status-rct: rgba(245, 158, 11, 0.8);
+            --status-missing: rgba(148, 163, 184, 0.8);
+            --status-crown: rgba(234, 179, 8, 0.8);
         }
 
         * {
@@ -51,12 +51,12 @@
 
         .app-container {
             width: 100%;
-            max-width: 720px;
+            max-width: 780px;
         }
 
         .card {
             background-color: var(--card-bg);
-            padding: 30px 25px;
+            padding: 25px 20px;
             border-radius: 20px;
             box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
             margin-bottom: 20px;
@@ -72,26 +72,26 @@
 
         .card-header {
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
         }
 
         .clinic-logo {
-            width: 75px;
-            height: 75px;
+            width: 70px;
+            height: 70px;
             background: linear-gradient(135deg, #0EA5E9, #0284C7);
             color: white;
             border-radius: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 36px;
-            margin: 0 auto 15px auto;
+            font-size: 34px;
+            margin: 0 auto 12px auto;
             box-shadow: 0 10px 25px rgba(14, 165, 233, 0.35);
             transform: rotate(-3deg);
         }
 
         .card-header h2 {
-            font-size: 24px;
+            font-size: 22px;
             font-weight: 700;
             color: var(--text-main);
             margin-bottom: 5px;
@@ -104,7 +104,7 @@
         }
 
         .form-group {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             text-align: right;
         }
 
@@ -167,12 +167,12 @@
 
         textarea {
             resize: vertical;
-            height: 90px;
+            height: 80px;
         }
 
         .btn {
             width: 100%;
-            padding: 14px;
+            padding: 13px;
             border: none;
             border-radius: 12px;
             background-color: var(--primary);
@@ -199,7 +199,7 @@
 
         .card-footer-link {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 18px;
             font-size: 13px;
             color: var(--text-muted);
         }
@@ -215,7 +215,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
             padding-bottom: 12px;
             border-bottom: 1px solid var(--border-color);
             direction: ltr;
@@ -250,8 +250,8 @@
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
             margin-top: 20px;
         }
 
@@ -259,7 +259,7 @@
             background-color: #F8FAFC;
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 25px 15px;
+            padding: 20px 10px;
             text-align: center;
             cursor: pointer;
             transition: all 0.25s ease;
@@ -273,19 +273,19 @@
         }
 
         .tile-icon {
-            font-size: 38px;
-            margin-bottom: 12px;
+            font-size: 32px;
+            margin-bottom: 10px;
         }
 
         .tile-title {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--text-main);
             margin-bottom: 4px;
         }
 
         .tile-desc {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
             font-weight: 500;
         }
@@ -340,21 +340,17 @@
             background: var(--primary-hover);
         }
 
-        /* حاوية الفكين المرفوعة محلياً من جهاز الدكتور */
+        /* حاوية قالب الفكين الأساسي مع النقاط المتحركة بحرية */
         .real-jaw-container {
             width: 100%;
-            max-width: 380px;
+            max-width: 450px;
             margin: 0 auto 15px auto;
             position: relative;
-            background: #1E293B;
+            background: #0F172A;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             text-align: center;
-            min-height: 200px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
 
         .real-jaw-container img {
@@ -362,37 +358,38 @@
             display: block;
         }
 
-        .jaw-overlay-grid {
+        /* حاوية النقاط المطلقة فوق الصورة لتتحرك بكل حرية */
+        .jaw-absolute-overlay {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            grid-template-rows: repeat(4, 1fr);
-            padding: 12px;
-            gap: 3px;
+            pointer-events: none;
         }
 
         .tooth-hotspot {
+            position: absolute;
             background: var(--status-healthy);
-            border: 1px solid rgba(255, 255, 255, 0.35);
+            border: 1.5px solid rgba(255, 255, 255, 0.7);
             border-radius: 6px;
             cursor: pointer;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 9px;
-            font-weight: bold;
+            font-weight: 900;
             color: #FFFFFF;
-            transition: all 0.2s;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+            transition: background 0.2s;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+            pointer-events: auto;
+            transform: translate(-50%, -50%);
+            user-select: none;
         }
 
         .tooth-hotspot:hover {
-            background: rgba(14, 165, 233, 0.7);
-            border-color: #0EA5E9;
+            background: rgba(14, 165, 233, 0.85);
+            border-color: #FFFFFF;
+            z-index: 10;
         }
 
         .tooth-hotspot.status-تسوس { background-color: var(--status-caries); border: 1px solid #EF4444; }
@@ -401,12 +398,23 @@
         .tooth-hotspot.status-خلع { background-color: var(--status-missing); border: 1px solid #94A3B8; }
         .tooth-hotspot.status-تلبيسة { background-color: var(--status-crown); border: 1px solid #EAB308; }
 
+        .editor-tools-bar {
+            background: #F1F5F9;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            border: 1px solid var(--border-color);
+        }
+
         .chart-legend {
             display: flex;
             justify-content: center;
             gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             font-size: 11px;
             font-weight: 600;
         }
@@ -528,7 +536,7 @@
             </div>
         </div>
 
-        <!-- 3. لوحة التحكم الرئيسية -->
+        <!-- 3. لوحة التحكم الرئيسية (الأيقونات الثلاث) -->
         <div class="card" id="dashboard-section">
             <div class="clinic-topbar">
                 <a onclick="logout()" class="logout-btn">خروج</a>
@@ -546,6 +554,11 @@
                     <div class="tile-title">مريض جديد</div>
                     <div class="tile-desc">فتح ملف ومخطط</div>
                 </div>
+                <div class="dashboard-tile" onclick="openTemplateManager()">
+                    <div class="tile-icon">🖼️</div>
+                    <div class="tile-title">قالب الفكين</div>
+                    <div class="tile-desc">تغيير الصورة الرئيسية</div>
+                </div>
                 <div class="dashboard-tile" onclick="openPatientsArchive()">
                     <div class="tile-icon">📂</div>
                     <div class="tile-title">ملفات المرضى</div>
@@ -554,7 +567,31 @@
             </div>
         </div>
 
-        <!-- 4. أرشيف ملفات المرضى -->
+        <!-- 4. شاشة إدارة قالب الفكين الرئيسي للعيادة -->
+        <div class="card" id="template-manager-section">
+            <div class="clinic-topbar">
+                <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
+                <div class="doctor-welcome">🦷 قالب الفكين العام</div>
+            </div>
+
+            <div class="card-header" style="margin-bottom: 15px;">
+                <h2>صورة الفكين الرئيسية للعيادة</h2>
+                <p>اختر صورة فكين معتمدة لتظهر تلقائياً لكل المرضى</p>
+            </div>
+
+            <div class="form-group">
+                <label for="global-jaw-file">اختر ملف صورة الفكين من جهازك:</label>
+                <input type="file" id="global-jaw-file" accept="image/*" onchange="previewGlobalJaw(event)">
+            </div>
+
+            <div class="real-jaw-container" style="margin-top: 15px;">
+                <img id="global-preview-img" src="" alt="معاينة قالب الفكين">
+            </div>
+
+            <button type="button" class="btn" onclick="saveGlobalJawTemplate()">اعتماد كقالب رئيسي للعيادة</button>
+        </div>
+
+        <!-- 5. أرشيف ملفات المرضى -->
         <div class="card" id="patients-archive-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
@@ -573,7 +610,7 @@
             </div>
         </div>
 
-        <!-- 5. شاشة معلومات المريض (مع زر رفع/تغيير صورة الفكين خصيصاً للمريض) -->
+        <!-- 6. شاشة معلومات المريض -->
         <div class="card" id="patient-info-section">
             <div class="clinic-topbar">
                 <a onclick="backToDashboard()" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
@@ -582,7 +619,7 @@
 
             <div class="card-header" style="margin-bottom: 15px;">
                 <h2 id="patient-form-title">ملف مريض جديد</h2>
-                <p>الخطوة 1: ادخل بيانات المريض وصورة الفكين الخاصة به</p>
+                <p>الخطوة 1: ادخل بيانات المريض الأساسية</p>
             </div>
 
             <form onsubmit="goToChartSection(event)">
@@ -611,11 +648,6 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="p-jaw-image-file">صورة الفكين الخاصة بالمريض (انقر لتغييرها أو رفعها):</label>
-                    <input type="file" id="p-jaw-image-file" accept="image/*" onchange="loadPatientJawImage(event)">
-                </div>
-
-                <div class="form-group">
                     <label for="p-history">التاريخ الطبي</label>
                     <textarea id="p-history" placeholder="الأمراض المزمنة والحساسية..."></textarea>
                 </div>
@@ -624,16 +656,31 @@
             </form>
         </div>
 
-        <!-- 6. شاشة المخطط الطبي -->
+        <!-- 7. شاشة المخطط الطبي مع تحكم كامل بأرقام الأسنان (سحب، تكبير، تصغير) -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
-                <div class="doctor-welcome">🦷 المخطط الطبي الواقعي</div>
+                <div class="doctor-welcome">🦷 المخطط الطبي التفاعلي</div>
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2 id="chart-patient-title">مخطط الأسنان التشريعي</h2>
-                <p>انقر مباشرة على السن في صورة الفكين لتحديد حالته</p>
+                <p>انقر مباشرة على السن لتحديد حالته السريرية</p>
+            </div>
+
+            <!-- شريط أدوات تحكم الطبيب بالنقاط والأرقام -->
+            <div class="editor-tools-bar">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">تحكم بأرقام الأسنان:</span>
+                    <button type="button" class="btn" style="width: auto; padding: 5px 12px; font-size: 11px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع تحريك الأرقام</button>
+                </div>
+                <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 5px;">
+                    اسحب أي رقم سن بملمس إصبعك أو الماوس لوضعه فوق السن بدقة!
+                    <div style="display: flex; gap: 10px; margin-top: 8px; justify-content: center; align-items: center;">
+                        <label>حجم الأرقام:</label>
+                        <input type="range" id="hotspot-size-range" min="18" max="40" value="28" oninput="updateHotspotSize(this.value)">
+                    </div>
+                </div>
             </div>
 
             <div class="smart-chart-container">
@@ -646,11 +693,11 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- عرض صورة الفكين التي رفعها الدكتور خصيصاً لهذا المريض -->
-                <div class="real-jaw-container">
-                    <img id="active-jaw-img" src="" alt="صورة الفكين للمريض">
-                    <div class="jaw-overlay-grid" id="jaw-grid">
-                        <!-- توزيع النقاط التفاعلية للأسنان -->
+                <!-- عرض القالب العام مع النقاط المتحركة فوقه -->
+                <div class="real-jaw-container" id="jaw-container-box">
+                    <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
+                    <div class="jaw-absolute-overlay" id="jaw-grid">
+                        <!-- توزيع أرقام الأسنان التفاعلية -->
                     </div>
                 </div>
             </div>
@@ -702,7 +749,10 @@
         const db = firebase.firestore();
 
         let toothData = {};
-        let patientJawImageSrc = "";
+        let globalJawImage = localStorage.getItem('clinic_global_jaw') || "";
+        let hotspotPositions = JSON.parse(localStorage.getItem('clinic_jaw_positions')) || getDefaultPositions();
+        let hotspotSize = localStorage.getItem('clinic_jaw_size') || 28;
+        let isEditMode = false;
         let currentSelectedTooth = null;
         let currentUser = null;
         let temporaryPatientInfo = {};
@@ -713,12 +763,32 @@
             48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38
         ];
 
+        function getDefaultPositions() {
+            let pos = {};
+            // إحداثيات افتراضية موزعة بشكل مبدئي فوق القوسين (نسب مئوية X و Y)
+            let upper = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
+            let lower = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
+            
+            upper.forEach((num, i) => {
+                let x = 12 + (i * 5.2);
+                let y = i < 8 ? 22 + Math.abs(3 - i) * 6 : 22 + Math.abs(12 - i) * 6;
+                pos[num] = { x: x, y: y };
+            });
+            lower.forEach((num, i) => {
+                let x = 12 + (i * 5.2);
+                let y = i < 8 ? 78 - Math.abs(3 - i) * 6 : 78 - Math.abs(12 - i) * 6;
+                pos[num] = { x: x, y: y };
+            });
+            return pos;
+        }
+
         function renderJawGrid() {
             const grid = document.getElementById('jaw-grid');
             grid.innerHTML = '';
 
-            if (patientJawImageSrc) {
-                document.getElementById('active-jaw-img').src = patientJawImageSrc;
+            if (globalJawImage) {
+                document.getElementById('active-jaw-img').src = globalJawImage;
+                document.getElementById('global-preview-img').src = globalJawImage;
             }
 
             allTeeth.forEach(num => {
@@ -726,9 +796,78 @@
                 hotspot.className = 'tooth-hotspot';
                 hotspot.id = `hotspot-${num}`;
                 hotspot.textContent = num;
-                hotspot.onclick = () => openToothModal(num);
+                
+                let p = hotspotPositions[num] || { x: 50, y: 50 };
+                hotspot.style.left = p.x + '%';
+                hotspot.style.top = p.y + '%';
+                hotspot.style.width = hotspotSize + 'px';
+                hotspot.style.height = hotspotSize + 'px';
+                hotspot.style.fontSize = (hotspotSize * 0.35) + 'px';
+
+                if (isEditMode) {
+                    makeDraggable(hotspot, num);
+                } else {
+                    hotspot.onclick = () => openToothModal(num);
+                }
+
                 grid.appendChild(hotspot);
             });
+        }
+
+        function makeDraggable(element, toothNum) {
+            let isDragging = false;
+            let container = document.getElementById('jaw-container-box');
+
+            element.onmousedown = element.ontouchstart = (e) => {
+                isDragging = true;
+                e.preventDefault();
+            };
+
+            window.onmousemove = window.ontouchmove = (e) => {
+                if (!isDragging) return;
+                let rect = container.getBoundingClientRect();
+                let clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                let x = ((clientX - rect.left) / rect.width) * 100;
+                let y = ((clientY - rect.top) / rect.height) * 100;
+
+                x = Math.max(5, Math.min(95, x));
+                y = Math.max(5, Math.min(95, y));
+
+                hotspotPositions[toothNum] = { x: x, y: y };
+                element.style.left = x + '%';
+                element.style.top = y + '%';
+            };
+
+            window.onmouseup = window.ontouchend = () => {
+                if (isDragging) {
+                    isDragging = false;
+                    localStorage.setItem('clinic_jaw_positions', JSON.stringify(hotspotPositions));
+                }
+            };
+        }
+
+        function toggleEditMode() {
+            isEditMode = !isEditMode;
+            let btn = document.getElementById('edit-mode-btn');
+            let controls = document.getElementById('position-controls');
+            if (isEditMode) {
+                btn.textContent = "🔒 إيقاف وضع التعديل والحفظ";
+                btn.style.background = "#EF4444";
+                controls.style.display = "block";
+            } else {
+                btn.textContent = "🔓 تفعيل وضع تحريك الأرقام";
+                btn.style.background = "var(--primary)";
+                controls.style.display = "none";
+            }
+            renderJawGrid();
+        }
+
+        function updateHotspotSize(val) {
+            hotspotSize = val;
+            localStorage.setItem('clinic_jaw_size', val);
+            renderJawGrid();
         }
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -775,21 +914,36 @@
             document.getElementById('p-age').value = '';
             document.getElementById('p-phone').value = '';
             document.getElementById('p-history').value = '';
-            document.getElementById('p-jaw-image-file').value = '';
             toothData = {};
-            patientJawImageSrc = "";
+            renderJawGrid();
             switchTab('patient-info-section');
         }
 
-        function loadPatientJawImage(event) {
+        function openTemplateManager() {
+            switchTab('template-manager-section');
+        }
+
+        function previewGlobalJaw(event) {
             const file = event.target.files[0];
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function(e) {
-                    patientJawImageSrc = e.target.result;
+                    globalJawImage = e.target.result;
+                    document.getElementById('global-preview-img').src = globalJawImage;
                 }
                 reader.readAsDataURL(file);
             }
+        }
+
+        function saveGlobalJawTemplate() {
+            if (!globalJawImage) {
+                alert('الرجاء اختيار صورة أولاً');
+                return;
+            }
+            localStorage.setItem('clinic_global_jaw', globalJawImage);
+            alert('تم اعتماد قالب الفكين الرئيسي للعيادة بنجاح!');
+            switchTab('dashboard-section');
+            renderJawGrid();
         }
 
         function openPatientsArchive() {
@@ -848,7 +1002,6 @@
                     document.getElementById('p-phone').value = data.phone;
                     document.getElementById('p-history').value = data.history || '';
                     toothData = data.teeth || {};
-                    patientJawImageSrc = data.jawImage || "";
                     
                     renderJawGrid();
                     for (let toothNum in toothData) {
@@ -864,11 +1017,6 @@
 
         function goToChartSection(event) {
             event.preventDefault();
-            if (!patientJawImageSrc && !editingPatientId) {
-                alert('الرجاء اختيار صورة الفكين الخاصة بالمريض أولاً');
-                return;
-            }
-
             temporaryPatientInfo = {
                 name: document.getElementById('p-name').value,
                 gender: document.getElementById('p-gender').value,
@@ -876,7 +1024,6 @@
                 phone: document.getElementById('p-phone').value,
                 history: document.getElementById('p-history').value
             };
-            
             renderJawGrid();
             document.getElementById('chart-patient-title').textContent = `مخطط أسنان: ${temporaryPatientInfo.name}`;
             switchTab('patient-chart-section');
@@ -892,21 +1039,20 @@
                 doctorId: currentUser.uid,
                 ...temporaryPatientInfo,
                 teeth: toothData,
-                jawImage: patientJawImageSrc,
                 updatedAt: new Date()
             };
 
             if (editingPatientId) {
                 db.collection("patients").doc(editingPatientId).update(finalPatientData)
                     .then(() => {
-                        alert('تم تحديث ملف المريض وصورته بنجاح!');
+                        alert('تم تحديث ملف المريض بنجاح!');
                         switchTab('dashboard-section');
                     })
                     .catch((error) => alert('خطأ في التحديث: ' + error.message));
             } else {
                 db.collection("patients").add(finalPatientData)
                     .then(() => {
-                        alert('تم حفظ ملف المريض الجديد وصورته في السحابة بنجاح!');
+                        alert('تم حفظ ملف المريض الجديد في السحابة بنجاح!');
                         switchTab('dashboard-section');
                     })
                     .catch((error) => alert('خطأ في الحفظ: ' + error.message));
@@ -931,10 +1077,10 @@
         }
 
         function saveToothStatus() {
-            const status = document.getElementById('tooth-status').value;
+            const status = document.getElementById('tooth-status5') || document.getElementById('tooth-status').value;
             const notes = document.getElementById('tooth-notes').value;
-            toothData[currentSelectedTooth] = { status, notes };
-            updateToothVisual(currentSelectedTooth, status);
+            toothData[currentSelectedTooth] = { status: document.getElementById('tooth-status').value, notes };
+            updateToothVisual(currentSelectedTooth, document.getElementById('tooth-status').value);
             closeToothModal();
         }
 
