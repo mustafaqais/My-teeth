@@ -120,6 +120,7 @@
         input[type="password"],
         input[type="email"],
         input[type="number"],
+        input[type="file"],
         select,
         textarea {
             width: 100%;
@@ -249,8 +250,8 @@
 
         .dashboard-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
             margin-top: 20px;
         }
 
@@ -258,7 +259,7 @@
             background-color: #F8FAFC;
             border: 1px solid var(--border-color);
             border-radius: 16px;
-            padding: 25px 15px;
+            padding: 20px 10px;
             text-align: center;
             cursor: pointer;
             transition: all 0.25s ease;
@@ -272,19 +273,19 @@
         }
 
         .tile-icon {
-            font-size: 38px;
-            margin-bottom: 12px;
+            font-size: 32px;
+            margin-bottom: 10px;
         }
 
         .tile-title {
-            font-size: 15px;
+            font-size: 13px;
             font-weight: 700;
             color: var(--text-main);
             margin-bottom: 4px;
         }
 
         .tile-desc {
-            font-size: 11px;
+            font-size: 10px;
             color: var(--text-muted);
             font-weight: 500;
         }
@@ -339,7 +340,7 @@
             background: var(--primary-hover);
         }
 
-        /* حاوية صورتك الخاصة للفكين الحقيقيين */
+        /* حاوية صورة الفكين المخصصة */
         .real-jaw-container {
             width: 100%;
             max-width: 380px;
@@ -357,7 +358,6 @@
             display: block;
         }
 
-        /* شبكة النقاط التفاعلية بدقة فوق صورتك الخاصة */
         .jaw-overlay-grid {
             position: absolute;
             top: 0;
@@ -524,7 +524,7 @@
             </div>
         </div>
 
-        <!-- 3. لوحة التحكم الرئيسية -->
+        <!-- 3. لوحة التحكم الرئيسية (محدثة مع أيقونة تخصيص صورة الفكين للمريض) -->
         <div class="card" id="dashboard-section">
             <div class="clinic-topbar">
                 <a onclick="logout()" class="logout-btn">خروج</a>
@@ -540,17 +540,46 @@
                 <div class="dashboard-tile" onclick="openNewPatientForm()">
                     <div class="tile-icon">➕</div>
                     <div class="tile-title">مريض جديد</div>
-                    <div class="tile-desc">فتح ملف ومخطط طبي واقعي</div>
+                    <div class="tile-desc">فتح ملف ومخطط</div>
+                </div>
+                <div class="dashboard-tile" onclick="openCustomImageSection()">
+                    <div class="tile-icon">🖼️</div>
+                    <div class="tile-title">صورة الفكين</div>
+                    <div class="tile-desc">تخصيص صورة المريض</div>
                 </div>
                 <div class="dashboard-tile" onclick="openPatientsArchive()">
                     <div class="tile-icon">📂</div>
                     <div class="tile-title">ملفات المرضى</div>
-                    <div class="tile-desc">استعراض وتعديل السجلات السابقة</div>
+                    <div class="tile-desc">السجلات السابقة</div>
                 </div>
             </div>
         </div>
 
-        <!-- 4. أرشيف ملفات المرضى -->
+        <!-- 4. شاشة تخصيص ورفع صورة الفكين الخاصة بالمريض -->
+        <div class="card" id="custom-image-section">
+            <div class="clinic-topbar">
+                <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
+                <div class="doctor-welcome">🦷 إرفاق صورة الفكين</div>
+            </div>
+
+            <div class="card-header" style="margin-bottom: 15px;">
+                <h2>تخصيص صورة الفكين</h2>
+                <p>اختر صورة فكين خاصة بالمريض من جهازك</p>
+            </div>
+
+            <div class="form-group">
+                <label for="custom-img-file">اختر ملف الصورة:</label>
+                <input type="file" id="custom-img-file" accept="image/*" onchange="previewCustomImage(event)">
+            </div>
+
+            <div class="real-jaw-container" style="margin-top: 15px;">
+                <img id="custom-preview-img" src="jaw.jpg" alt="معاينة الفكين">
+            </div>
+
+            <button type="button" class="btn" onclick="saveCustomImageToActivePatient()">اعتماد الصورة للمريض الحالي</button>
+        </div>
+
+        <!-- 5. أرشيف ملفات المرضى -->
         <div class="card" id="patients-archive-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
@@ -569,7 +598,7 @@
             </div>
         </div>
 
-        <!-- 5. شاشة معلومات المريض -->
+        <!-- 6. شاشة معلومات المريض -->
         <div class="card" id="patient-info-section">
             <div class="clinic-topbar">
                 <a onclick="backToDashboard()" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
@@ -611,11 +640,11 @@
                     <textarea id="p-history" placeholder="الأمراض المزمنة والحساسية..."></textarea>
                 </div>
 
-                <button type="submit" class="btn" style="margin-top: 15px;">الانتقال للمخطط الطبي الواقعي &larr;</button>
+                <button type="submit" class="btn" style="margin-top: 15px;">الانتقال للمخطط الطبي &larr;</button>
             </form>
         </div>
 
-        <!-- 6. شاشة المخطط الطبي بصورتك المحلية الحصرية -->
+        <!-- 7. شاشة المخطط الطبي -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
@@ -637,9 +666,9 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- عرض صورتك الخاصة jaw.jpg الحصرية حصراً -->
+                <!-- عرض صورة الفكين الخاصة بالمريض (سواء الافتراضية jaw.jpg أو المرفوعة خصيصاً) -->
                 <div class="real-jaw-container">
-                    <img src="jaw.jpg" alt="قالب الفكين التشريعي" id="jaw-real-img">
+                    <img id="active-jaw-img" src="jaw.jpg" alt="قالب الفكين التشريعي">
                     <div class="jaw-overlay-grid" id="jaw-grid">
                         <!-- توزيع النقاط التفاعلية للأسنان -->
                     </div>
@@ -693,6 +722,7 @@
         const db = firebase.firestore();
 
         let toothData = {};
+        let currentCustomImage = "jaw.jpg";
         let currentSelectedTooth = null;
         let currentUser = null;
         let temporaryPatientInfo = {};
@@ -706,6 +736,10 @@
         function renderJawGrid() {
             const grid = document.getElementById('jaw-grid');
             grid.innerHTML = '';
+
+            // تحديث صورتي المعاينة والمخطط بالصورة المختارة للمريض
+            document.getElementById('active-jaw-img').src = currentCustomImage;
+            document.getElementById('custom-preview-img').src = currentCustomImage;
 
             allTeeth.forEach(num => {
                 const hotspot = document.createElement('div');
@@ -762,8 +796,30 @@
             document.getElementById('p-phone').value = '';
             document.getElementById('p-history').value = '';
             toothData = {};
+            currentCustomImage = "jaw.jpg";
             renderJawGrid();
             switchTab('patient-info-section');
+        }
+
+        function openCustomImageSection() {
+            switchTab('custom-image-section');
+        }
+
+        function previewCustomImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentCustomImage = e.target.result;
+                    document.getElementById('custom-preview-img').src = currentCustomImage;
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function saveCustomImageToActivePatient() {
+            alert('تم اعتماد الصورة بنجاح! سيتم حفظها في ملف المريض.');
+            switchTab('dashboard-section');
         }
 
         function openPatientsArchive() {
@@ -822,6 +878,7 @@
                     document.getElementById('p-phone').value = data.phone;
                     document.getElementById('p-history').value = data.history || '';
                     toothData = data.teeth || {};
+                    currentCustomImage = data.customImage || "jaw.jpg";
                     
                     renderJawGrid();
                     for (let toothNum in toothData) {
@@ -858,20 +915,21 @@
                 doctorId: currentUser.uid,
                 ...temporaryPatientInfo,
                 teeth: toothData,
+                customImage: currentCustomImage,
                 updatedAt: new Date()
             };
 
             if (editingPatientId) {
                 db.collection("patients").doc(editingPatientId).update(finalPatientData)
                     .then(() => {
-                        alert('تم تحديث ملف المريض بنجاح!');
+                        alert('تم تحديث ملف المريض مع الصورة بنجاح!');
                         switchTab('dashboard-section');
                     })
                     .catch((error) => alert('خطأ في التحديث: ' + error.message));
             } else {
                 db.collection("patients").add(finalPatientData)
                     .then(() => {
-                        alert('تم حفظ ملف المريض الجديد في السحابة بنجاح!');
+                        alert('تم حفظ ملف المريض الجديد مع الصورة في السحابة بنجاح!');
                         switchTab('dashboard-section');
                     })
                     .catch((error) => alert('خطأ في الحفظ: ' + error.message));
