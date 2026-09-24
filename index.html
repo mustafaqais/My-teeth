@@ -24,7 +24,7 @@
             --input-bg: #F8FAFC;
             --border-color: #E2E8F0;
             
-            --status-healthy: rgba(255, 255, 255, 0.25);
+            --status-healthy: transparent;
             --status-caries: rgba(239, 68, 68, 0.85);
             --status-filled: rgba(59, 130, 246, 0.85);
             --status-rct: rgba(245, 158, 11, 0.85);
@@ -366,20 +366,28 @@
             pointer-events: none;
         }
 
+        /* تصميم أرقام الأسنان (افتراضياً شفافة ولا تظهر حدودها إلا عند التفعيل أو الاختيار) */
         .tooth-hotspot {
             position: absolute;
             background: var(--status-healthy);
-            border: 1.5px solid rgba(255, 255, 255, 0.8);
+            border: 1px dashed rgba(255, 255, 255, 0.2); /* شفافة وخفيفة جداً حتى لا تشوه الصورة */
             cursor: grab;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: 900;
             color: #FFFFFF;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+            text-shadow: 0 1px 3px rgba(0,0,0,0.9), 0 0 5px rgba(0,0,0,0.8);
             pointer-events: auto;
             user-select: none;
             touch-action: none;
+            transition: background-color 0.2s, border 0.2s;
+        }
+
+        /* وضع إظهار الحدود للمساعدة أثناء التعديل */
+        .jaw-absolute-overlay.show-borders .tooth-hotspot {
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.1);
         }
 
         .tooth-hotspot:active {
@@ -387,7 +395,7 @@
         }
 
         .tooth-hotspot:hover {
-            background: rgba(14, 165, 233, 0.9);
+            background: rgba(14, 165, 233, 0.4);
             border-color: #FFFFFF;
             z-index: 50;
         }
@@ -650,7 +658,7 @@
 
             <div class="card-header" style="margin-bottom: 15px;">
                 <h2>صورة الفكين وأحجام ومواقع الأسنان</h2>
-                <p>اسحب أي سن أو انقر عليه للتحكم بحجمه (العرض والارتفاع)، شكله (دائري/مربع/مستطيل)، وزاوية تدويره</p>
+                <p>اسحب أي سن أو انقر عليه لتعديل حجمه، وضعه بدقة فوق السن في الصورة</p>
             </div>
 
             <div class="form-group">
@@ -660,11 +668,11 @@
 
             <div class="editor-tools-bar" style="margin-top: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <span style="font-size: 12px; font-weight: bold; color: var(--primary);">أداة التحكم المتقدمة:</span>
+                    <button type="button" class="btn btn-secondary" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleBorders()">👁️ إظهار/إخفاء حدود الأرقام</button>
                     <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع السحب والتخصيص</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 10px; border-radius: 8px;">
-                    ✋ **اسحب أي سن بمكانه.** | 👆 **انقر على أي سن لتعديل حجمه وشكله بدقة.**
+                    ✋ **اسحب الرقم وضعه فوق السن تماماً.** | 👆 **انقر على أي رقم لتعديل حجمه ودائرته بدقة.**
                 </div>
             </div>
 
@@ -674,17 +682,17 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label>عرض السن (Width):</label>
-                        <input type="range" min="15" max="80" id="edit-width" oninput="updateSelectedHotspotStyle()">
+                        <input type="range" min="15" max="60" id="edit-width" oninput="updateSelectedHotspotStyle()">
                     </div>
                     <div class="form-group">
                         <label>ارتفاع السن (Height):</label>
-                        <input type="range" min="15" max="80" id="edit-height" oninput="updateSelectedHotspotStyle()">
+                        <input type="range" min="15" max="60" id="edit-height" oninput="updateSelectedHotspotStyle()">
                     </div>
                 </div>
                 <div class="form-row">
                     <div class="form-group">
-                        <label>انحناء الحواف (دائري / مربع / مستطيل):</label>
-                        <input type="range" min="0" max="40" id="edit-radius" oninput="updateSelectedHotspotStyle()">
+                        <label>انحناء الحواف (دائري / مربع):</label>
+                        <input type="range" min="0" max="30" id="edit-radius" oninput="updateSelectedHotspotStyle()">
                     </div>
                     <div class="form-group">
                         <label>التدوير (Rotation الزاوية):</label>
@@ -696,7 +704,7 @@
 
             <div class="real-jaw-container" id="template-jaw-container" style="margin-top: 15px;">
                 <img id="global-preview-img" src="" alt="معاينة قالب الفكين">
-                <div class="jaw-absolute-overlay" id="template-jaw-grid"></div>
+                <div class="jaw-absolute-overlay show-borders" id="template-jaw-grid"></div>
             </div>
 
             <button type="button" class="btn" onclick="saveGlobalJawTemplate()">اعتماد قالب الفكين والتخصيصات للعيادة</button>
@@ -776,7 +784,7 @@
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>مخطط الأسنان التشريعي</h2>
-                <p>انقر على أي سن لفتح لوحة التحكم الخاصة به بالأسفل</p>
+                <p>الأرقام مثبتة على الأسنان، اضغط على أي رقم لفتح ملفه بالأسفل</p>
             </div>
 
             <div class="smart-chart-container">
@@ -789,7 +797,7 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- عرض القالب النظيف الخاص بالمريض -->
+                <!-- عرض القالب النظيف الخاص بالمريض (أرقام شفافة ومنسقة فوق الأسنان تماماً) -->
                 <div class="real-jaw-container" id="jaw-container-box">
                     <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
                     <div class="jaw-absolute-overlay" id="jaw-grid">
@@ -882,22 +890,26 @@
 
         function getDefaultPositions() {
             let pos = {};
+            // إحداثيات افتراضية دقيقة متناسبة مع شكل الأقواس القياسي للفكين العلوي والسفل
+            const upperCoords = [
+                {x: 23, y: 39}, {x: 25, y: 31}, {x: 28, y: 24}, {x: 32, y: 19}, {x: 37, y: 15}, {x: 43, y: 13}, {x: 49, y: 12}, {x: 55, y: 12},
+                {x: 61, y: 12}, {x: 67, y: 13}, {x: 73, y: 15}, {x: 78, y: 19}, {x: 82, y: 24}, {x: 85, y: 31}, {x: 87, y: 39}, {x: 89, y: 47}
+            ];
+            const lowerCoords = [
+                {x: 25, y: 64}, {x: 27, y: 72}, {x: 30, y: 79}, {x: 34, y: 84}, {x: 39, y: 87}, {x: 44, y: 89}, {x: 50, y: 90}, {x: 56, y: 90},
+                {x: 62, y: 90}, {x: 68, y: 89}, {x: 73, y: 87}, {x: 78, y: 84}, {x: 82, y: 79}, {x: 85, y: 72}, {x: 87, y: 64}, {x: 89, y: 56}
+            ];
+            
             let upper = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
             let lower = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
             
-            upper.forEach((num, i) => {
-                let x = 12 + (i * 5.2);
-                pos[num] = { x: x, y: 25 };
-            });
-            lower.forEach((num, i) => {
-                let x = 12 + (i * 5.2);
-                pos[num] = { x: x, y: 75 };
-            });
+            upper.forEach((num, i) => { pos[num] = upperCoords[i]; });
+            lower.forEach((num, i) => { pos[num] = lowerCoords[i]; });
             return pos;
         }
 
         function getToothStyle(num) {
-            return hotspotStyles[num] || { width: 28, height: 28, radius: 6, rotate: 0 };
+            return hotspotStyles[num] || { width: 26, height: 26, radius: 13, rotate: 0 };
         }
 
         function applyStyleToElement(element, styleObj) {
@@ -905,12 +917,11 @@
             element.style.height = styleObj.height + 'px';
             element.style.borderRadius = styleObj.radius + 'px';
             element.style.transform = `translate(-50%, -50%) rotate(${styleObj.rotate}deg)`;
-            // حجم رقم السن بداخل المربع يتناسب ديناميكياً مع حجم المربع نفسه
-            element.style.fontSize = (Math.min(styleObj.width, styleObj.height) * 0.42) + 'px';
+            element.style.fontSize = (Math.min(styleObj.width, styleObj.height) * 0.5) + 'px';
         }
 
         function renderJawGrid() {
-            // 1. شاشة المريض
+            // 1. شاشة المريض (مخطط نظيف وشفاف بدون حدود مزعجة)
             const grid = document.getElementById('jaw-grid');
             if (grid) {
                 grid.innerHTML = '';
@@ -930,6 +941,11 @@
                     hotspot.style.top = p.y + '%';
                     applyStyleToElement(hotspot, st);
 
+                    // إذا كان السن مصاباً بحالة معينة، نلون خلفية الرقم بلون الحالة
+                    if (toothData[num] && toothData[num].status && toothData[num].status !== 'سليم') {
+                        hotspot.classList.add(`status-${toothData[num].status}`);
+                    }
+
                     hotspot.onclick = (e) => {
                         openToothPanel(num);
                     };
@@ -938,7 +954,7 @@
                 });
             }
 
-            // 2. شاشة قالب الفكين (مع إمكانية النقر والتخصيص الفردي)
+            // 2. شاشة قالب الفكين (للتخصيص والسحب)
             const templateGrid = document.getElementById('template-jaw-grid');
             if (templateGrid) {
                 templateGrid.innerHTML = '';
@@ -971,10 +987,17 @@
             }
         }
 
+        function toggleBorders() {
+            const templateGrid = document.getElementById('template-jaw-grid');
+            if (templateGrid) {
+                templateGrid.classList.toggle('show-borders');
+            }
+        }
+
         function openHotspotEditor(num) {
             editingHotspotTooth = num;
             let st = getToothStyle(num);
-            document.getElementById('editor-tooth-title').textContent = `تخصيص حجم وشكل السن رقم: ${num}`;
+            document.getElementById('editor-tooth-title').textContent = `تخصيص حجم وشكل الرقم للسن: ${num}`;
             document.getElementById('edit-width').value = st.width;
             document.getElementById('edit-height').value = st.height;
             document.getElementById('edit-radius').value = st.radius;
