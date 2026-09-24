@@ -366,11 +366,11 @@
             pointer-events: none;
         }
 
-        /* تصميم أرقام الأسنان (افتراضياً شفافة ولا تظهر حدودها إلا عند التفعيل أو الاختيار) */
+        /* تصميم أرقام الأسنان */
         .tooth-hotspot {
             position: absolute;
             background: var(--status-healthy);
-            border: 1px dashed rgba(255, 255, 255, 0.2); /* شفافة وخفيفة جداً حتى لا تشوه الصورة */
+            border: 1px dashed rgba(255, 255, 255, 0.2);
             cursor: grab;
             display: flex;
             justify-content: center;
@@ -381,7 +381,13 @@
             pointer-events: auto;
             user-select: none;
             touch-action: none;
-            transition: background-color 0.2s, border 0.2s;
+            transition: background-color 0.2s, border 0.2s, opacity 0.2s;
+        }
+
+        /* إخفاء الأرقام تماماً عندما يتم تفعيل خاصية الإخفاء */
+        .jaw-absolute-overlay.hide-numbers .tooth-hotspot {
+            opacity: 0;
+            pointer-events: none;
         }
 
         /* وضع إظهار الحدود للمساعدة أثناء التعديل */
@@ -668,7 +674,7 @@
 
             <div class="editor-tools-bar" style="margin-top: 15px;">
                 <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                    <button type="button" class="btn btn-secondary" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleBorders()">👁️ إظهار/إخفاء حدود الأرقام</button>
+                    <button type="button" class="btn btn-secondary" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleBorders()">👁️ إظهار/إخفاء الحدود</button>
                     <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع السحب والتخصيص</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 10px; border-radius: 8px;">
@@ -784,10 +790,15 @@
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>مخطط الأسنان التشريعي</h2>
-                <p>الأرقام مثبتة على الأسنان، اضغط على أي رقم لفتح ملفه بالأسفل</p>
+                <p>اضغط على أي سن لفتح ملفه وإدخال معلوماته</p>
             </div>
 
             <div class="smart-chart-container">
+                <!-- أزرار التحكم العلوية للمخطط (إخفاء/إظهار الأرقام) -->
+                <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 10px;">
+                    <button type="button" class="btn btn-secondary" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="togglePatientNumbersVisibility()" id="toggle-num-btn">👁️ إخفاء الأرقام</button>
+                </div>
+
                 <div class="chart-legend">
                     <div class="legend-item"><div class="legend-color" style="background:#E2E8F0"></div>سليم</div>
                     <div class="legend-item"><div class="legend-color" style="background:#EF4444"></div>تسوس</div>
@@ -797,7 +808,7 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- عرض القالب النظيف الخاص بالمريض (أرقام شفافة ومنسقة فوق الأسنان تماماً) -->
+                <!-- عرض القالب الخاص بالمريض -->
                 <div class="real-jaw-container" id="jaw-container-box">
                     <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
                     <div class="jaw-absolute-overlay" id="jaw-grid">
@@ -877,6 +888,7 @@
         let hotspotPositions = JSON.parse(localStorage.getItem('clinic_jaw_positions')) || getDefaultPositions();
         let hotspotStyles = JSON.parse(localStorage.getItem('clinic_jaw_styles')) || {};
         let isEditMode = false;
+        let isNumbersHidden = false;
         let currentSelectedTooth = null;
         let editingHotspotTooth = null;
         let currentUser = null;
@@ -890,7 +902,6 @@
 
         function getDefaultPositions() {
             let pos = {};
-            // إحداثيات افتراضية دقيقة متناسبة مع شكل الأقواس القياسي للفكين العلوي والسفل
             const upperCoords = [
                 {x: 23, y: 39}, {x: 25, y: 31}, {x: 28, y: 24}, {x: 32, y: 19}, {x: 37, y: 15}, {x: 43, y: 13}, {x: 49, y: 12}, {x: 55, y: 12},
                 {x: 61, y: 12}, {x: 67, y: 13}, {x: 73, y: 15}, {x: 78, y: 19}, {x: 82, y: 24}, {x: 85, y: 31}, {x: 87, y: 39}, {x: 89, y: 47}
@@ -921,12 +932,18 @@
         }
 
         function renderJawGrid() {
-            // 1. شاشة المريض (مخطط نظيف وشفاف بدون حدود مزعجة)
+            // 1. شاشة المريض
             const grid = document.getElementById('jaw-grid');
             if (grid) {
                 grid.innerHTML = '';
                 const activeImg = document.getElementById('active-jaw-img');
                 if (activeImg && globalJawImage) activeImg.src = globalJawImage;
+
+                if (isNumbersHidden) {
+                    grid.classList.add('hide-numbers');
+                } else {
+                    grid.classList.remove('hide-numbers');
+                }
 
                 allTeeth.forEach(num => {
                     const hotspot = document.createElement('div');
@@ -941,7 +958,6 @@
                     hotspot.style.top = p.y + '%';
                     applyStyleToElement(hotspot, st);
 
-                    // إذا كان السن مصاباً بحالة معينة، نلون خلفية الرقم بلون الحالة
                     if (toothData[num] && toothData[num].status && toothData[num].status !== 'سليم') {
                         hotspot.classList.add(`status-${toothData[num].status}`);
                     }
@@ -954,7 +970,7 @@
                 });
             }
 
-            // 2. شاشة قالب الفكين (للتخصيص والسحب)
+            // 2. شاشة قالب الفكين
             const templateGrid = document.getElementById('template-jaw-grid');
             if (templateGrid) {
                 templateGrid.innerHTML = '';
@@ -992,6 +1008,23 @@
             if (templateGrid) {
                 templateGrid.classList.toggle('show-borders');
             }
+        }
+
+        function togglePatientNumbersVisibility() {
+            isNumbersHidden = !isNumbersHidden;
+            const btn = document.getElementById('toggle-num-btn');
+            if (btn) {
+                if (isNumbersHidden) {
+                    btn.textContent = "👁️ إظهار الأرقام";
+                    btn.style.background = "var(--primary)";
+                    btn.style.color = "#FFF";
+                } else {
+                    btn.textContent = "👁️ إخفاء الأرقام";
+                    btn.style.background = "#94A3B8";
+                    btn.style.color = "#FFF";
+                }
+            }
+            renderJawGrid();
         }
 
         function openHotspotEditor(num) {
@@ -1376,9 +1409,7 @@
             const status = document.getElementById('tooth-status').value;
             const notes = document.getElementById('tooth-notes').value;
             
-            if (!toothData[currentSelectedTooth]) {
-                toothData[currentSelectedTooth] = { imagesBefore: [], imagesAfter: [] };
-            }
+            , toothData[currentSelectedTooth] = { imagesBefore: [], imagesAfter: [] };
             toothData[currentSelectedTooth].status = status;
             toothData[currentSelectedTooth].notes = notes;
 
