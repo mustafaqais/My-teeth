@@ -1409,7 +1409,9 @@
             const status = document.getElementById('tooth-status').value;
             const notes = document.getElementById('tooth-notes').value;
             
-            , toothData[currentSelectedTooth] = { imagesBefore: [], imagesAfter: [] };
+            if (!toothData[currentSelectedTooth]) {
+                toothData[currentSelectedTooth] = { imagesBefore: [], imagesAfter: [] };
+            }
             toothData[currentSelectedTooth].status = status;
             toothData[currentSelectedTooth].notes = notes;
 
