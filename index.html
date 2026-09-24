@@ -22,7 +22,7 @@
             --input-bg: #F8FAFC;
             --border-color: #E2E8F0;
             
-            --status-healthy: rgba(255, 255, 255, 0.15);
+            --status-healthy: rgba(255, 255, 255, 0.4);
             --status-caries: rgba(239, 68, 68, 0.85);
             --status-filled: rgba(59, 130, 246, 0.85);
             --status-rct: rgba(245, 158, 11, 0.85);
@@ -354,6 +354,8 @@
         .real-jaw-container img {
             width: 100%;
             display: block;
+            position: relative;
+            z-index: 1;
         }
 
         .jaw-absolute-overlay {
@@ -362,10 +364,11 @@
             left: 0;
             width: 100%;
             height: 100%;
+            z-index: 10;
             pointer-events: none;
         }
 
-        /* أرقام الأسنان والتحكم الحر بوضوح تام */
+        /* أرقام الأسنان والمضلع الحر */
         .tooth-polygon {
             position: absolute;
             top: 0;
@@ -373,33 +376,28 @@
             width: 100%;
             height: 100%;
             pointer-events: none;
+            z-index: 15;
         }
 
         .tooth-shape-area {
             position: absolute;
             background: var(--status-healthy);
-            border: 1.5px solid #38BDF8;
+            border: 1px solid rgba(255, 255, 255, 0.7);
             pointer-events: auto;
             display: flex;
             justify-content: center;
             align-items: center;
             font-weight: 900;
             color: #FFFFFF;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+            text-shadow: 0 1px 4px rgba(0,0,0,0.9);
             user-select: none;
             touch-action: none;
-            z-index: 10;
-        }
-
-        /* في الوضع العادي، إظهار الإطار خفيف والأرقام واضحة جداً */
-        .real-jaw-container:not(.edit-mode-active) .tooth-shape-area {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px dashed rgba(255, 255, 255, 0.5);
+            z-index: 20;
         }
 
         .edit-mode-active .tooth-shape-area {
             border: 2px solid #FACC15;
-            background: rgba(14, 165, 233, 0.35);
+            background: rgba(14, 165, 233, 0.4);
         }
 
         /* نقاط التحكم الأربع للزوايا الحرة */
@@ -411,11 +409,11 @@
             border: 2px solid #0F172A;
             border-radius: 50%;
             display: none;
-            z-index: 70;
+            z-index: 50;
             pointer-events: auto;
             transform: translate(-50%, -50%);
             touch-action: none;
-            box-shadow: 0 0 5px rgba(0,0,0,0.5);
+            box-shadow: 0 0 6px rgba(0,0,0,0.6);
         }
 
         .edit-mode-active .tooth-polygon.selected-poly .vertex-handle {
@@ -696,8 +694,8 @@
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
-                <h2>مخطط الأسنان مع ظهور الأرقام بوضوح</h2>
-                <p>تظهر أرقام الأسنان بوضوح فوق الصورة، وفعل وضع التعديل لتحريك الزوايا بحرية تامة!</p>
+                <h2>مخطط الأسنان مع الأرقام الظاهرة بدقة</h2>
+                <p>الأرقام تظهر بوضوح فوق الفكين، ويمكنك تفعيل وضع التعديل لتحريك كل زاوية بحرية تامة!</p>
             </div>
 
             <!-- شريط أدوات تحكم الطبيب -->
@@ -707,7 +705,7 @@
                     <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع التعديل الحر</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 8px; border-radius: 8px;">
-                    ✨ **مفعل:** انقر على أي سن لتظهر نقاطه الصفراء، واسحب أي زاوية لتتحرك وحدها تماماً مع ظهور الأرقام بوضوح!
+                    ✨ **مفعل:** انقر على أي سن لتظهر نقاطه الصفراء، واسحب أي زاوية لتتحرك وحدها تماماً فوق الصورة بوضوح!
                 </div>
             </div>
 
@@ -721,11 +719,11 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- عرض القالب مع الأرقام الواضحة فوق الصورة -->
+                <!-- عرض القالب مع الأرقام المرئية فوق الصورة بدقة -->
                 <div class="real-jaw-container" id="jaw-container-box">
                     <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
                     <div class="jaw-absolute-overlay" id="jaw-grid">
-                        <!-- توزيع الأسنان مع الأرقام الظاهرة -->
+                        <!-- توزيع الأسنان والأرقام الظاهرة -->
                     </div>
                 </div>
             </div>
@@ -854,7 +852,7 @@
 
                 const shapeDiv = document.createElement('div');
                 shapeDiv.className = 'tooth-shape-area';
-                shapeDiv.textContent = num; // رقم السن ظاهر بوضوح تام
+                shapeDiv.textContent = num; // رقم السن ظاهر بوضوح فوق الصورة
                 shapeDiv.style.left = minX + '%';
                 shapeDiv.style.top = minY + '%';
                 shapeDiv.style.width = Math.max(maxX - minX, 4) + '%';
@@ -870,7 +868,7 @@
                 let relBlY = p.bl.y - minY;
 
                 shapeDiv.style.clipPath = `polygon(${relTlX}% ${relTlY}%, ${relTrX}% ${relTrY}%, ${relBrX}% ${relBrY}%, ${relBlX}% ${relBlY}%)`;
-                shapeDiv.style.fontSize = '11px';
+                shapeDiv.style.fontSize = '12px';
 
                 // إنشاء 4 نقاط تحكم حرة للزوايا الأربع
                 const corners = [
@@ -1145,7 +1143,7 @@
                 doctorId: currentUser.uid,
                 ...temporaryPatientInfo,
                 teeth: toothData,
-                updatedAt: new Date()
+            updatedAt: new Date()
             };
 
             if (editingPatientId) {
