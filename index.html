@@ -24,12 +24,12 @@
             --input-bg: #F8FAFC;
             --border-color: #E2E8F0;
             
-            --status-healthy: rgba(255, 255, 255, 0.1);
-            --status-caries: rgba(239, 68, 68, 0.6);
-            --status-filled: rgba(59, 130, 246, 0.6);
-            --status-rct: rgba(245, 158, 11, 0.6);
-            --status-missing: rgba(148, 163, 184, 0.6);
-            --status-crown: rgba(234, 179, 8, 0.6);
+            --status-healthy: rgba(255, 255, 255, 0.15);
+            --status-caries: rgba(239, 68, 68, 0.7);
+            --status-filled: rgba(59, 130, 246, 0.7);
+            --status-rct: rgba(245, 158, 11, 0.7);
+            --status-missing: rgba(148, 163, 184, 0.7);
+            --status-crown: rgba(234, 179, 8, 0.7);
         }
 
         * {
@@ -339,13 +339,13 @@
             background: var(--primary-hover);
         }
 
-        /* حاوية الصورة الواقعية للفكين مع أزرار تفاعلية فوقها */
+        /* حاوية الصورة الحقيقية للفكين المطابقة لصورتك تماماً */
         .real-jaw-container {
             width: 100%;
-            max-width: 420px;
+            max-width: 380px;
             margin: 0 auto 15px auto;
             position: relative;
-            background: #1E293B;
+            background: #2D3748;
             border-radius: 16px;
             overflow: hidden;
             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
@@ -355,10 +355,9 @@
         .real-jaw-container img {
             width: 100%;
             display: block;
-            opacity: 0.9;
         }
 
-        /* شبكة تحديد الأسنان فوق الصورة الحقيقية بدقة */
+        /* شبكة النقاط التفاعلية بدقة فوق قالب الفكين الحقيقي */
         .jaw-overlay-grid {
             position: absolute;
             top: 0;
@@ -368,13 +367,13 @@
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(4, 1fr);
-            padding: 15px;
-            gap: 4px;
+            padding: 12px;
+            gap: 3px;
         }
 
         .tooth-hotspot {
             background: var(--status-healthy);
-            border: 1px dashed rgba(255,255,255,0.4);
+            border: 1px solid rgba(255, 255, 255, 0.3);
             border-radius: 6px;
             cursor: pointer;
             display: flex;
@@ -382,12 +381,13 @@
             align-items: center;
             font-size: 9px;
             font-weight: bold;
-            color: white;
+            color: #FFFFFF;
             transition: all 0.2s;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
         }
 
         .tooth-hotspot:hover {
-            background: rgba(14, 165, 233, 0.4);
+            background: rgba(14, 165, 233, 0.6);
             border-color: #0EA5E9;
         }
 
@@ -564,7 +564,7 @@
 
             <div class="form-group">
                 <div class="patients-list" id="patients-list-container">
-                    <p style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">جاري تحميل السجلات من السحابة...</p>
+                    <p style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">جاري جلب السجلات السحابية...</p>
                 </div>
             </div>
         </div>
@@ -615,7 +615,7 @@
             </form>
         </div>
 
-        <!-- 6. شاشة المخطط الطبي بالصورة الواقعية الحقيقية -->
+        <!-- 6. شاشة المخطط الطبي بالصورة الواقعية المطابقة لصورتك -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
@@ -637,11 +637,11 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- عرض الصورة الحقيقية للفكين مع نقاط تفاعلية فوق الأسنان -->
+                <!-- عرض قالب الفكين الحقيقي المطابق للصورة التي أرسلتها -->
                 <div class="real-jaw-container">
-                    <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80" alt="قالب الفكين التشريعي">
+                    <img src="https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80" alt="قالب الفكين التشريعي" id="jaw-real-img">
                     <div class="jaw-overlay-grid" id="jaw-grid">
-                        <!-- يتم توزيع النقاط التفاعلية للأسنان برمجياً فوق الصورة -->
+                        <!-- توزيع النقاط التفاعلية للأسنان -->
                     </div>
                 </div>
             </div>
@@ -668,7 +668,7 @@
             </div>
             <div class="form-group">
                 <label for="tooth-notes">ملاحظات السن:</label>
-                <textarea id="tooth-notes" placeholder="ملاحظات العلاج أو الحشوة..."></textarea>
+                <textarea id="tooth-notes" placeholder="ملاحظات العلاج والحشوة..."></textarea>
             </div>
             <div class="modal-actions">
                 <button class="btn btn-secondary" type="button" onclick="closeToothModal()">إلغاء</button>
@@ -706,6 +706,10 @@
         function renderJawGrid() {
             const grid = document.getElementById('jaw-grid');
             grid.innerHTML = '';
+            
+            // استخدام رابط الصورة الفعلي المباشر الذي أرسلته لضمان التطابق التام
+            document.getElementById('jaw-real-img').src = 'https://images.unsplash.com/photo-1629909613654-28e377c37b09?auto=format&fit=crop&w=800&q=80';
+
             allTeeth.forEach(num => {
                 const hotspot = document.createElement('div');
                 hotspot.className = 'tooth-hotspot';
