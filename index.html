@@ -433,7 +433,7 @@
             border-radius: 50%;
         }
 
-        /* صندوق إدارة السن المدمج تحت المخطط */
+        /* صندوق إدارة السن المدمج تحت المخطط (مع إمكانية رفع صور متعددة للسن) */
         .tooth-panel-box {
             background: #FFFFFF;
             border: 2px solid var(--primary);
@@ -448,30 +448,44 @@
             display: block;
         }
 
-        /* تنسيق قسم صور قبل وبعد */
-        .before-after-container {
+        .tooth-images-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-top: 15px;
-            background: #F8FAFC;
-            padding: 15px;
-            border-radius: 14px;
-            border: 1px solid var(--border-color);
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+            margin-top: 8px;
         }
 
-        .ba-box {
-            text-align: center;
-        }
-
-        .ba-box img {
+        .tooth-img-thumb {
+            position: relative;
             width: 100%;
-            height: 110px;
-            object-fit: cover;
-            border-radius: 10px;
+            height: 70px;
+            border-radius: 8px;
+            overflow: hidden;
             border: 1px solid var(--border-color);
-            margin-top: 6px;
-            background: #FFF;
+            background: #F8FAFC;
+        }
+
+        .tooth-img-thumb img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .tooth-img-delete {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            background: rgba(239, 68, 68, 0.85);
+            color: #FFF;
+            border: none;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            font-size: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
     </style>
 </head>
@@ -613,7 +627,7 @@
             </div>
         </div>
 
-        <!-- 6. شاشة معلومات المريض (مع ميزة صور قبل وبعد) -->
+        <!-- 6. شاشة معلومات المريض الأساسية -->
         <div class="card" id="patient-info-section">
             <div class="clinic-topbar">
                 <a onclick="backToDashboard()" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
@@ -622,7 +636,7 @@
 
             <div class="card-header" style="margin-bottom: 15px;">
                 <h2 id="patient-form-title">ملف مريض جديد</h2>
-                <p>الخطوة 1: ادخل بيانات المريض الأساسية وتوثيق الصور</p>
+                <p>الخطوة 1: ادخل بيانات المريض الأساسية</p>
             </div>
 
             <form onsubmit="goToChartSection(event)">
@@ -655,23 +669,6 @@
                     <textarea id="p-history" placeholder="الأمراض المزمنة والحساسية..."></textarea>
                 </div>
 
-                <!-- قسم صور قبل وبعد العلاج -->
-                <div class="form-group">
-                    <label>📷 توثيق الحالة (قبل وبعد العلاج / الأشعة):</label>
-                    <div class="before-after-container">
-                        <div class="ba-box">
-                            <label for="img-before" style="cursor: pointer; color: var(--primary);">📥 صورة (قبل)</label>
-                            <input type="file" id="img-before" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'before')">
-                            <img id="preview-before" src="" alt="قبل العلاج">
-                        </div>
-                        <div class="ba-box">
-                            <label for="img-after" style="cursor: pointer; color: var(--primary);">📥 صورة (بعد)</label>
-                            <input type="file" id="img-after" accept="image/*" style="display:none;" onchange="handleImageUpload(event, 'after')">
-                            <img id="preview-after" src="" alt="بعد العلاج">
-                        </div>
-                    </div>
-                </div>
-
                 <button type="submit" class="btn" style="margin-top: 15px;">الانتقال للمخطط الطبي التفاعلي &larr;</button>
             </form>
         </div>
@@ -685,7 +682,7 @@
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>مخطط الأسنان التشريعي</h2>
-                <p>انقر على أي سن لفتح لوحة التحكم الخاصة به بالأسفل</p>
+                <p>انقر على أي سن لفتح لوحة التحكم الخاصة به بالأسفل وإضافة الأشعة</p>
             </div>
 
             <!-- شريط أدوات تحكم الطبيب -->
@@ -723,7 +720,7 @@
                 </div>
             </div>
 
-            <!-- صندوق إدارة السن المدمج تحت المخطط -->
+            <!-- صندوق إدارة السن (يحتوي على الحالة، الملاحظات، ورفع صور أشعة متعددة للسن نفسه) -->
             <div class="tooth-panel-box" id="tooth-panel">
                 <div class="card-header" style="margin-bottom: 10px;">
                     <h3 id="panel-tooth-title" style="font-size: 16px; color: var(--primary);">إدارة السن</h3>
@@ -743,7 +740,17 @@
                     <label for="tooth-notes">ملاحظات السن:</label>
                     <textarea id="tooth-notes" placeholder="ملاحظات العلاج والحشوة..."></textarea>
                 </div>
-                <div style="display: flex; gap: 10px;">
+
+                <!-- رفع صور متعددة خاصة بهذا السن فقط -->
+                <div class="form-group">
+                    <label>📥 صور وأشعة السن (يمكنك رفع أكثر من صورة):</label>
+                    <input type="file" accept="image/*" multiple onchange="handleToothImagesUpload(event)">
+                    <div class="tooth-images-grid" id="tooth-images-container">
+                        <!-- معاينة صور السن -->
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px; margin-top: 15px;">
                     <button class="btn btn-secondary" type="button" onclick="closeToothPanel()">إغلاق</button>
                     <button class="btn" type="button" onclick="saveToothStatus()">حفظ السن</button>
                 </div>
@@ -770,7 +777,6 @@
         const db = firebase.firestore();
 
         let toothData = {};
-        let patientImages = { before: '', after: '' };
         let globalJawImage = localStorage.getItem('clinic_global_jaw') || "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80";
         let hotspotPositions = JSON.parse(localStorage.getItem('clinic_jaw_positions')) || getDefaultPositions();
         let hotspotSizes = JSON.parse(localStorage.getItem('clinic_jaw_sizes')) || {};
@@ -964,10 +970,6 @@
                 if (el) el.value = '';
             });
 
-            patientImages = { before: '', after: '' };
-            document.getElementById('preview-before').src = '';
-            document.getElementById('preview-after').src = '';
-
             toothData = {};
             renderJawGrid();
             switchTab('patient-info-section');
@@ -985,18 +987,6 @@
                     globalJawImage = e.target.result;
                     const previewImg = document.getElementById('global-preview-img');
                     if (previewImg) previewImg.src = globalJawImage;
-                }
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function handleImageUpload(event, type) {
-            const file = event.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    patientImages[type] = e.target.result;
-                    document.getElementById(`preview-${type}`).src = e.target.result;
                 }
                 reader.readAsDataURL(file);
             }
@@ -1072,10 +1062,6 @@
                     document.getElementById('p-phone').value = data.phone || '';
                     document.getElementById('p-history').value = data.history || '';
                     
-                    patientImages = data.images || { before: '', after: '' };
-                    document.getElementById('preview-before').src = patientImages.before || '';
-                    document.getElementById('preview-after').src = patientImages.after || '';
-
                     toothData = data.teeth || {};
                     
                     renderJawGrid();
@@ -1083,7 +1069,7 @@
                         updateToothVisual(toothNum, toothData[toothNum].status);
                     }
 
-                    temporaryPatientInfo = { name: data.name, gender: data.gender, age: data.age, phone: data.phone, history: data.history, images: patientImages };
+                    temporaryPatientInfo = { name: data.name, gender: data.gender, age: data.age, phone: data.phone, history: data.history };
                     switchTab('patient-info-section');
                 }
             });
@@ -1096,8 +1082,7 @@
                 gender: document.getElementById('p-gender').value,
                 age: document.getElementById('p-age').value,
                 phone: document.getElementById('p-phone').value,
-                history: document.getElementById('p-history').value,
-                images: patientImages
+                history: document.getElementById('p-history').value
             };
             renderJawGrid();
             switchTab('patient-chart-section');
@@ -1138,14 +1123,15 @@
             const panelTitle = document.getElementById('panel-tooth-title');
             if (panelTitle) panelTitle.textContent = `إدارة السن رقم: ${toothNum}`;
             
-            if (toothData[toothNum]) {
-                document.getElementById('tooth-status').value = toothData[toothNum].status;
-                document.getElementById('tooth-notes').value = toothData[toothNum].notes || '';
-            } else {
-                document.getElementById('tooth-status').value = 'سليم';
-                document.getElementById('tooth-notes').value = '';
+            if (!toothData[toothNum]) {
+                toothData[toothNum] = { status: 'سليم', notes: '', images: [] };
             }
+
+            document.getElementById('tooth-status').value = toothData[toothNum].status || 'سليم';
+            document.getElementById('tooth-notes').value = toothData[toothNum].notes || '';
             
+            renderToothImages();
+
             const panel = document.getElementById('tooth-panel');
             if (panel) {
                 panel.classList.add('active');
@@ -1158,10 +1144,63 @@
             if (panel) panel.classList.remove('active');
         }
 
+        function handleToothImagesUpload(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
+
+            if (!toothData[currentSelectedTooth]) {
+                toothData[currentSelectedTooth] = { status: 'سليم', notes: '', images: [] };
+            }
+            if (!toothData[currentSelectedTooth].images) {
+                toothData[currentSelectedTooth].images = [];
+            }
+
+            Array.from(files).forEach(file => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    toothData[currentSelectedTooth].images.push(e.target.result);
+                    renderToothImages();
+                }
+                reader.readAsDataURL(file);
+            });
+            event.target.value = '';
+        }
+
+        function renderToothImages() {
+            const container = document.getElementById('tooth-images-container');
+            if (!container) return;
+            container.innerHTML = '';
+
+            let images = (toothData[currentSelectedTooth] && toothData[currentSelectedTooth].images) ? toothData[currentSelectedTooth].images : [];
+
+            images.forEach((imgSrc, index) => {
+                const thumb = document.createElement('div');
+                thumb.className = 'tooth-img-thumb';
+                thumb.innerHTML = `
+                    <img src="${imgSrc}" alt="صورة السن">
+                    <button class="tooth-img-delete" type="button" onclick="removeToothImage(${index})">&times;</button>
+                `;
+                container.appendChild(thumb);
+            });
+        }
+
+        function removeToothImage(index) {
+            if (toothData[currentSelectedTooth] && toothData[currentSelectedTooth].images) {
+                toothData[currentSelectedTooth].images.splice(index, 1);
+                renderToothImages();
+            }
+        }
+
         function saveToothStatus() {
             const status = document.getElementById('tooth-status').value;
             const notes = document.getElementById('tooth-notes').value;
-            toothData[currentSelectedTooth] = { status, notes };
+            
+            if (!toothData[currentSelectedTooth]) {
+                toothData[currentSelectedTooth] = { images: [] };
+            }
+            toothData[currentSelectedTooth].status = status;
+            toothData[currentSelectedTooth].notes = notes;
+
             updateToothVisual(currentSelectedTooth, status);
             closeToothPanel();
         }
