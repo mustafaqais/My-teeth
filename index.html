@@ -532,15 +532,20 @@
             justify-content: center;
         }
 
-        .advanced-hotspot-editor {
-            background: #F8FAFC;
-            border: 1px solid var(--primary);
+        /* نافذة منسدلة ذكية تظهر فوراً تحت السن عند النقر عليه في وضع التعديل */
+        .floating-tooth-dropdown {
+            position: absolute;
+            background: #FFFFFF;
+            border: 2px solid var(--primary);
             border-radius: 12px;
             padding: 12px;
-            margin-top: 15px;
+            width: 240px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+            z-index: 100;
             display: none;
+            text-align: right;
         }
-        .advanced-hotspot-editor.active {
+        .floating-tooth-dropdown.active {
             display: block;
         }
     </style>
@@ -649,7 +654,7 @@
 
             <div class="card-header" style="margin-bottom: 15px;">
                 <h2>إدارة صور الفكين وأحجام ومواقع الأسنان</h2>
-                <p>اسحب أي سن أو انقر عليه لتعديل الطول، العرض، التدوير، والشكل (دائري، مربع، مستطيل)</p>
+                <p>انقر على أي سن لتفتح لك **قائمة منسدلة فورية بجانبه** للتحكم بالطول، العرض، التدوير، والشكل!</p>
             </div>
 
             <!-- القالب الأول -->
@@ -684,34 +689,32 @@
                     <button type="button" class="btn" style="width: auto; padding: 6px 14px; font-size: 12px; margin: 0;" onclick="toggleEditMode()" id="edit-mode-btn">🔓 تفعيل وضع السحب والتخصيص</button>
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 10px; border-radius: 8px;">
-                    ✋ **اسحب أي سن بمكانه.** | 👆 **انقر على أي سن لفتح لوحة الطول، العرض، التدوير، والشكل.**
+                    ✋ **اسحب أي سن بمكانه.** | 👆 **انقر على أي سن لتظهر لك قائمة التحكم الفورية تحته مباشرة!**
                 </div>
             </div>
 
-            <!-- لوحة التحكم المتقدمة (الطول والعرض والتدوير والانحناء) -->
-            <div class="advanced-hotspot-editor" id="hotspot-custom-editor">
-                <h4 id="editor-tooth-title" style="color: var(--primary); font-size: 14px; margin-bottom: 10px;">تخصيص السن</h4>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>عرض السن (Width):</label>
-                        <input type="range" min="15" max="80" id="edit-width" oninput="updateSelectedHotspotStyle()">
-                    </div>
-                    <div class="form-group">
-                        <label>طول/ارتفاع السن (Height):</label>
-                        <input type="range" min="15" max="80" id="edit-height" oninput="updateSelectedHotspotStyle()">
-                    </div>
+            <!-- قائمة منسدلة عائمة تظهر بجانب السن عند النقر عليه -->
+            <div class="floating-tooth-dropdown" id="floating-tooth-editor">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                    <span id="editor-tooth-title" style="font-size: 12px; font-weight: 700; color: var(--primary);">إعدادات السن</span>
+                    <span onclick="closeHotspotEditor()" style="cursor: pointer; font-weight: bold; color: #EF4444; font-size: 14px;">&times;</span>
                 </div>
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>الشكل (دائري 🔄 / مربع 🔲 / مستطيل):</label>
-                        <input type="range" min="0" max="40" id="edit-radius" oninput="updateSelectedHotspotStyle()">
-                    </div>
-                    <div class="form-group">
-                        <label>تدوير السن (Rotation الزاوية):</label>
-                        <input type="range" min="-180" max="180" id="edit-rotate" oninput="updateSelectedHotspotStyle()">
-                    </div>
+                <div class="form-group" style="margin-bottom: 8px;">
+                    <label style="font-size: 10px;">العرض (Width):</label>
+                    <input type="range" min="15" max="80" id="edit-width" oninput="updateSelectedHotspotStyle()">
                 </div>
-                <button class="btn btn-secondary" type="button" style="padding: 6px; font-size: 12px;" onclick="closeHotspotEditor()">إغلاق اللوحة</button>
+                <div class="form-group" style="margin-bottom: 8px;">
+                    <label style="font-size: 10px;">الطول / الارتفاع (Height):</label>
+                    <input type="range" min="15" max="80" id="edit-height" oninput="updateSelectedHotspotStyle()">
+                </div>
+                <div class="form-group" style="margin-bottom: 8px;">
+                    <label style="font-size: 10px;">الشكل (دائري / مربع / مستطيل):</label>
+                    <input type="range" min="0" max="40" id="edit-radius" oninput="updateSelectedHotspotStyle()">
+                </div>
+                <div class="form-group" style="margin-bottom: 4px;">
+                    <label style="font-size: 10px;">التدوير (Rotation):</label>
+                    <input type="range" min="-180" max="180" id="edit-rotate" oninput="updateSelectedHotspotStyle()">
+                </div>
             </div>
 
             <button type="button" class="btn" onclick="saveGlobalJawTemplates()" style="margin-top: 15px;">اعتماد القوالب والتعديلات للعيادة</button>
@@ -791,7 +794,7 @@
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>مخطط الأسنان التشريعي</h2>
-                <p>انقر على أي سن لفتح لوحة التحكم الخاصة به بالأسفل</p>
+                <p>انقر على أي سن لإدارة حالته وتوثيق صوره</p>
             </div>
 
             <div class="smart-chart-container">
@@ -810,7 +813,7 @@
                     <div class="jaw-absolute-overlay" id="jaw-grid-1"></div>
                 </div>
 
-                <!-- قالب الفكين الثاني للمريض (يظهر فقط إذا كانت الصورة الثانية مفعلة) -->
+                <!-- قالب الفكين الثاني للمريض -->
                 <div class="real-jaw-container" id="jaw-container-box-2" style="display: none;">
                     <img id="active-jaw-img-2" src="" alt="قالب 2">
                     <div class="jaw-absolute-overlay" id="jaw-grid-2"></div>
@@ -1017,7 +1020,7 @@
 
                     hotspot.onclick = (e) => {
                         e.stopPropagation();
-                        if (isEditMode) openHotspotEditor(1, num);
+                        if (isEditMode) openHotspotEditor(1, num, hotspot);
                     };
                     templateGrid1.appendChild(hotspot);
                 });
@@ -1048,7 +1051,7 @@
 
                         hotspot.onclick = (e) => {
                             e.stopPropagation();
-                            if (isEditMode) openHotspotEditor(2, num);
+                            if (isEditMode) openHotspotEditor(2, num, hotspot);
                         };
                         templateGrid2.appendChild(hotspot);
                     });
@@ -1058,21 +1061,44 @@
             }
         }
 
-        function openHotspotEditor(templateIndex, num) {
+        function openHotspotEditor(templateIndex, num, hotspotElement) {
             editingHotspotTooth = `${templateIndex}-${num}`;
             let st = getToothStyle(templateIndex, num);
-            document.getElementById('editor-tooth-title').textContent = `تخصيص السن رقم ${num} (القالب ${templateIndex})`;
+            document.getElementById('editor-tooth-title').textContent = `السن رقم ${num} (قالب ${templateIndex})`;
             document.getElementById('edit-width').value = st.width;
             document.getElementById('edit-height').value = st.height;
             document.getElementById('edit-radius').value = st.radius;
             document.getElementById('edit-rotate').value = st.rotate;
             
-            document.getElementById('hotspot-custom-editor').classList.add('active');
+            // إظهار النافذة المنسدلة بجوار السن المنقور مباشرة
+            const dropdown = document.getElementById('floating-tooth-editor');
+            const container = document.getElementById(`template-jaw-container-${templateIndex}`);
+            
+            if (dropdown && container) {
+                dropdown.classList.add('active');
+                
+                // حساب مكان السن داخل الحاوية لجعل القائمة تظهر بقربه بدقة
+                let rect = hotspotElement.getBoundingClientRect();
+                let contRect = container.getBoundingClientRect();
+                
+                let topPos = (hotspotElement.offsetTop + hotspotElement.offsetHeight + 5);
+                let leftPos = (hotspotElement.offsetLeft - 100);
+                
+                // التأكد من عدم خروج القائمة عن حدود الحاوية
+                if (leftPos < 10) leftPos = 10;
+                if (leftPos + 240 > contRect.width) leftPos = contRect.width - 250;
+
+                dropdown.style.top = topPos + 'px';
+                dropdown.style.left = leftPos + 'px';
+                
+                // إلحاق النافذة داخل حاوية الصورة نفسها لتبقى ملاصقة لها
+                container.appendChild(dropdown);
+            }
         }
 
         function closeHotspotEditor() {
             editingHotspotTooth = null;
-            document.getElementById('hotspot-custom-editor').classList.remove('active');
+            document.getElementById('floating-tooth-editor').classList.remove('active');
         }
 
         function updateSelectedHotspotStyle() {
@@ -1469,10 +1495,7 @@
             const status = document.getElementById('tooth-status').value;
             const notes = document.getElementById('tooth-notes').value;
             
-            if (!toothData[currentSelectedTooth]) {
-                toothData[currentSelectedTooth] = { imagesBefore: [], imagesAfter: [] };
-            }
-            toothData[currentSelectedTooth].status = status;
+            (toothData[currentSelectedTooth] ||= { imagesBefore: [], imagesAfter: [] }).status = status;
             toothData[currentSelectedTooth].notes = notes;
 
             updateToothVisual(currentSelectedTooth, status);
