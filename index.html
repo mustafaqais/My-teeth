@@ -5,13 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>منصة أسناني السحابية - عيادات الأسنان</title>
     
-    <!-- استيراد أرقى الخطوط العربية الحديثة (Cairo & Tajawal) -->
+    <!-- استيراد أرقى الخطوط العربية الحديثة -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
 
-    <!-- استيراد مكتبات Firebase عبر CDN -->
+    <!-- استيراد مكتبات Firebase و Three.js للعرض ثلاثي الأبعاد الحقيقي -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
     <style>
         :root {
@@ -51,7 +53,7 @@
 
         .app-container {
             width: 100%;
-            max-width: 680px;
+            max-width: 720px;
         }
 
         .card {
@@ -104,11 +106,6 @@
             margin: 0 auto 15px auto;
             box-shadow: 0 10px 25px rgba(14, 165, 233, 0.35);
             transform: rotate(-3deg);
-            transition: transform 0.3s ease;
-        }
-
-        .clinic-logo:hover {
-            transform: rotate(0deg) scale(1.05);
         }
 
         .card-header h2 {
@@ -116,7 +113,6 @@
             font-weight: 700;
             color: var(--text-main);
             margin-bottom: 5px;
-            letter-spacing: -0.5px;
         }
 
         .card-header p {
@@ -361,11 +357,57 @@
             background: var(--primary-hover);
         }
 
-        /* تعديلات المخطط ثلاثي الأبعاد 3D المتطور */
-        .smart-chart-container {
-            margin-top: 15px;
-            border-top: 1px dashed var(--border-color);
-            padding-top: 15px;
+        /* حاوية العرض الحقيقي ثلاثي الأبعاد 3D Canvas */
+        #canvas-container {
+            width: 100%;
+            height: 320px;
+            background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: inset 0 4px 15px rgba(0,0,0,0.3);
+            margin-bottom: 15px;
+        }
+
+        .canvas-hint {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(15, 23, 42, 0.75);
+            color: #F8FAFC;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            pointer-events: none;
+            backdrop-filter: blur(4px);
+        }
+
+        /* قائمة أزرار سريعة للأسنان بجانب العارض 3D لضمان سهولة الاختيار التام */
+        .quick-teeth-panel {
+            display: flex;
+            gap: 5px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+
+        .quick-tooth-pill {
+            background: #F1F5F9;
+            border: 1px solid var(--border-color);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .quick-tooth-pill:hover, .quick-tooth-pill.selected {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
         }
 
         .chart-legend {
@@ -373,7 +415,7 @@
             justify-content: center;
             gap: 8px;
             flex-wrap: wrap;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             font-size: 11px;
             font-weight: 600;
         }
@@ -390,73 +432,6 @@
             height: 10px;
             border-radius: 50%;
         }
-
-        .arch-wrapper {
-            margin-bottom: 20px;
-            background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
-            padding: 18px 12px;
-            border-radius: 18px;
-            border: 1px solid var(--border-color);
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.03);
-        }
-
-        .arch-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 14px;
-            text-align: center;
-        }
-
-        .teeth-grid {
-            display: flex;
-            justify-content: center;
-            gap: 6px;
-            flex-wrap: wrap;
-        }
-
-        /* تصميم زر السن ثلاثي الأبعاد 3D بمؤثرات مجسمة وظلال فاخرة */
-        .tooth-btn {
-            width: 36px;
-            height: 52px;
-            background-color: var(--status-healthy);
-            border: 1px solid #CBD5E1;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            align-items: center;
-            padding: 5px 2px;
-            cursor: pointer;
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-            color: var(--text-main);
-            /* تأثير العمق الثلاثي الأبعاد 3D */
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -1px rgba(0, 0, 0, 0.04), inset 0 -2px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        .tooth-btn:hover {
-            transform: translateY(-4px) scale(1.08);
-            border-color: var(--primary);
-            box-shadow: 0 10px 15px -3px rgba(14, 165, 233, 0.2), 0 4px 6px -2px rgba(14, 165, 233, 0.1);
-        }
-
-        .tooth-num {
-            font-size: 9px;
-            font-weight: 700;
-            color: var(--text-muted);
-        }
-
-        .tooth-icon {
-            font-size: 15px;
-            filter: drop-shadow(0 1px 1px rgba(0,0,0,0.1));
-        }
-
-        /* تلوين الحالات بتأثير التوهج ثلاثي الأبعاد */
-        .tooth-btn.status-تسوس { background: linear-gradient(135deg, #EF4444, #DC2626); color: white; border-color: #B91C1C; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4), inset 0 2px 3px rgba(255,255,255,0.3); }
-        .tooth-btn.status-حشوة { background: linear-gradient(135deg, #3B82F6, #2563EB); color: white; border-color: #1D4ED8; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4), inset 0 2px 3px rgba(255,255,255,0.3); }
-        .tooth-btn.status-علاج-عصب { background: linear-gradient(135deg, #F59E0B, #D97706); color: white; border-color: #B45309; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4), inset 0 2px 3px rgba(255,255,255,0.3); }
-        .tooth-btn.status-خلع { background: linear-gradient(135deg, #94A3B8, #64748B); color: white; border-color: #475569; opacity: 0.7; box-shadow: inset 0 2px 3px rgba(0,0,0,0.2); }
-        .tooth-btn.status-تلبيسة { background: linear-gradient(135deg, #EAB308, #CA8A04); color: white; border-color: #A16207; box-shadow: 0 4px 12px rgba(234, 179, 8, 0.4), inset 0 2px 3px rgba(255,255,255,0.3); }
 
         .modal {
             display: none;
@@ -562,7 +537,7 @@
             </div>
         </div>
 
-        <!-- 3. لوحة التحكم الرئيسية بنظام الأيقونات التفاعلية -->
+        <!-- 3. لوحة التحكم الرئيسية -->
         <div class="card" id="dashboard-section">
             <div class="clinic-topbar">
                 <a onclick="logout()" class="logout-btn">خروج</a>
@@ -578,7 +553,7 @@
                 <div class="dashboard-tile" onclick="openNewPatientForm()">
                     <div class="tile-icon">➕</div>
                     <div class="tile-title">مريض جديد</div>
-                    <div class="tile-desc">فتح ملف وإضافة مخطط جديد</div>
+                    <div class="tile-desc">فتح ملف ومخطط ثلاثي الأبعاد</div>
                 </div>
                 <div class="dashboard-tile" onclick="openPatientsArchive()">
                     <div class="tile-icon">📂</div>
@@ -649,20 +624,20 @@
                     <textarea id="p-history" placeholder="الأمراض المزمنة والحساسية..."></textarea>
                 </div>
 
-                <button type="submit" class="btn" style="margin-top: 15px;">الانتقال لمخطط الأسنان ثلاثي الأبعاد 3D &larr;</button>
+                <button type="submit" class="btn" style="margin-top: 15px;">الانتقال للمجسم ثلاثي الأبعاد 3D &larr;</button>
             </form>
         </div>
 
-        <!-- 6. شاشة مخطط الأسنان ثلاثي الأبعاد 3D والحفظ السحابي النهائي -->
+        <!-- 6. شاشة العرض الحقيقي ثلاثي الأبعاد للفك والأسنان والحفظ السحابي -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
-                <div class="doctor-welcome">🦷 مخطط الأسنان 3D</div>
+                <div class="doctor-welcome">🦷 محرك الفك 3D الحقيقي</div>
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
-                <h2 id="chart-patient-title">مخطط الأسنان المجسم</h2>
-                <p>اضغط على السن لتحديد حالته السريرية</p>
+                <h2 id="chart-patient-title">مخطط الأسنان ثلاثي الأبعاد</h2>
+                <p>قم بتدوير الفك أو اضغط على السن لإدارته</p>
             </div>
 
             <div class="smart-chart-container">
@@ -675,16 +650,15 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- الفك العلوي ثلاثي الأبعاد -->
-                <div class="arch-wrapper">
-                    <div class="arch-title">الفك العلوي (Upper Arch 3D)</div>
-                    <div class="teeth-grid" id="upper-arch-grid"></div>
+                <!-- شاشة العرض الحقيقي 3D (Three.js Canvas) -->
+                <div id="canvas-container">
+                    <div class="canvas-hint">اسحب بالماوس لتدوير الفك 3D أو انقر على أي سن</div>
                 </div>
 
-                <!-- الفك السفلي ثلاثي الأبعاد -->
-                <div class="arch-wrapper">
-                    <div class="arch-title">الفك السفلي (Lower Arch 3D)</div>
-                    <div class="teeth-grid" id="lower-arch-grid"></div>
+                <!-- شريط أزرار سريعة لاختيار الأسنان بدقة تامة -->
+                <label style="margin-bottom: 5px;">أو اختر رقم السن مباشرة للتعديل:</label>
+                <div class="quick-teeth-panel" id="quick-teeth-panel">
+                    <!-- يتم توليد الأزرار برمجياً -->
                 </div>
             </div>
 
@@ -740,36 +714,127 @@
         let temporaryPatientInfo = {};
         let editingPatientId = null;
 
-        const upperTeeth = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
-        const lowerTeeth = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
+        const allTeeth = [
+            18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28,
+            48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38
+        ];
+
+        // إعداد محرك العرض ثلاثي الأبعاد الحقيقي Three.js
+        let scene, camera, renderer, controls;
+        let toothMeshes = {};
+
+        function init3DViewer() {
+            const container = document.getElementById('canvas-container');
+            container.innerHTML = '<div class="canvas-hint">اسحب للتدوير 3D أو انقر على أي سن</div>';
+
+            scene = new THREE.Scene();
+            camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+            camera.position.set(0, 0, 18);
+
+            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            renderer.setPixelRatio(window.devicePixelRatio);
+            container.appendChild(renderer.domElement);
+
+            controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+
+            // إضاءة احترافية مجسمة
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+
+            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.8);
+            directionalLight.position.set(5, 10, 7);
+            scene.add(directionalLight);
+
+            // بناء مجسم الفك الحقيقي ثلاثي الأبعاد هندسياً
+            buildAnatomicalJaw3D();
+
+            // نظام النقر بالماوس لاختيار السن في الـ 3D
+            renderer.domElement.addEventListener('click', onCanvasClick);
+
+            animate3D();
+        }
+
+        function buildAnatomicalJaw3D() {
+            toothMeshes = {};
+            const toothGeo = new THREE.BoxGeometry(0.8, 1.2, 0.7);
+
+            // الفك العلوي
+            allTeeth.slice(0, 16).forEach((num, index) => {
+                const angle = (index - 7.5) * 0.18;
+                const x = Math.sin(angle) * 5.5;
+                const z = Math.cos(angle) * 5.5 - 2;
+                const y = 2.0;
+
+                const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+                const mesh = new THREE.Mesh(toothGeo, material);
+                mesh.position.set(x, y, z);
+                mesh.userData = { toothNum: num };
+
+                scene.add(mesh);
+                toothMeshes[num] = mesh;
+            });
+
+            // الفك السفلي
+            allTeeth.slice(16).forEach((num, index) => {
+                const angle = (index - 7.5) * 0.18;
+                const x = Math.sin(angle) * 5.2;
+                const z = Math.cos(angle) * 5.2 - 2;
+                const y = -2.0;
+
+                const material = new THREE.MeshStandardMaterial({ color: 0xffffff, roughness: 0.3 });
+                const mesh = new THREE.Mesh(toothGeo, material);
+                mesh.position.set(x, y, z);
+                mesh.userData = { toothNum: num };
+
+                scene.add(mesh);
+                toothMeshes[num] = mesh;
+            });
+
+            updateAllTeethVisuals3D();
+        }
+
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            if (controls) controls.update();
+            if (renderer && scene && camera) renderer.render(scene, camera);
+        }
+
+        function onCanvasClick(event) {
+            const rect = renderer.domElement.getBoundingClientRect();
+            const x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+            const y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+            const raycaster = new THREE.Raycaster();
+            raycaster.setFromCamera(new THREE.Vector2(x, y), camera);
+
+            const intersects = raycaster.intersectObjects(scene.children);
+            if (intersects.length > 0) {
+                const clickedMesh = intersects[0].object;
+                if (clickedMesh.userData && clickedMesh.userData.toothNum) {
+                    openToothModal(clickedMesh.userData.toothNum);
+                }
+            }
+        }
+
+        function renderQuickTeethPanel() {
+            const panel = document.getElementById('quick-teeth-panel');
+            panel.innerHTML = '';
+            allTeeth.forEach(num => {
+                const pill = document.createElement('div');
+                pill.className = 'quick-tooth-pill';
+                pill.id = `pill-${num}`;
+                pill.textContent = `سن ${num}`;
+                pill.onclick = () => openToothModal(num);
+                panel.appendChild(pill);
+            });
+        }
 
         document.addEventListener("DOMContentLoaded", () => {
-            renderTeethGrids();
+            renderQuickTeethPanel();
         });
-
-        function renderTeethGrids() {
-            const upperContainer = document.getElementById('upper-arch-grid');
-            const lowerContainer = document.getElementById('lower-arch-grid');
-            
-            upperContainer.innerHTML = '';
-            lowerContainer.innerHTML = '';
-
-            upperTeeth.forEach(num => upperContainer.appendChild(createToothElement(num)));
-            lowerTeeth.forEach(num => lowerContainer.appendChild(createToothElement(num)));
-        }
-
-        function createToothElement(num) {
-            const btn = document.createElement('div');
-            btn.className = 'tooth-btn';
-            btn.id = `tooth-${num}`;
-            btn.onclick = () => openToothModal(num);
-            
-            btn.innerHTML = `
-                <span class="tooth-num">${num}</span>
-                <span class="tooth-icon">🦷</span>
-            `;
-            return btn;
-        }
 
         auth.onAuthStateChanged((user) => {
             if (user) {
@@ -812,7 +877,6 @@
             document.getElementById('p-phone').value = '';
             document.getElementById('p-history').value = '';
             toothData = {};
-            renderTeethGrids();
             switchTab('patient-info-section');
         }
 
@@ -873,14 +937,14 @@
                     document.getElementById('p-history').value = data.history || '';
                     toothData = data.teeth || {};
                     
-                    renderTeethGrids();
-                    for (let toothNum in toothData) {
-                        updateToothVisual(toothNum, toothData[toothNum].status);
-                    }
-
                     temporaryPatientInfo = { name: data.name, gender: data.gender, age: data.age, phone: data.phone, history: data.history };
                     document.getElementById('chart-patient-title').textContent = `مخطط أسنان: ${data.name}`;
                     switchTab('patient-chart-section');
+                    
+                    setTimeout(() => {
+                        if (!renderer) init3DViewer();
+                        updateAllTeethVisuals3D();
+                    }, 200);
                 }
             });
         }
@@ -896,6 +960,11 @@
             };
             document.getElementById('chart-patient-title').textContent = `مخطط أسنان: ${temporaryPatientInfo.name}`;
             switchTab('patient-chart-section');
+
+            setTimeout(() => {
+                if (!renderer) init3DViewer();
+                updateAllTeethVisuals3D();
+            }, 200);
         }
 
         function savePatientToCloud() {
@@ -949,18 +1018,34 @@
             const status = document.getElementById('tooth-status').value;
             const notes = document.getElementById('tooth-notes').value;
             toothData[currentSelectedTooth] = { status, notes };
-            updateToothVisual(currentSelectedTooth, status);
+            updateToothVisual3D(currentSelectedTooth, status);
             closeToothModal();
         }
 
-        function updateToothVisual(toothNum, status) {
-            const toothEl = document.getElementById(`tooth-${toothNum}`);
-            if (toothEl) {
-                toothEl.className = 'tooth-btn';
-                if (status !== 'سليم') {
-                    toothEl.classList.add(`status-${status}`);
-                }
+        function updateToothVisual3D(toothNum, status) {
+            if (toothMeshes[toothNum]) {
+                let colorHex = 0xffffff;
+                if (status === 'تسوس') colorHex = 0xEF4444;
+                else if (status === 'حشوة') colorHex = 0x3B82F6;
+                else if (status === 'علاج-عصب') colorHex = 0xF59E0B;
+                else if (status === 'خلع') colorHex = 0x94A3B8;
+                else if (status === 'تلبيسة') colorHex = 0xEAB308;
+
+                toothMeshes[toothNum].material.color.setHex(colorHex);
             }
+
+            const pill = document.getElementById(`pill-${toothNum}`);
+            if (pill) {
+                if (status !== 'سليم') pill.style.borderColor = '#0EA5E9';
+                else pill.style.borderColor = '#E2E8F0';
+            }
+        }
+
+        function updateAllTeethVisuals3D() {
+            allTeeth.forEach(num => {
+                const status = toothData[num] ? toothData[num].status : 'سليم';
+                updateToothVisual3D(num, status);
+            });
         }
 
         function togglePass(id, el) {
