@@ -657,7 +657,7 @@
             </form>
         </div>
 
-        <!-- 7. شاشة المخطط الطبي (مع تحكم حر ومستقل بالسحب والحجم لكل رقم سن) -->
+        <!-- 7. شاشة المخطط الطبي -->
         <div class="card" id="patient-chart-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('patient-info-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; رجوع للبيانات</a>
@@ -677,7 +677,7 @@
                 </div>
                 <div id="position-controls" style="display: none; font-size: 11px; color: var(--text-muted); text-align: center; margin-top: 10px; background: #FFF; padding: 10px; border-radius: 8px;">
                     ✋ **اسحب أي رقم بإصبعك أو الماوس إلى أي مكان.**<br>
-                    🔍 **لتصبير أو تكبير أي رقم:** انقر عليه نقرة مزدوجة (Double Click) لتتغير مقاسه فوراً، أو استخدِم الشريط لتعديل الكل:
+                    🔍 **لتصغير أو تكبير أي رقم:** انقر عليه نقرة مزدوجة (Double Click)، أو استخدِم الشريط لتعديل الكل:
                     <div style="display: flex; gap: 10px; margin-top: 8px; justify-content: center; align-items: center;">
                         <label>الحجم العام:</label>
                         <input type="range" id="hotspot-size-range" min="15" max="50" value="28" oninput="updateAllHotspotSize(this.value)">
@@ -695,7 +695,7 @@
                     <div class="legend-item"><div class="legend-color" style="background:#EAB308"></div>تلبيسة</div>
                 </div>
 
-                <!-- عرض القالب مع النقاط القابلة للسحب والتحكم المستقل -->
+                <!-- عرض القالب مع النقاط القابلة للسحب -->
                 <div class="real-jaw-container" id="jaw-container-box">
                     <img id="active-jaw-img" src="" alt="قالب الفكين المعتمد">
                     <div class="jaw-absolute-overlay" id="jaw-grid">
@@ -783,11 +783,14 @@
 
         function renderJawGrid() {
             const grid = document.getElementById('jaw-grid');
+            if (!grid) return;
             grid.innerHTML = '';
 
+            const activeImg = document.getElementById('active-jaw-img');
+            const previewImg = document.getElementById('global-preview-img');
             if (globalJawImage) {
-                document.getElementById('active-jaw-img').src = globalJawImage;
-                document.getElementById('global-preview-img').src = globalJawImage;
+                if (activeImg) activeImg.src = globalJawImage;
+                if (previewImg) previewImg.src = globalJawImage;
             }
 
             allTeeth.forEach(num => {
@@ -805,7 +808,6 @@
                 hotspot.style.height = size + 'px';
                 hotspot.style.fontSize = (size * 0.4) + 'px';
 
-                // تفعيل السحب لكل عنصر بشكل مستقل تماماً
                 enableDrag(hotspot, num);
 
                 hotspot.onclick = (e) => {
@@ -828,6 +830,7 @@
                 activeTouchId = e.pointerId;
 
                 let container = document.getElementById('jaw-container-box');
+                if (!container) return;
 
                 function onPointerMove(ev) {
                     if (ev.pointerId !== activeTouchId) return;
@@ -856,7 +859,6 @@
                 element.addEventListener('pointerup', onPointerUp);
             });
 
-            // تكبير/تصغير خاص بهذا السن عند النقر المزدوج
             element.ondblclick = (e) => {
                 e.stopPropagation();
                 let currentSize = hotspotSizes[toothNum] || 28;
@@ -872,13 +874,17 @@
             let btn = document.getElementById('edit-mode-btn');
             let controls = document.getElementById('position-controls');
             if (isEditMode) {
-                btn.textContent = "🔒 إيقاف وضع السحب والحفظ";
-                btn.style.background = "#EF4444";
-                controls.style.display = "block";
+                if (btn) {
+                    btn.textContent = "🔒 إيقاف وضع السحب والحفظ";
+                    btn.style.background = "#EF4444";
+                }
+                if (controls) controls.style.display = "block";
             } else {
-                btn.textContent = "🔓 تفعيل وضع السحب والتحكم";
-                btn.style.background = "var(--primary)";
-                controls.style.display = "none";
+                if (btn) {
+                    btn.textContent = "🔓 تفعيل وضع السحب والتحكم";
+                    btn.style.background = "var(--primary)";
+                }
+                if (controls) controls.style.display = "none";
             }
             renderJawGrid();
         }
@@ -930,11 +936,14 @@
 
         function openNewPatientForm() {
             editingPatientId = null;
-            document.getElementById('patient-form-title').textContent = "ملف مريض جديد";
-            document.getElementById('p-name').value = '';
-            document.getElementById('p-age').value = '';
-            document.getElementById('p-phone').value = '';
-            document.getElementById('p-history').value = '';
+            const titleEl = document.getElementById('patient-form-title');
+            if (titleEl) titleEl.textContent = "ملف مريض جديد";
+            
+            ['p-name', 'p-age', 'p-phone', 'p-history'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+
             toothData = {};
             renderJawGrid();
             switchTab('patient-info-section');
@@ -950,7 +959,8 @@
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     globalJawImage = e.target.result;
-                    document.getElementById('global-preview-img').src = globalJawImage;
+                    const previewImg = document.getElementById('global-preview-img');
+                    if (previewImg) previewImg.src = globalJawImage;
                 }
                 reader.readAsDataURL(file);
             }
@@ -978,6 +988,7 @@
 
         function loadPatientsList() {
             const container = document.getElementById('patients-list-container');
+            if (!container) return;
             container.innerHTML = '<p style="text-align: center; color: var(--text-muted); font-size: 13px; padding: 20px;">جاري جلب السجلات السحابية...</p>';
 
             db.collection("patients")
@@ -1016,11 +1027,13 @@
             db.collection("patients").doc(patientId).get().then((doc) => {
                 if (doc.exists) {
                     const data = doc.data();
-                    document.getElementById('patient-form-title').textContent = `تعديل ملف: ${data.name}`;
-                    document.getElementById('p-name').value = data.name;
-                    document.getElementById('p-gender').value = data.gender;
-                    document.getElementById('p-age').value = data.age;
-                    document.getElementById('p-phone').value = data.phone;
+                    const titleEl = document.getElementById('patient-form-title');
+                    if (titleEl) titleEl.textContent = `تعديل ملف: ${data.name}`;
+                    
+                    document.getElementById('p-name').value = data.name || '';
+                    document.getElementById('p-gender').value = data.gender || 'ذكر';
+                    document.getElementById('p-age').value = data.age || '';
+                    document.getElementById('p-phone').value = data.phone || '';
                     document.getElementById('p-history').value = data.history || '';
                     toothData = data.teeth || {};
                     
@@ -1030,7 +1043,8 @@
                     }
 
                     temporaryPatientInfo = { name: data.name, gender: data.gender, age: data.age, phone: data.phone, history: data.history };
-                    document.getElementById('chart-patient-title').textContent = `مخطط أسنان: ${data.name}`;
+                    const chartTitle = document.getElementById('chart-patient-title');
+                    if (chartTitle) chartTitle.textContent = `مخطط أسنان: ${data.name}`;
                     switchTab('patient-chart-section');
                 }
             });
@@ -1046,7 +1060,8 @@
                 history: document.getElementById('p-history').value
             };
             renderJawGrid();
-            document.getElementById('chart-patient-title').textContent = `مخطط أسنان: ${temporaryPatientInfo.name}`;
+            const chartTitle = document.getElementById('chart-patient-title');
+            if (chartTitle) chartTitle.textContent = `مخطط أسنان: ${temporaryPatientInfo.name}`;
             switchTab('patient-chart-section');
         }
 
@@ -1082,7 +1097,9 @@
 
         function openToothModal(toothNum) {
             currentSelectedTooth = toothNum;
-            document.getElementById('modal-tooth-title').textContent = `إدارة السن رقم: ${toothNum}`;
+            const modalTitle = document.getElementById('modal-tooth-title');
+            if (modalTitle) modalTitle.textContent = `إدارة السن رقم: ${toothNum}`;
+            
             if (toothData[toothNum]) {
                 document.getElementById('tooth-status').value = toothData[toothNum].status;
                 document.getElementById('tooth-notes').value = toothData[toothNum].notes || '';
@@ -1090,11 +1107,13 @@
                 document.getElementById('tooth-status').value = 'سليم';
                 document.getElementById('tooth-notes').value = '';
             }
-            document.getElementById('tooth-modal').classList.add('open');
+            const modal = document.getElementById('tooth-modal');
+            if (modal) modal.classList.add('open');
         }
 
         function closeToothModal() {
-            document.getElementById('tooth-modal').classList.remove('open');
+            const modal = document.getElementById('tooth-modal');
+            if (modal) modal.classList.remove('open');
         }
 
         function saveToothStatus() {
@@ -1117,6 +1136,7 @@
 
         function togglePass(id, el) {
             const input = document.getElementById(id);
+            if (!input) return;
             if (input.type === "password") {
                 input.type = "text";
                 el.textContent = "إخفاء";
@@ -1128,7 +1148,8 @@
 
         function switchTab(cardId) {
             document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
-            document.getElementById(cardId).classList.add('active');
+            const target = document.getElementById(cardId);
+            if (target) target.classList.add('active');
         }
     </script>
 </body>
