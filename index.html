@@ -120,7 +120,6 @@
         input[type="password"],
         input[type="email"],
         input[type="number"],
-        input[type="file"],
         select,
         textarea {
             width: 100%;
@@ -448,38 +447,68 @@
             display: block;
         }
 
-        /* أقسام صور قبل وبعد لكل سن */
-        .tooth-ba-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-top: 10px;
+        /* تصميم قسم قبل وبعد بشكل عمودي وأنيق جداً للموبايل */
+        .tooth-ba-section {
             background: #F8FAFC;
-            padding: 10px;
-            border-radius: 12px;
             border: 1px solid var(--border-color);
+            border-radius: 14px;
+            padding: 12px;
+            margin-top: 12px;
         }
 
-        .tooth-ba-column h4 {
-            font-size: 12px;
-            color: var(--primary);
-            margin-bottom: 6px;
-            text-align: center;
+        .tooth-ba-card {
+            background: #FFFFFF;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .tooth-ba-card:last-child {
+            margin-bottom: 0;
+        }
+
+        .tooth-ba-title {
+            font-size: 13px;
             font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* زر تحميل مخصص ومرتب */
+        .custom-file-upload {
+            display: inline-block;
+            background: #E0F2FE;
+            color: var(--primary);
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            border: 1px dashed var(--primary);
+            text-align: center;
+            width: 100%;
+            margin-bottom: 8px;
+            transition: background 0.2s;
+        }
+        .custom-file-upload:hover {
+            background: #BAE6FD;
         }
 
         .tooth-images-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 6px;
-            margin-top: 6px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
         }
 
         .tooth-img-thumb {
             position: relative;
             width: 100%;
-            height: 60px;
-            border-radius: 6px;
+            height: 75px;
+            border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border-color);
             background: #FFF;
@@ -493,15 +522,15 @@
 
         .tooth-img-delete {
             position: absolute;
-            top: 2px;
-            left: 2px;
-            background: rgba(239, 68, 68, 0.85);
+            top: 3px;
+            left: 3px;
+            background: rgba(239, 68, 68, 0.9);
             color: #FFF;
             border: none;
             border-radius: 50%;
-            width: 16px;
-            height: 16px;
-            font-size: 9px;
+            width: 20px;
+            height: 20px;
+            font-size: 11px;
             cursor: pointer;
             display: flex;
             align-items: center;
@@ -702,7 +731,7 @@
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>مخطط الأسنان التشريعي</h2>
-                <p>انقر على أي سن لفتح لوحة التحكم (قبل وبعد) الخاصة به بالأسفل</p>
+                <p>انقر على أي سن لفتح لوحة التحكم الخاصة به بالأسفل</p>
             </div>
 
             <!-- شريط أدوات تحكم الطبيب -->
@@ -740,7 +769,7 @@
                 </div>
             </div>
 
-            <!-- صندوق إدارة السن (مقسم إلى صور قبل وبعد لكل سن) -->
+            <!-- صندوق إدارة السن (مقسم بشكل عمودي واحترافي) -->
             <div class="tooth-panel-box" id="tooth-panel">
                 <div class="card-header" style="margin-bottom: 10px;">
                     <h3 id="panel-tooth-title" style="font-size: 16px; color: var(--primary);">إدارة السن</h3>
@@ -761,20 +790,24 @@
                     <textarea id="tooth-notes" placeholder="ملاحظات العلاج والحشوة..."></textarea>
                 </div>
 
-                <!-- توثيق صور قبل وبعد للسن (صور متعددة لكل قسم) -->
-                <div class="form-group">
-                    <label>📸 توثيق السن (قبل وبعد العلاج / الأشعة):</label>
-                    <div class="tooth-ba-grid">
-                        <div class="tooth-ba-column">
-                            <h4>📷 قبل العلاج</h4>
-                            <input type="file" accept="image/*" multiple onchange="handleToothImagesUpload(event, 'before')" style="font-size: 11px; padding: 6px;">
-                            <div class="tooth-images-grid" id="tooth-before-images"></div>
-                        </div>
-                        <div class="tooth-ba-column">
-                            <h4>📸 بعد العلاج</h4>
-                            <input type="file" accept="image/*" multiple onchange="handleToothImagesUpload(event, 'after')" style="font-size: 11px; padding: 6px;">
-                            <div class="tooth-images-grid" id="tooth-after-images"></div>
-                        </div>
+                <!-- قسم صور قبل وبعد مقسم بشكل عمودي احترافي -->
+                <div class="tooth-ba-section">
+                    <label style="font-weight: 700; color: var(--text-main); margin-bottom: 8px; display: block;">📸 توثيق السن (الأشعة والصور):</label>
+                    
+                    <!-- بطاقة قبل العلاج -->
+                    <div class="tooth-ba-card">
+                        <div class="tooth-ba-title">📥 صور (قبل العلاج)</div>
+                        <label for="input-before-file" class="custom-file-upload">➕ إضافَة صور قبل العلاج</label>
+                        <input type="file" id="input-before-file" accept="image/*" multiple onchange="handleToothImagesUpload(event, 'before')" style="display: none;">
+                        <div class="tooth-images-grid" id="tooth-before-images"></div>
+                    </div>
+
+                    <!-- بطاقة بعد العلاج -->
+                    <div class="tooth-ba-card">
+                        <div class="tooth-ba-title">📤 صور (بعد العلاج)</div>
+                        <label for="input-after-file" class="custom-file-upload">➕ إضافَة صور بعد العلاج</label>
+                        <input type="file" id="input-after-file" accept="image/*" multiple onchange="handleToothImagesUpload(event, 'after')" style="display: none;">
+                        <div class="tooth-images-grid" id="tooth-after-images"></div>
                     </div>
                 </div>
 
