@@ -246,10 +246,7 @@
             direction: rtl;
             transition: background 0.2s;
         }
-
-        .logout-btn:hover {
-            background: rgba(239, 68, 68, 0.15);
-        }
+        .logout-btn:hover { background: rgba(239, 68, 68, 0.15); }
 
         .dashboard-grid {
             display: grid;
@@ -267,7 +264,6 @@
             cursor: pointer;
             transition: all 0.25s ease;
         }
-
         .dashboard-tile:hover {
             border-color: var(--primary);
             transform: translateY(-3px);
@@ -297,7 +293,6 @@
             transition: border-color 0.2s;
         }
         .patient-item:hover { border-color: var(--primary); }
-
         .patient-info h4 { font-size: 15px; color: var(--text-main); margin-bottom: 4px; font-weight: 700; }
         .patient-info p { font-size: 12px; color: var(--text-muted); }
 
@@ -314,7 +309,7 @@
         }
         .patient-actions button:hover { background: var(--primary-hover); }
 
-        /* حاوية قالب الفكين الأساسي */
+        /* حاوية قالب الفكين الرئيسي */
         .real-jaw-container {
             width: 100%;
             max-width: 480px;
@@ -326,7 +321,6 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.15);
             text-align: center;
         }
-
         .real-jaw-container img { width: 100%; display: block; }
 
         .jaw-absolute-overlay {
@@ -406,7 +400,6 @@
         }
         .tooth-ba-card { background: #FFFFFF; border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; margin-bottom: 10px; }
         .tooth-ba-card:last-child { margin-bottom: 0; }
-
         .tooth-ba-title { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
 
         .custom-file-upload {
@@ -442,7 +435,7 @@
         .advanced-hotspot-editor { background: #F8FAFC; border: 1px solid var(--primary); border-radius: 12px; padding: 12px; margin-top: 15px; display: none; }
         .advanced-hotspot-editor.active { display: block; }
 
-        /* تنسيقات الروشتة التفاعلية ووضع الـ Config Mode والسحب والإفلات */
+        /* نافذة الروشتة ونظام السحب وإفلات العناصر */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -476,7 +469,6 @@
         .suggestion-item { padding: 8px 12px; font-size: 12px; cursor: pointer; border-bottom: 1px solid #F1F5F9; }
         .suggestion-item:hover { background: #E0F2FE; color: var(--primary); }
 
-        /* حاوية الروشتة وأجزائها القابلة للسحب */
         .rx-canvas-container {
             position: relative !important;
             width: 100% !important;
@@ -543,8 +535,40 @@
 
     <div class="app-container">
 
+        <!-- 0. شاشة تفعيل الاشتراك (أسبوعي / سنوي) -->
+        <div class="card active" id="activation-section">
+            <div class="card-header">
+                <div class="clinic-logo">🔐</div>
+                <h2>تفعيل اشتراك العيادة</h2>
+                <p>أدخل كود التفعيل (أسبوعي أو سنوي) لتفعيل كافة صلاحيات العيادة</p>
+            </div>
+            <div class="form-group">
+                <label for="activation-code-input">كود التفعيل:</label>
+                <input type="text" id="activation-code-input" placeholder="مثال: ASNANI-7D-XXXX أو ASNANI-365D-XXXX" style="text-align: center; font-size: 15px; font-weight: bold; letter-spacing: 1px;">
+            </div>
+            <button type="button" class="btn" style="background: #10B981;" onclick="verifyActivationCode()">تحقق وتفعيل الاشتراك</button>
+            <div id="subscription-status-box" style="margin-top: 15px; text-align: center; font-size: 13px; font-weight: 700; color: var(--primary);"></div>
+            
+            <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px; text-align: center;">توليد كود اشتراك (أسبوعي / سنوي):</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <select id="code-duration-select">
+                            <option value="7">اشتراك أسبوعي (7 أيام)</option>
+                            <option value="365">اشتراك سنوي (365 يوماً)</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-secondary" style="margin-top:0; width: auto; font-size: 12px;" onclick="generateNewActivationCode()">توليد كود جديد</button>
+                </div>
+                <div id="generated-code-display" style="margin-top: 10px; text-align: center; font-size: 14px; font-weight: 900; color: #DC2626;"></div>
+            </div>
+        </div>
+
         <!-- 1. تسجيل الدخول السحابي -->
-        <div class="card active" id="login-section">
+        <div class="card" id="login-section">
+            <div class="clinic-topbar">
+                <button type="button" onclick="openActivationModalFromApp()" style="background:#e0f2fe; color:var(--primary); border:none; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;"><i class="fa-solid fa-key"></i> حالة الاشتراك</button>
+            </div>
             <div class="card-header">
                 <div class="clinic-logo">🦷</div>
                 <h2>منصة أسناني السحابية</h2>
@@ -607,16 +631,19 @@
         <div class="card" id="dashboard-section">
             <div class="clinic-topbar">
                 <a onclick="logout()" class="logout-btn">خروج</a>
-                <div class="doctor-welcome">🦷 عيادة أسناني السحابية</div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button type="button" onclick="openActivationModalFromApp()" style="background:#e0f2fe; color:var(--primary); border:none; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;"><i class="fa-solid fa-key"></i> تجديد الاشتراك</button>
+                    <div class="doctor-welcome">🦷 عيادة أسناني السحابية</div>
+                </div>
             </div>
 
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>لوحة التحكم الرئيسية</h2>
-                <p>اختر الخدمة المطلوبة للبدء</p>
+                <p id="subscription-badge-text" style="color: #10B981; font-weight: bold; font-size: 12px; margin-top: 4px;"></p>
             </div>
 
             <div class="dashboard-grid">
-                <div class="dashboard-tile" onclick="openNewPatientForm()">
+                <div class="dashboard-tile" id="tile-new-patient" onclick="openNewPatientForm()">
                     <div class="tile-icon">➕</div>
                     <div class="tile-title">مريض جديد</div>
                     <div class="tile-desc">فتح ملف ومخطط</div>
@@ -707,16 +734,16 @@
             <button type="button" class="btn" onclick="saveGlobalJawTemplate()">اعتماد قالب الفكين والتخصيصات للعيادة</button>
         </div>
 
-        <!-- 5. أرشيف ملفات المرضى -->
+        <!-- 5. أرشيف ملفات المرضى (متاحة دائماً للمشاهدة والاستعراض) -->
         <div class="card" id="patients-archive-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
-                <div class="doctor-welcome">🦷 أرشيف العيادة</div>
+                <div class="doctor-welcome">🦷 أرشيف العيادة (متاح للمشاهدة دائماً)</div>
             </div>
 
             <div class="card-header" style="margin-bottom: 15px;">
                 <h2>ملفات المرضى السابقين</h2>
-                <p>اختر أي مريض للاستعراض أو التعديل الفوري</p>
+                <p>يمكنك استعراض ومتابعة جميع ملفات المرضى في أي وقت</p>
             </div>
 
             <div class="form-group">
@@ -832,17 +859,14 @@
                     <div class="suggestions-box" id="suggestions-notes"></div>
                 </div>
 
-                <!-- قسم صور قبل وبعد لكل سن -->
                 <div class="tooth-ba-section">
                     <label style="font-weight: 700; color: var(--text-main); margin-bottom: 8px; display: block;">📸 توثيق السن (الأشعة والصور):</label>
-                    
                     <div class="tooth-ba-card">
                         <div class="tooth-ba-title">📥 صور (قبل العلاج)</div>
                         <label for="input-before-file" class="custom-file-upload">➕ إضافَة صور قبل العلاج</label>
                         <input type="file" id="input-before-file" accept="image/*" multiple onchange="handleToothImagesUpload(event, 'before')" style="display: none;">
                         <div class="tooth-images-grid" id="tooth-before-images"></div>
                     </div>
-
                     <div class="tooth-ba-card">
                         <div class="tooth-ba-title">📤 صور (بعد العلاج)</div>
                         <label for="input-after-file" class="custom-file-upload">➕ إضافَة صور بعد العلاج</label>
@@ -916,7 +940,7 @@
 
     </div>
 
-    <!-- نافذة منبثقة للروشتة الطبية مع ميزة Config Mode والسحب وإفلات العناصر (Draggable Boxes) -->
+    <!-- نافذة الروشتة وتخصيص إحداثياتها -->
     <div id="rxModal" class="modal-overlay" style="display: none;">
         <div class="modal-body" style="max-width: 600px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
@@ -929,15 +953,13 @@
                 </div>
             </div>
 
-            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px; text-align: center;" id="rxModeHint">
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px; text-align: center;">
                 💡 انقر على "ضبط الأماكن والخطوط" لسحب ونقل الأجزاء وتكبير وتصغير الخطوط بحرية تامة على ترويسة عيادتك.
             </div>
 
-            <!-- حاوية الروشتة التفاعلية القابلة للسحب -->
             <div id="rxCanvasContainer" class="rx-canvas-container">
                 <img id="rxBgImg" class="rx-bg-img" src="" alt="ترويسة الروشتة" style="display: none;">
                 
-                <!-- صندوق اسم وتفاصيل المريض القابل للسحب -->
                 <div id="rxDragBoxPatient" class="draggable-box" style="top: 130px; left: 30px;">
                     <div class="box-font-controls">
                         <span>خط المريض:</span>
@@ -949,7 +971,6 @@
                     <div id="rxDragPatientText" style="font-size: 14px; font-weight: bold; color: #DC2626;">المريض: —</div>
                 </div>
 
-                <!-- صندوق التاريخ القابل للسحب -->
                 <div id="rxDragBoxDate" class="draggable-box" style="top: 130px; left: 400px;">
                     <div class="box-font-controls">
                         <span>خط التاريخ:</span>
@@ -961,7 +982,6 @@
                     <div id="rxDragDateText" style="font-size: 13px; font-weight: bold; color: #334155;">التاريخ: —</div>
                 </div>
 
-                <!-- صندوق الأدوية والعلاج (Rx) القابل للسحب -->
                 <div id="rxDragBoxTreatment" class="draggable-box" style="top: 200px; left: 30px; width: 480px;">
                     <div class="box-font-controls">
                         <span>خط الأدوية:</span>
@@ -972,7 +992,7 @@
                     </div>
                     <div style="font-size: 20px; font-weight: 900; color: #DC2626; margin-bottom: 4px;">Rx</div>
                     <div class="form-group" style="position: relative; margin-bottom: 0;">
-                        <textarea id="rx-drugs-textarea" rows="5" placeholder="اكتب الأدوية والتعليمات هنا (مع الاقتراحات التلقائية)..." oninput="handleDictSuggestions(this, 'drugs')" onblur="hideSuggestions('drugs')" style="font-size: 14px; line-height: 1.6; background: rgba(255,255,255,0.9);"></textarea>
+                        <textarea id="rx-drugs-textarea" rows="5" placeholder="اكتب الأدوية والتعليمات هنا..." oninput="handleDictSuggestions(this, 'drugs')" onblur="hideSuggestions('drugs')" style="font-size: 14px; line-height: 1.6; background: rgba(255,255,255,0.9);"></textarea>
                         <div class="suggestions-box" id="suggestions-drugs"></div>
                     </div>
                 </div>
@@ -990,7 +1010,7 @@
         </div>
     </div>
 
-    <!-- نافذة منبثقة للتقرير الطبي الرسمي (Medical Report Modal) -->
+    <!-- نافذة التقرير الطبي -->
     <div id="medicalReportModal" class="modal-overlay" style="display: none;">
         <div class="modal-body" style="max-width: 560px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
@@ -1012,6 +1032,35 @@
             <div style="display: flex; gap: 10px;">
                 <button type="button" class="btn btn-secondary" onclick="closeMedicalReportModal()">إغلاق</button>
                 <button type="button" class="btn" style="background: #10B981;" onclick="printReportDirectly()"><i class="fa-solid fa-print"></i> طباعة التقرير</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- نافذة تفعيل الاشتراك المنبثقة (لتجديد الاشتراك في أي وقت) -->
+    <div id="activationModal" class="modal-overlay" style="display: none;">
+        <div class="modal-body" style="max-width: 480px; text-align: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="color: var(--primary);"><i class="fa-solid fa-key"></i> إدارة وتجديد الاشتراك</h3>
+                <button type="button" onclick="closeActivationModal()" style="background: none; border: none; font-size: 18px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <p id="modal-sub-info" style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;"></p>
+            <div class="form-group">
+                <input type="text" id="modal-activation-code-input" placeholder="أدخل كود التفعيل (أسبوعي / سنوي)" style="text-align: center; font-size: 15px; font-weight: bold;">
+            </div>
+            <button type="button" class="btn" style="background: #10B981;" onclick="verifyModalActivationCode()">تفعيل وتجديد الاشتراك فوراً</button>
+            
+            <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
+                <h4 style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">توليد أكواد جديدة (للإدارة):</h4>
+                <div class="form-row">
+                    <div class="form-group">
+                        <select id="modal-code-duration-select">
+                            <option value="7">أسبوعي (7 أيام)</option>
+                            <option value="365">سنوي (365 يوماً)</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn btn-secondary" style="margin-top:0; width: auto; font-size: 11px;" onclick="generateModalActivationCode()">توليد كود</button>
+                </div>
+                <div id="modal-generated-code-display" style="margin-top: 8px; font-size: 13px; font-weight: 900; color: #DC2626;"></div>
             </div>
         </div>
     </div>
@@ -1072,6 +1121,144 @@
             lower.forEach((num, i) => { pos[num] = lowerCoords[i]; });
             return pos;
         }
+
+        /* نظام الاشتراكات الذكي وتجديد الأسبوعي/السنوي */
+        function checkSubscriptionStatus() {
+            let subData = localStorage.getItem('clinic_subscription');
+            if (subData) {
+                try {
+                    let parsed = JSON.parse(subData);
+                    let expiryDate = new Date(parsed.expiry);
+                    let now = new Date();
+                    if (now <= expiryDate) {
+                        let daysLeft = Math.ceil((expiryDate - now) / (1000 * 60 * 60 * 24));
+                        return { active: true, daysLeft: daysLeft };
+                    }
+                } catch(e) {}
+            }
+            return { active: false, daysLeft: 0 };
+        }
+
+        function applySubscriptionDays(daysToAdd) {
+            let subData = localStorage.getItem('clinic_subscription');
+            let baseDate = new Date();
+            if (subData) {
+                try {
+                    let parsed = JSON.parse(subData);
+                    let currentExpiry = new Date(parsed.expiry);
+                    if (currentExpiry > baseDate) {
+                        baseDate = currentExpiry; // إذا كان الاشتراك ساري، نضيف الأيام الجديدة فوقه (يدعم التجديد المتكرر للأسبوعي أو السنوي)
+                    }
+                } catch(e) {}
+            }
+            baseDate.setDate(baseDate.getDate() + parseInt(daysToAdd));
+            localStorage.setItem('clinic_subscription', JSON.stringify({ expiry: baseDate.toISOString() }));
+        }
+
+        function verifyActivationCode() {
+            let code = document.getElementById('activation-code-input').value.trim();
+            let savedCodes = JSON.parse(localStorage.getItem('clinic_valid_codes')) || {};
+            
+            // كود تجريبي افتراضي
+            if (code === "ASNANI-VIP-7D" || code === "ASNANI-VIP-365D" || savedCodes[code]) {
+                let days = 7;
+                if (code.includes("365") || savedCodes[code] === 365) days = 365;
+                if (savedCodes[code]) days = savedCodes[code];
+
+                applySubscriptionDays(days);
+                alert(`🎉 تم تفعيل / تجديد الاشتراك بنجاح لمدة ${days} يوم!`);
+                closeActivationModal();
+                checkAuthAndRedirect();
+            } else {
+                alert('❌ كود التفعيل غير صالح!');
+            }
+        }
+
+        function generateNewActivationCode() {
+            let days = parseInt(document.getElementById('code-duration-select').value);
+            let randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+            let newCode = `ASNANI-${days}D-${randomPart}`;
+            
+            let savedCodes = JSON.parse(localStorage.getItem('clinic_valid_codes')) || {};
+            savedCodes[newCode] = days;
+            localStorage.setItem('clinic_valid_codes', JSON.stringify(savedCodes));
+            
+            document.getElementById('generated-code-display').innerHTML = `الكود المولّد: ${newCode} (${days === 7 ? 'أسبوعي' : 'سنوي'})`;
+        }
+
+        function openActivationModalFromApp() {
+            let sub = checkSubscriptionStatus();
+            document.getElementById('modal-sub-info').innerHTML = sub.active ? 
+                `الحالة: <span style="color:#10B981; font-weight:bold;">مفعل (باقي ${sub.daysLeft} يوم)</span>. يمكنك إدخال كود جديد لتجديد الاشتراك (أسبوعي أو سنوي) في أي وقت.` :
+                `الحالة: <span style="color:#EF4444; font-weight:bold;">منتهي الصلاحية</span>. يمكنك مشاهدة ملفات المرضى، لكن يلزم التجديد لإضافة مرضى جدد.`;
+            document.getElementById('activationModal').style.display = 'flex';
+        }
+        function closeActivationModal() { document.getElementById('activationModal').style.display = 'none'; }
+
+        function verifyModalActivationCode() {
+            let code = document.getElementById('modal-activation-code-input').value.trim();
+            let savedCodes = JSON.parse(localStorage.getItem('clinic_valid_codes')) || {};
+            if (code === "ASNANI-VIP-7D" || code === "ASNANI-VIP-365D" || savedCodes[code]) {
+                let days = 7;
+                if (code.includes("365") || savedCodes[code] === 365) days = 365;
+                if (savedCodes[code]) days = savedCodes[code];
+
+                applySubscriptionDays(days);
+                alert(`🎉 تم تجديد الاشتراك بنجاح لمدة ${days} يوم!`);
+                closeActivationModal();
+                updateDashboardSubscriptionBadge();
+            } else {
+                alert('❌ كود التفعيل غير صالح!');
+            }
+        }
+
+        function generateModalActivationCode() {
+            let days = parseInt(document.getElementById('modal-code-duration-select').value);
+            let randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
+            let newCode = `ASNANI-${days}D-${randomPart}`;
+            let savedCodes = JSON.parse(localStorage.getItem('clinic_valid_codes')) || {};
+            savedCodes[newCode] = days;
+            localStorage.setItem('clinic_valid_codes', JSON.stringify(savedCodes));
+            document.getElementById('modal-generated-code-display').innerHTML = `الكود: ${newCode}`;
+        }
+
+        function updateDashboardSubscriptionBadge() {
+            let sub = checkSubscriptionStatus();
+            const badge = document.getElementById('subscription-badge-text');
+            const tileNew = document.getElementById('tile-new-patient');
+            if (sub.active) {
+                badge.innerHTML = `🟢 الاشتراك مفعل (باقي ${sub.daysLeft} يوم)`;
+                badge.style.color = "#10B981";
+                if(tileNew) tileNew.style.opacity = "1";
+            } else {
+                badge.innerHTML = `⚠️ انتهى الاشتراك! (يمكنك مشاهدة المرضى، ويلزم التجديد لإضافة مرضى جدد)`;
+                badge.style.color = "#EF4444";
+            }
+        }
+
+        function checkAuthAndRedirect() {
+            let sub = checkSubscriptionStatus();
+            if (sub.active) {
+                auth.onAuthStateChanged((user) => {
+                    if (user) { currentUser = user; switchTab('dashboard-section'); updateDashboardSubscriptionBadge(); }
+                    else { currentUser = null; switchTab('login-section'); }
+                });
+            } else {
+                // إذا انتهى الاشتراك، نسمح للطبيب بالدخول لعرض المرضى والأرشيف لكن مع تنبيه، أو شاشة التفعيل
+                auth.onAuthStateChanged((user) => {
+                    if (user) { currentUser = user; switchTab('dashboard-section'); updateDashboardSubscriptionBadge(); }
+                    else { currentUser = null; switchTab('login-section'); }
+                });
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            renderJawGrid();
+            renderDictManagerList();
+            initDraggableRxBoxes();
+            loadSavedRxLayout();
+            checkAuthAndRedirect();
+        });
 
         function getToothStyle(num) {
             return hotspotStyles[num] || { width: 26, height: 26, radius: 13, rotate: 0 };
@@ -1218,18 +1405,6 @@
             renderJawGrid();
         }
 
-        document.addEventListener("DOMContentLoaded", () => {
-            renderJawGrid();
-            renderDictManagerList();
-            initDraggableRxBoxes();
-            loadSavedRxLayout();
-        });
-
-        auth.onAuthStateChanged((user) => {
-            if (user) { currentUser = user; switchTab('dashboard-section'); }
-            else { currentUser = null; switchTab('login-section'); }
-        });
-
         function handleLogin(event) {
             event.preventDefault();
             auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value)
@@ -1246,6 +1421,12 @@
         function logout() { auth.signOut(); }
 
         function openNewPatientForm() {
+            let sub = checkSubscriptionStatus();
+            if (!sub.active) {
+                alert('⚠️ انتهى اشتراك العيادة! يرجى تجديد الاشتراك (أسبوعي أو سنوي) من زر "تجديد الاشتراك" لإضافة مرضى جدد.');
+                openActivationModalFromApp();
+                return;
+            }
             editingPatientId = null;
             document.getElementById('patient-form-title').textContent = "ملف مريض جديد";
             ['p-name', 'p-age', 'p-phone', 'p-history'].forEach(id => document.getElementById(id).value = '');
@@ -1292,7 +1473,7 @@
                                     <p>العمر: ${data.age} سنة | الهاتف: ${data.phone}</p>
                                 </div>
                                 <div class="patient-actions">
-                                    <button onclick="editPatient('${doc.id}')">تعديل الملف</button>
+                                    <button onclick="editPatient('${doc.id}')">استعراض / تعديل</button>
                                 </div>
                             </div>
                         `;
@@ -1306,7 +1487,7 @@
             db.collection("patients").doc(patientId).get().then((doc) => {
                 if (doc.exists) {
                     const data = doc.data();
-                    document.getElementById('patient-form-title').textContent = `تعديل ملف: ${data.name}`;
+                    document.getElementById('patient-form-title').textContent = `ملف المريض: ${data.name}`;
                     document.getElementById('p-name').value = data.name || '';
                     document.getElementById('p-gender').value = data.gender || 'ذكر';
                     document.getElementById('p-age').value = data.age || '';
@@ -1336,6 +1517,12 @@
 
         function savePatientToCloud() {
             if (!currentUser) { alert('الرجاء تسجيل الدخول أولاً'); return; }
+            let sub = checkSubscriptionStatus();
+            if (!editingPatientId && !sub.active) {
+                alert('⚠️ انتهى اشتراك العيادة! يرجى تجديد الاشتراك لإضافة مريض جديد.');
+                openActivationModalFromApp();
+                return;
+            }
             const finalPatientData = { doctorId: currentUser.uid, ...temporaryPatientInfo, teeth: toothData, updatedAt: new Date() };
             if (editingPatientId) {
                 db.collection("patients").doc(editingPatientId).update(finalPatientData)
@@ -1405,7 +1592,6 @@
             }
         }
 
-        /* دوال القاموس الطبي */
         function openDictionaryManager() { renderDictManagerList(); switchTab('dict-manager-section'); }
         function addDictItem() {
             const val = document.getElementById('new-dict-item').value.trim();
@@ -1460,7 +1646,6 @@
             setTimeout(() => { document.getElementById('suggestions-' + type).style.display = 'none'; }, 250);
         }
 
-        /* دوال الروشتة وترويستها وتخصيص إحداثياتها (Draggable & Config Mode) */
         function openRxTemplateManager() {
             const imgEl = document.getElementById('rx-preview-header');
             if (rxHeaderImage) { imgEl.src = rxHeaderImage; imgEl.style.display = 'block'; }
@@ -1484,11 +1669,9 @@
         function openRxModal() {
             document.getElementById('rxDragPatientText').textContent = "المريض: " + (temporaryPatientInfo.name || "غير محدد");
             document.getElementById('rxDragDateText').textContent = "التاريخ: " + new Date().toLocaleDateString('en-GB');
-            
             const bgImg = document.getElementById('rxBgImg');
             if (rxHeaderImage) { bgImg.src = rxHeaderImage; bgImg.style.display = 'block'; }
             else { bgImg.style.display = 'none'; }
-
             loadSavedRxLayout();
             document.getElementById('rxModal').style.display = 'flex';
         }
@@ -1513,7 +1696,6 @@
             if (boxType === 'patient') targetEl = document.getElementById('rxDragPatientText');
             else if (boxType === 'date') targetEl = document.getElementById('rxDragDateText');
             else if (boxType === 'drugs') targetEl = document.getElementById('rx-drugs-textarea');
-            
             if (targetEl) {
                 let curSize = parseFloat(window.getComputedStyle(targetEl).fontSize);
                 targetEl.style.fontSize = (curSize + delta) + 'px';
@@ -1525,7 +1707,6 @@
             const container = document.getElementById('rxCanvasContainer');
             const cWidth = container.clientWidth; const cHeight = container.clientHeight;
             let layoutData = {};
-
             document.querySelectorAll('#rxModal .draggable-box').forEach(box => {
                 layoutData[box.id] = {
                     top: ((box.offsetTop / cHeight) * 100) + '%',
@@ -1554,7 +1735,7 @@
                             if (inner && cfg.fontSize) inner.style.fontSize = cfg.fontSize;
                         }
                     }
-                } catch(e) { console.log(e); }
+                } catch(e) {}
             }
         }
 
@@ -1562,7 +1743,6 @@
             let activeBox = null; let startX = 0, startY = 0, initLeft = 0, initTop = 0;
             const container = document.getElementById('rxCanvasContainer');
             if (!container) return;
-
             document.querySelectorAll('#rxModal .draggable-box').forEach(box => {
                 box.addEventListener('pointerdown', (e) => {
                     if (!isConfigMode || e.target.tagName === 'BUTTON' || e.target.tagName === 'TEXTAREA' || e.target.closest('button')) return;
@@ -1586,7 +1766,6 @@
 
         function printRxDirectly() {
             if (isConfigMode) toggleRxConfigMode();
-            // إخفاء أزرار التحكم بالخطوط مؤقتاً أثناء الطباعة
             document.querySelectorAll('.box-font-controls').forEach(el => el.style.display = 'none');
             const element = document.getElementById('rxCanvasContainer');
             html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
@@ -1614,7 +1793,6 @@
             });
         }
 
-        /* التقارير الطبية والنسخ الاحتياطي */
         function openMedicalReportModal() {
             document.getElementById('report-header-img-container').innerHTML = rxHeaderImage ? `<img src="${rxHeaderImage}" style="max-height: 80px; max-width: 100%;">` : `<h3 style="color:var(--primary);">عيادة أسناني السحابية</h3>`;
             document.getElementById('medicalReportModal').style.display = 'flex';
