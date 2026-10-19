@@ -142,7 +142,7 @@
     <div class="mobile-container">
 
         <!-- 0. تفعيل الاشتراك -->
-        <div class="content active" id="activation-section">
+        <div class="content" id="activation-section">
             <div class="auth-screen">
                 <div class="activ-icon"><i class="fa-solid fa-key"></i></div>
                 <h2 class="activ-title">تفعيل اشتراك العيادة</h2>
@@ -159,7 +159,7 @@
         </div>
 
         <!-- 1. تسجيل الدخول -->
-        <div class="content" id="login-section">
+        <div class="content active" id="login-section">
             <div class="auth-screen">
                 <div class="activ-icon"><i class="fa-solid fa-tooth"></i></div>
                 <h2 class="activ-title">منصة أسناني السحابية</h2>
@@ -211,7 +211,6 @@
                     </div>
                 </div>
                 <div class="header-icon"><i class="fa-solid fa-tooth"></i></div>
-                <!-- اسم الطبيب الذي يمكن تعديله وحفظه فوراً -->
                 <h1 id="header-doctor-name" onclick="editDoctorName()" title="انقر لتعديل الاسم">Dr. قيس قاسم</h1>
                 <p>لوحة التحكم السحابية الآمنة (Clinic Master)</p>
             </div>
@@ -263,7 +262,6 @@
                             </div>
                         </div>
 
-                        <!-- أيقونة إدارة المؤسس أصبحت في نهاية القائمة تماماً -->
                         <div class="menu-card founder-card" id="founder-menu-tile" style="display: none;" onclick="openFounderAdminPanel()">
                             <div class="menu-icon founder-icon"><i class="fa-solid fa-crown"></i></div>
                             <div class="menu-info">
@@ -621,7 +619,7 @@
         }
 
         function checkSubscriptionStatus() {
-            if (currentUser && currentUser.email && currentUser.email.toLowerCase() === FOUNDER_EMAIL.toLowerCase()) {
+            if (currentUser && currentUser.email && currentUser.email.toLowerCase().trim() === FOUNDER_EMAIL.toLowerCase().trim()) {
                 return { active: true, daysLeft: 9999 };
             }
             let subData = localStorage.getItem('clinic_subscription');
@@ -679,29 +677,36 @@
         }
 
         function checkAuthAndRedirect() {
-            auth.onAuthStateChanged((user) => {
-                if (user) {
-                    currentUser = user;
-                    let isFounder = currentUser.email.toLowerCase() === FOUNDER_EMAIL.toLowerCase();
-                    let sub = checkSubscriptionStatus();
+            if (!currentUser) {
+                switchTab('login-section');
+                return;
+            }
 
-                    const founderTile = document.getElementById('founder-menu-tile');
-                    if (founderTile) {
-                        founderTile.style.display = isFounder ? "flex" : "none";
-                    }
+            let isFounder = currentUser.email && currentUser.email.toLowerCase().trim() === FOUNDER_EMAIL.toLowerCase().trim();
+            let sub = checkSubscriptionStatus();
 
-                    if (isFounder || sub.active) {
-                        switchTab('dashboard-section');
-                        loadDoctorName();
-                    } else {
-                        switchTab('activation-section');
-                    }
-                } else {
-                    currentUser = null;
-                    switchTab('login-section');
-                }
-            });
+            const founderTile = document.getElementById('founder-menu-tile');
+            if (founderTile) {
+                founderTile.style.display = isFounder ? "flex" : "none";
+            }
+
+            if (isFounder || sub.active) {
+                switchTab('dashboard-section');
+                loadDoctorName();
+            } else {
+                switchTab('activation-section');
+            }
         }
+
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                currentUser = user;
+                checkAuthAndRedirect();
+            } else {
+                currentUser = null;
+                switchTab('login-section');
+            }
+        });
 
         document.addEventListener("DOMContentLoaded", () => {
             loadDoctorName();
@@ -709,7 +714,6 @@
             renderDictManagerList();
             initDraggableRxBoxes();
             loadSavedRxLayout();
-            checkAuthAndRedirect();
         });
 
         function toggleDropdown() { document.getElementById('dropdownMenu').classList.toggle('show'); }
@@ -832,7 +836,7 @@
 
         function openNewPatientForm() {
             let sub = checkSubscriptionStatus();
-            let isFounder = currentUser && currentUser.email && currentUser.email.toLowerCase() === FOUNDER_EMAIL.toLowerCase();
+            let isFounder = currentUser && currentUser.email && currentUser.email.toLowerCase().trim() === FOUNDER_EMAIL.toLowerCase().trim();
             if (!sub.active && !isFounder) {
                 alert('⚠️ انتهى اشتراك العيادة! يرجى تجديد الاشتراك لإضافة مرضى جدد.');
                 switchTab('activation-section');
@@ -1046,7 +1050,6 @@
         }
         function closeRxModal() { document.getElementById('rxModal').style.display = 'none'; }
 
-        let isConfigMode = false;
         function toggleRxConfigMode() {
             isConfigMode = !isConfigMode;
             document.querySelectorAll('#rxModal .draggable-box').forEach(b => {
