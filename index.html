@@ -5,13 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>منصة أسناني السحابية - عيادات الأسنان (Clinic Master Edition)</title>
     
-    <!-- الخطوط العصرية وأيقونات FontAwesome -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@600;700;900&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -23,9 +21,9 @@
         body.dark-mode { background-color: #0b0f19; color: #f8fafc; }
         body.dark-mode .mobile-container { background: #0b0f19; }
         body.dark-mode .auth-screen { background: #0b0f19; color: #f8fafc; }
-        body.dark-mode .activ-title, body.dark-mode .header h1, body.dark-mode .menu-info h3, body.dark-mode .patient-info h4, body.dark-mode .modal-header h3 { color: #f8fafc !important; }
-        body.dark-mode .activ-sub, body.dark-mode .header p, body.dark-mode .menu-info p, body.dark-mode .patient-info p, body.dark-mode .field-label { color: #94a3b8 !important; }
-        body.dark-mode .input-wrapper, body.dark-mode .menu-card, body.dark-mode .group-card, body.dark-mode .patient-card, body.dark-mode .modal-body, body.dark-mode .dropdown-menu { background-color: #1e293b !important; border-color: #334155 !important; color: #f8fafc !important; }
+        body.dark-mode .activ-title, body.dark-mode .header h1, body.dark-mode .menu-info h3, body.dark-mode .modal-header h3 { color: #f8fafc !important; }
+        body.dark-mode .activ-sub, body.dark-mode .header p, body.dark-mode .menu-info p, body.dark-mode .field-label { color: #94a3b8 !important; }
+        body.dark-mode .input-wrapper, body.dark-mode .menu-card, body.dark-mode .modal-body, body.dark-mode .dropdown-menu { background-color: #1e293b !important; border-color: #334155 !important; color: #f8fafc !important; }
 
         .mobile-container { background: #ffffff; width: 100%; max-width: 820px; min-height: 100vh; position: relative; display: flex; flex-direction: column; box-shadow: 0 0 40px rgba(0,0,0,0.08); }
 
@@ -39,7 +37,6 @@
         .password-wrapper input { width: 100%; padding-right: 40px; }
         .toggle-password { position: absolute; right: 14px; cursor: pointer; color: #64748b; font-size: 0.85rem; font-weight: 700; }
 
-        /* ترويسة النظام */
         .header { background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); color: white; padding: 35px 20px 30px 20px; text-align: center; border-bottom-left-radius: 35px; border-bottom-right-radius: 35px; position: relative; box-shadow: 0 4px 20px rgba(0,0,0,0.15); flex-shrink: 0; }
         .header-icon { font-size: 44px; color: #0d9488; margin-bottom: 10px; }
         .header h1 { font-family: 'Playfair Display', serif; font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; color: #f8fafc; letter-spacing: 0.5px; }
@@ -91,7 +88,6 @@
         .btn-main { width: 100%; background: #0d9488; color: white; border: none; border-radius: 12px; padding: 12px; font-size: 0.95rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: background 0.2s; }
         .btn-main:hover { background: #0f766e; }
 
-        /* بطاقة بيانات الحسابات للمؤسس */
         .registered-account-card { background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; text-align: right; }
         .account-info h4 { font-size: 0.95rem; font-weight: 800; color: #0f172a; margin-bottom: 3px; }
         .account-info p { font-size: 0.78rem; color: #64748b; font-weight: 600; }
@@ -103,14 +99,14 @@
 
     <div class="mobile-container">
 
-        <!-- 0. شاشة تفعيل الاشتراك للحسابات الجديدة -->
+        <!-- 0. شاشة تفعيل الاشتراك -->
         <div class="content active" id="activation-section">
             <div class="auth-screen">
                 <div class="activ-icon"><i class="fa-solid fa-key"></i></div>
                 <h2 class="activ-title">تفعيل اشتراك العيادة</h2>
-                <p class="activ-sub">يرجى إدخال كود التفعيل المرسل لك من إدارة المنصة لتفعيل حسابك</p>
+                <p class="activ-sub">يرجى إدخال كود التفعيل لتنشيط حسابك بالمنصة</p>
                 <div class="auth-form">
-                    <input type="text" id="activation-code-input" placeholder="أدخل كود التفعيل (أسبوعي / سنوي)" style="text-align: center; font-weight: bold; letter-spacing: 1px;">
+                    <input type="text" id="activation-code-input" placeholder="أدخل كود التفعيل" style="text-align: center; font-weight: bold; letter-spacing: 1px;">
                     <button type="button" class="btn-main" style="background: #10B981;" onclick="verifyActivationCode()">تحقق وتفعيل الاشتراك</button>
                     <div id="subscription-status-box" style="margin-top: 10px; font-size: 13px; font-weight: 700; color: #0d9488;"></div>
                     <div style="margin-top: 15px; font-size: 12px; color: #64748b;">
@@ -173,25 +169,15 @@
                     </div>
                 </div>
                 <div class="header-icon"><i class="fa-solid fa-tooth"></i></div>
-                <h1>Dr. قيس قاسم</h1>
+                <!-- اسم الطبيب الذي يمكن تعديله وحفظه -->
+                <h1 id="header-doctor-name" style="cursor: pointer;" onclick="editDoctorName()" title="انقر لتعديل الاسم">Dr. قيس قاسم</h1>
                 <p>لوحة التحكم السحابية الآمنة (Clinic Master)</p>
             </div>
 
             <div style="padding: 20px 16px;">
-                <div id="subscription-status-banner" style="margin-bottom: 15px; padding: 10px; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 12px; font-size: 12px; font-weight: 700; color: #166534; text-align: center;"></div>
-
                 <div class="section-group">
                     <div class="section-title"><i class="fa-solid fa-stethoscope"></i> Operations & Daily Tasks</div>
                     <div class="menu-grid">
-                        <!-- أيقونة المؤسس المخصصة تظهر حصراً لبريدك Musqaqa009@gmail.com -->
-                        <div class="menu-card founder-card" id="founder-menu-tile" style="display: none;" onclick="openFounderAdminPanel()">
-                            <div class="menu-icon founder-icon"><i class="fa-solid fa-crown"></i></div>
-                            <div class="menu-info">
-                                <h3>إدارة المؤسس</h3>
-                                <p>الأكواد وحسابات المنصة</p>
-                            </div>
-                        </div>
-
                         <div class="menu-card" onclick="openNewPatientForm()">
                             <div class="menu-icon new-pat"><i class="fa-solid fa-user-plus"></i></div>
                             <div class="menu-info">
@@ -227,13 +213,22 @@
                                 <p>إدارة الأدوية والاقتراحات</p>
                             </div>
                         </div>
+
+                        <!-- أيقونة المؤسس أصبحت في النهاية تماماً -->
+                        <div class="menu-card founder-card" id="founder-menu-tile" style="display: none;" onclick="openFounderAdminPanel()">
+                            <div class="menu-icon founder-icon"><i class="fa-solid fa-crown"></i></div>
+                            <div class="menu-info">
+                                <h3>إدارة المؤسس</h3>
+                                <p>الأكواد وحسابات المنصة</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="footer">منصة أسناني السحابية © 2026 - جميع الحقوق محفوظة</div>
         </div>
 
-        <!-- 4. شاشة لوحة تحكم المؤسس المخصصة (تحتوي مجموعتين: الأكواد + الحسابات المسجلة) -->
+        <!-- 4. شاشة لوحة تحكم المؤسس المخصصة -->
         <div class="content" id="founder-admin-section">
             <div class="header" style="padding: 25px 20px;">
                 <button type="button" class="back-btn" onclick="switchTab('dashboard-section')"><i class="fa-solid fa-arrow-right"></i> الرئيسية</button>
@@ -243,7 +238,6 @@
             </div>
             
             <div style="padding: 20px 0;">
-                <!-- المجموعة الأولى: الأكواد -->
                 <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 16px; margin-bottom: 20px;">
                     <h3 style="color: #0d9488; font-size: 15px; font-weight: 800; margin-bottom: 10px;"><i class="fa-solid fa-key"></i> المجموعة الأولى: توليد وإدارة أكواد التفعيل</h3>
                     <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">اختر مدة الصلاحية لتوليد كود تفعيل فوري للعيادات الجديدة:</p>
@@ -254,7 +248,6 @@
                     <div id="founder-code-display" style="font-size: 14px; font-weight: 900; color: #dc2626; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #cbd5e1; text-align: center; display: none;"></div>
                 </div>
 
-                <!-- المجموعة الثانية: الحسابات المسجلة بالمنصة -->
                 <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 16px; padding: 16px;">
                     <h3 style="color: #0d9488; font-size: 15px; font-weight: 800; margin-bottom: 10px;"><i class="fa-solid fa-users-gear"></i> المجموعة الثانية: الحسابات المسجلة في المنصة</h3>
                     <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">قاعدة بيانات شاملة لكافة الحسابات والعيادات التي قامت بالتسجيل:</p>
@@ -265,11 +258,10 @@
             </div>
         </div>
 
-        <!-- الأقسام الأخرى الأساسية (بيانات المريض، المخطط، الأرشيف، القاموس، النسخ) -->
+        <!-- الأقسام الأخرى الأساسية -->
         <div class="content" id="patient-info-section">
             <div class="header" style="padding: 25px 20px;">
                 <button type="button" class="back-btn" onclick="switchTab('dashboard-section')"><i class="fa-solid fa-arrow-right"></i> الرئيسية</button>
-                <div class="header-icon" style="font-size: 32px;"><i class="fa-solid fa-user-injured"></i></div>
                 <h1 id="patient-form-title" style="font-size: 1.3rem;">ملف مريض جديد</h1>
             </div>
             <div style="padding: 20px 0;">
@@ -288,23 +280,14 @@
         <div class="content" id="patient-chart-section">
             <div class="header" style="padding: 25px 20px;">
                 <button type="button" class="back-btn" onclick="switchTab('patient-info-section')"><i class="fa-solid fa-arrow-right"></i> رجوع</button>
-                <div class="header-icon" style="font-size: 32px;"><i class="fa-solid fa-teeth"></i></div>
                 <h1 style="font-size: 1.3rem;">مخطط الأسنان التشريعي</h1>
             </div>
             <div style="padding: 20px 0; text-align: center;">
-                <p style="font-weight:700; color:#64748b;">(مخطط الأسنان التفاعلي جاهز ومفعل)</p>
                 <button type="button" class="btn-main" onclick="savePatientToCloud()" style="margin-top: 20px; background: #10B981;">حفظ المريض سحابياً</button>
             </div>
         </div>
 
-        <div class="content" id="patients-archive-section">
-            <div class="header" style="padding: 25px 20px;">
-                <button type="button" class="back-btn" onclick="switchTab('dashboard-section')"><i class="fa-solid fa-arrow-right"></i> الرئيسية</button>
-                <h1 style="font-size: 1.3rem;">أرشيف المرضى</h1>
-            </div>
-            <div style="padding: 20px 0;" id="patients-list-container"></div>
-        </div>
-
+        <div class="content" id="patients-archive-section"><div class="header" style="padding: 25px 20px;"><button type="button" class="back-btn" onclick="switchTab('dashboard-section')"><i class="fa-solid fa-arrow-right"></i> الرئيسية</button><h1 style="font-size: 1.3rem;">أرشيف المرضى</h1></div></div>
         <div class="content" id="template-manager-section"><div class="header" style="padding: 25px 20px;"><button type="button" class="back-btn" onclick="switchTab('dashboard-section')"><i class="fa-solid fa-arrow-right"></i> الرئيسية</button><h1 style="font-size: 1.3rem;">قالب الفكين</h1></div></div>
         <div class="content" id="rx-template-section"><div class="header" style="padding: 25px 20px;"><button type="button" class="back-btn" onclick="switchTab('dashboard-section')"><i class="fa-solid fa-arrow-right"></i> الرئيسية</button><h1 style="font-size: 1.3rem;">ترويسة الروشتة</h1></div></div>
         <div class="content" id="dict-manager-section"><div class="header" style="padding: 25px 20px;"><button type="button" class="back-btn" onclick="switchTab('dashboard-section')"><i class="fa-solid fa-arrow-right"></i> الرئيسية</button><h1 style="font-size: 1.3rem;">القاموس الطبي</h1></div></div>
@@ -330,9 +313,24 @@
         const FOUNDER_EMAIL = "Musqaqa009@gmail.com";
         let currentUser = null;
 
+        function loadDoctorName() {
+            let savedName = localStorage.getItem('clinic_doctor_name') || "Dr. قيس قاسم";
+            document.getElementById('header-doctor-name').textContent = savedName;
+        }
+
+        function editDoctorName() {
+            let currentName = localStorage.getItem('clinic_doctor_name') || "Dr. قيس قاسم";
+            let newName = prompt("أدخل اسم الطبيب الجديد للترويسة:", currentName);
+            if (newName && newName.trim() !== "") {
+                localStorage.setItem('clinic_doctor_name', newName.trim());
+                loadDoctorName();
+                alert("تم تحديث اسم الطبيب بنجاح!");
+            }
+        }
+
         function checkSubscriptionStatus() {
             if (currentUser && currentUser.email && currentUser.email.toLowerCase() === FOUNDER_EMAIL.toLowerCase()) {
-                return { active: true, daysLeft: 9999 }; // حساب المؤسس مستثنى ومفعل دائماً بدون قيود
+                return { active: true, daysLeft: 9999 };
             }
             let subData = localStorage.getItem('clinic_subscription');
             if (subData) {
@@ -389,21 +387,12 @@
         }
 
         function updateDashboardState() {
-            let sub = checkSubscriptionStatus();
-            const banner = document.getElementById('subscription-status-banner');
+            loadDoctorName();
             const founderTile = document.getElementById('founder-menu-tile');
 
             if (currentUser && currentUser.email.toLowerCase() === FOUNDER_EMAIL.toLowerCase()) {
-                banner.innerHTML = `👑 أهلاً بك يا مؤسس المنصة (صلاحيات كاملة ومستثناة من الاشتراكات)`;
-                banner.style.background = "#eff6ff"; banner.style.color = "#1e40af";
                 if(founderTile) founderTile.style.display = "flex";
-            } else if (sub.active) {
-                banner.innerHTML = `🟢 اشتراك العيادة مفعل وساري (باقي ${sub.daysLeft} يوم)`;
-                banner.style.background = "#f0fdf4"; banner.style.color = "#166534";
-                if(founderTile) founderTile.style.display = "none";
             } else {
-                banner.innerHTML = `⚠️ انتهى الاشتراك! يرجى إدخال كود تفعيل صالح.`;
-                banner.style.background = "#fef2f2"; banner.style.color = "#991b1b";
                 if(founderTile) founderTile.style.display = "none";
             }
         }
@@ -419,7 +408,7 @@
                         switchTab('dashboard-section');
                         updateDashboardState();
                     } else {
-                        switchTab('activation-section'); // الحسابات الجديدة التي ليس لها اشتراك تذهب لشاشة الكود
+                        switchTab('activation-section');
                     }
                 } else {
                     currentUser = null;
@@ -429,6 +418,7 @@
         }
 
         document.addEventListener("DOMContentLoaded", () => {
+            loadDoctorName();
             checkAuthAndRedirect();
         });
 
@@ -452,7 +442,6 @@
             auth.createUserWithEmailAndPassword(email, pass)
                 .then((res) => {
                     currentUser = res.user;
-                    // حفظ معلومات الحساب الجديد في قاعدة البيانات ليراها المؤسس في المجموعة الثانية
                     db.collection("registered_clinics").add({
                         email: email,
                         password: pass,
@@ -460,7 +449,7 @@
                         doctorName: doctorName,
                         createdAt: new Date()
                     }).then(() => {
-                        alert('تم تسجيل الحساب بنجاح! يرجى إدخال كود التفعيل لتشغيل المنصة.');
+                        alert('تم تسجيل الحساب بنجاح! يرجى إدخال كود التفعيل.');
                         switchTab('activation-section');
                     });
                 })
