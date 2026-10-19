@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>منصة أسناني السحابية - عيادات الأسنان</title>
     
-    <!-- استيراد الخطوط العربية ومكتبات الأيقونات و html2canvas و jsPDF -->
+    <!-- استيراد الخطوط ومكتبات الأيقونات و html2canvas و jsPDF -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
@@ -275,23 +275,9 @@
             background-color: #FFFFFF;
         }
 
-        .tile-icon {
-            font-size: 32px;
-            margin-bottom: 10px;
-        }
-
-        .tile-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 4px;
-        }
-
-        .tile-desc {
-            font-size: 10px;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
+        .tile-icon { font-size: 32px; margin-bottom: 10px; }
+        .tile-title { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 4px; }
+        .tile-desc { font-size: 10px; color: var(--text-muted); font-weight: 500; }
 
         .patients-list {
             margin-top: 15px;
@@ -310,22 +296,10 @@
             border: 1px solid var(--border-color);
             transition: border-color 0.2s;
         }
+        .patient-item:hover { border-color: var(--primary); }
 
-        .patient-item:hover {
-            border-color: var(--primary);
-        }
-
-        .patient-info h4 {
-            font-size: 15px;
-            color: var(--text-main);
-            margin-bottom: 4px;
-            font-weight: 700;
-        }
-
-        .patient-info p {
-            font-size: 12px;
-            color: var(--text-muted);
-        }
+        .patient-info h4 { font-size: 15px; color: var(--text-main); margin-bottom: 4px; font-weight: 700; }
+        .patient-info p { font-size: 12px; color: var(--text-muted); }
 
         .patient-actions button {
             background: var(--primary);
@@ -338,10 +312,7 @@
             font-weight: 700;
             font-family: 'Cairo', sans-serif;
         }
-
-        .patient-actions button:hover {
-            background: var(--primary-hover);
-        }
+        .patient-actions button:hover { background: var(--primary-hover); }
 
         /* حاوية قالب الفكين الأساسي */
         .real-jaw-container {
@@ -356,17 +327,12 @@
             text-align: center;
         }
 
-        .real-jaw-container img {
-            width: 100%;
-            display: block;
-        }
+        .real-jaw-container img { width: 100%; display: block; }
 
         .jaw-absolute-overlay {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             pointer-events: none;
         }
 
@@ -387,16 +353,8 @@
             transition: background-color 0.2s, border 0.2s, opacity 0.2s, color 0.2s;
         }
 
-        .jaw-absolute-overlay.hide-numbers .tooth-hotspot {
-            color: transparent;
-            text-shadow: none;
-            border: none;
-        }
-
-        .jaw-absolute-overlay.show-borders .tooth-hotspot {
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            background: rgba(255, 255, 255, 0.1);
-        }
+        .jaw-absolute-overlay.hide-numbers .tooth-hotspot { color: transparent; text-shadow: none; border: none; }
+        .jaw-absolute-overlay.show-borders .tooth-hotspot { border: 1px solid rgba(255, 255, 255, 0.6); background: rgba(255, 255, 255, 0.1); }
 
         .tooth-hotspot:active { cursor: grabbing; }
         .tooth-hotspot:hover { background: rgba(14, 165, 233, 0.4); border-color: #FFFFFF; z-index: 50; }
@@ -425,7 +383,6 @@
             font-size: 11px;
             font-weight: 600;
         }
-
         .legend-item { display: flex; align-items: center; gap: 4px; color: var(--text-muted); }
         .legend-color { width: 10px; height: 10px; border-radius: 50%; }
 
@@ -447,25 +404,10 @@
             padding: 12px;
             margin-top: 12px;
         }
-
-        .tooth-ba-card {
-            background: #FFFFFF;
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
+        .tooth-ba-card { background: #FFFFFF; border: 1px solid var(--border-color); border-radius: 10px; padding: 10px; margin-bottom: 10px; }
         .tooth-ba-card:last-child { margin-bottom: 0; }
 
-        .tooth-ba-title {
-            font-size: 13px;
-            font-weight: 700;
-            color: var(--primary);
-            margin-bottom: 8px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
+        .tooth-ba-title { font-size: 13px; font-weight: 700; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
 
         .custom-file-upload {
             display: inline-block;
@@ -484,51 +426,23 @@
         }
         .custom-file-upload:hover { background: #BAE6FD; }
 
-        .tooth-images-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 8px;
-        }
-
-        .tooth-img-thumb {
-            position: relative;
-            width: 100%;
-            height: 75px;
-            border-radius: 8px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            background: #FFF;
-        }
+        .tooth-images-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .tooth-img-thumb { position: relative; width: 100%; height: 75px; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-color); background: #FFF; }
         .tooth-img-thumb img { width: 100%; height: 100%; object-fit: cover; }
 
         .tooth-img-delete {
             position: absolute;
-            top: 3px;
-            left: 3px;
+            top: 3px; left: 3px;
             background: rgba(239, 68, 68, 0.9);
-            color: #FFF;
-            border: none;
-            border-radius: 50%;
-            width: 20px;
-            height: 20px;
-            font-size: 11px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: #FFF; border: none; border-radius: 50%;
+            width: 20px; height: 20px; font-size: 11px;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
         }
 
-        .advanced-hotspot-editor {
-            background: #F8FAFC;
-            border: 1px solid var(--primary);
-            border-radius: 12px;
-            padding: 12px;
-            margin-top: 15px;
-            display: none;
-        }
+        .advanced-hotspot-editor { background: #F8FAFC; border: 1px solid var(--primary); border-radius: 12px; padding: 12px; margin-top: 15px; display: none; }
         .advanced-hotspot-editor.active { display: block; }
 
-        /* تنسيقات الميزات الطبية الجديدة والمودال */
+        /* تنسيقات الروشتة التفاعلية ووضع الـ Config Mode والسحب والإفلات */
         .modal-overlay {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -542,8 +456,8 @@
             border-radius: 16px;
             padding: 20px;
             width: 100%;
-            max-width: 520px;
-            max-height: 90vh;
+            max-width: 580px;
+            max-height: 95vh;
             overflow-y: auto;
             text-align: right;
         }
@@ -559,13 +473,70 @@
             overflow-y: auto;
             display: none;
         }
-        .suggestion-item {
-            padding: 8px 12px;
-            font-size: 12px;
-            cursor: pointer;
-            border-bottom: 1px solid #F1F5F9;
-        }
+        .suggestion-item { padding: 8px 12px; font-size: 12px; cursor: pointer; border-bottom: 1px solid #F1F5F9; }
         .suggestion-item:hover { background: #E0F2FE; color: var(--primary); }
+
+        /* حاوية الروشتة وأجزائها القابلة للسحب */
+        .rx-canvas-container {
+            position: relative !important;
+            width: 100% !important;
+            max-width: 540px !important;
+            height: 720px !important;
+            background: #ffffff !important;
+            margin: 0 auto !important;
+            overflow: hidden !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+        }
+        .rx-bg-img {
+            position: absolute !important;
+            left: 0 !important; top: 0 !important;
+            width: 100% !important; height: 100% !important;
+            object-fit: fill !important;
+            pointer-events: none !important;
+        }
+        .draggable-box {
+            touch-action: none !important;
+            cursor: move !important;
+            position: absolute !important;
+            background: transparent !important;
+            border: none !important;
+            padding: 4px;
+            direction: rtl;
+            text-align: right;
+        }
+        .config-mode.draggable-box {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border: 1px dashed var(--primary) !important;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+            padding: 8px !important;
+            border-radius: 6px;
+        }
+        .box-font-controls {
+            display: none;
+            gap: 4px;
+            margin-bottom: 4px;
+            background: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 6px;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #0f172a;
+        }
+        .config-mode .box-font-controls { display: flex; }
+        .box-font-controls button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 20px;
+            height: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 12px;
+        }
     </style>
 </head>
 <body>
@@ -945,26 +916,73 @@
 
     </div>
 
-    <!-- نافذة منبثقة للروشتة الطبية (Rx Modal) -->
+    <!-- نافذة منبثقة للروشتة الطبية مع ميزة Config Mode والسحب وإفلات العناصر (Draggable Boxes) -->
     <div id="rxModal" class="modal-overlay" style="display: none;">
-        <div class="modal-body" style="max-width: 560px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <h3 style="color: var(--primary);"><i class="fa-solid fa-file-prescription"></i> وصفة طبية (روشتة الأسنان)</h3>
-                <button type="button" onclick="closeRxModal()" style="background: none; border: none; font-size: 18px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div id="rx-print-area" style="background: #FFF; padding: 20px; border-radius: 12px; border: 1px solid var(--border-color); margin-bottom: 15px;">
-                <div id="rx-header-img-container" style="text-align: center; margin-bottom: 15px;"></div>
-                <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 700; border-bottom: 2px solid var(--primary); padding-bottom: 8px; margin-bottom: 12px;">
-                    <span id="rx-patient-name">المريض: —</span>
-                    <span id="rx-date">التاريخ: —</span>
-                </div>
-                <div style="font-size: 22px; font-weight: 900; color: #DC2626; margin-bottom: 10px;">Rx</div>
-                <div class="form-group" style="position: relative;">
-                    <textarea id="rx-drugs-textarea" rows="6" placeholder="اكتب الأدوية والتعليمات هنا (مع الاقتراحات التلقائية)..." oninput="handleDictSuggestions(this, 'drugs')" onblur="hideSuggestions('drugs')" style="font-size: 14px; line-height: 1.6;"></textarea>
-                    <div class="suggestions-box" id="suggestions-drugs"></div>
+        <div class="modal-body" style="max-width: 600px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <h3 style="color: var(--primary); font-size: 16px;"><i class="fa-solid fa-file-prescription"></i> وصفة طبية (روشتة الأسنان)</h3>
+                <div style="display: flex; gap: 6px;">
+                    <button type="button" id="rxConfigToggleBtn" onclick="toggleRxConfigMode()" style="background: #e0f2fe; color: var(--primary); border: 1px solid var(--primary); border-radius: 8px; padding: 4px 10px; font-size: 11px; font-weight: 700; cursor: pointer;">
+                        <i class="fa-solid fa-sliders"></i> ضبط الأماكن والخطوط
+                    </button>
+                    <button type="button" onclick="closeRxModal()" style="background: none; border: none; font-size: 18px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
                 </div>
             </div>
-            <div style="display: flex; gap: 10px;">
+
+            <div style="font-size: 11px; color: var(--text-muted); margin-bottom: 8px; text-align: center;" id="rxModeHint">
+                💡 انقر على "ضبط الأماكن والخطوط" لسحب ونقل الأجزاء وتكبير وتصغير الخطوط بحرية تامة على ترويسة عيادتك.
+            </div>
+
+            <!-- حاوية الروشتة التفاعلية القابلة للسحب -->
+            <div id="rxCanvasContainer" class="rx-canvas-container">
+                <img id="rxBgImg" class="rx-bg-img" src="" alt="ترويسة الروشتة" style="display: none;">
+                
+                <!-- صندوق اسم وتفاصيل المريض القابل للسحب -->
+                <div id="rxDragBoxPatient" class="draggable-box" style="top: 130px; left: 30px;">
+                    <div class="box-font-controls">
+                        <span>خط المريض:</span>
+                        <div style="display:flex; gap:3px;">
+                            <button type="button" onclick="changeBoxFontSize('patient', -1)">-</button>
+                            <button type="button" onclick="changeBoxFontSize('patient', 1)">+</button>
+                        </div>
+                    </div>
+                    <div id="rxDragPatientText" style="font-size: 14px; font-weight: bold; color: #DC2626;">المريض: —</div>
+                </div>
+
+                <!-- صندوق التاريخ القابل للسحب -->
+                <div id="rxDragBoxDate" class="draggable-box" style="top: 130px; left: 400px;">
+                    <div class="box-font-controls">
+                        <span>خط التاريخ:</span>
+                        <div style="display:flex; gap:3px;">
+                            <button type="button" onclick="changeBoxFontSize('date', -1)">-</button>
+                            <button type="button" onclick="changeBoxFontSize('date', 1)">+</button>
+                        </div>
+                    </div>
+                    <div id="rxDragDateText" style="font-size: 13px; font-weight: bold; color: #334155;">التاريخ: —</div>
+                </div>
+
+                <!-- صندوق الأدوية والعلاج (Rx) القابل للسحب -->
+                <div id="rxDragBoxTreatment" class="draggable-box" style="top: 200px; left: 30px; width: 480px;">
+                    <div class="box-font-controls">
+                        <span>خط الأدوية:</span>
+                        <div style="display:flex; gap:3px;">
+                            <button type="button" onclick="changeBoxFontSize('drugs', -1)">-</button>
+                            <button type="button" onclick="changeBoxFontSize('drugs', 1)">+</button>
+                        </div>
+                    </div>
+                    <div style="font-size: 20px; font-weight: 900; color: #DC2626; margin-bottom: 4px;">Rx</div>
+                    <div class="form-group" style="position: relative; margin-bottom: 0;">
+                        <textarea id="rx-drugs-textarea" rows="5" placeholder="اكتب الأدوية والتعليمات هنا (مع الاقتراحات التلقائية)..." oninput="handleDictSuggestions(this, 'drugs')" onblur="hideSuggestions('drugs')" style="font-size: 14px; line-height: 1.6; background: rgba(255,255,255,0.9);"></textarea>
+                        <div class="suggestions-box" id="suggestions-drugs"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button id="rxSaveLayoutBtn" class="btn" style="display: none; background: #0284c7; margin-top: 10px;" onclick="saveRxLayoutPositions()">
+                <i class="fa-solid fa-floppy-disk"></i> حفظ أماكن وأحجام الروشتة الحالية نهائياً
+            </button>
+
+            <div style="display: flex; gap: 10px; margin-top: 12px;">
                 <button type="button" class="btn btn-secondary" onclick="closeRxModal()">إغلاق</button>
                 <button type="button" class="btn" style="background: #10B981;" onclick="printRxDirectly()"><i class="fa-solid fa-print"></i> طباعة فورية</button>
                 <button type="button" class="btn" onclick="downloadRxPDF()"><i class="fa-solid fa-file-pdf"></i> حفظ PDF</button>
@@ -1031,6 +1049,7 @@
         let currentUser = null;
         let temporaryPatientInfo = {};
         let editingPatientId = null;
+        let isConfigMode = false;
 
         const allTeeth = [
             18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28,
@@ -1047,10 +1066,8 @@
                 {x: 25, y: 64}, {x: 27, y: 72}, {x: 30, y: 79}, {x: 34, y: 84}, {x: 39, y: 87}, {x: 44, y: 89}, {x: 50, y: 90}, {x: 56, y: 90},
                 {x: 62, y: 90}, {x: 68, y: 89}, {x: 73, y: 87}, {x: 78, y: 84}, {x: 82, y: 79}, {x: 85, y: 72}, {x: 87, y: 64}, {x: 89, y: 56}
             ];
-            
             let upper = [18, 17, 16, 15, 14, 13, 12, 11, 21, 22, 23, 24, 25, 26, 27, 28];
             let lower = [48, 47, 46, 45, 44, 43, 42, 41, 31, 32, 33, 34, 35, 36, 37, 38];
-            
             upper.forEach((num, i) => { pos[num] = upperCoords[i]; });
             lower.forEach((num, i) => { pos[num] = lowerCoords[i]; });
             return pos;
@@ -1082,13 +1099,11 @@
                     hotspot.className = 'tooth-hotspot';
                     hotspot.id = `hotspot-${num}`;
                     hotspot.textContent = num;
-                    
                     let p = hotspotPositions[num] || { x: 50, y: 50 };
                     let st = getToothStyle(num);
                     hotspot.style.left = p.x + '%';
                     hotspot.style.top = p.y + '%';
                     applyStyleToElement(hotspot, st);
-
                     if (toothData[num] && toothData[num].status && toothData[num].status !== 'سليم') {
                         hotspot.classList.add(`status-${toothData[num].status}`);
                     }
@@ -1109,13 +1124,11 @@
                     const hotspot = document.createElement('div');
                     hotspot.className = 'tooth-hotspot';
                     hotspot.textContent = num;
-                    
                     let p = hotspotPositions[num] || { x: 50, y: 50 };
                     let st = getToothStyle(num);
                     hotspot.style.left = p.x + '%';
                     hotspot.style.top = p.y + '%';
                     applyStyleToElement(hotspot, st);
-
                     enableTemplateDrag(hotspot, num);
                     hotspot.onclick = (e) => {
                         e.stopPropagation();
@@ -1126,22 +1139,15 @@
             }
         }
 
-        function toggleBorders() {
-            const tg = document.getElementById('template-jaw-grid');
-            if (tg) tg.classList.toggle('show-borders');
-        }
-
+        function toggleBorders() { document.getElementById('template-jaw-grid').classList.toggle('show-borders'); }
         function toggleTemplateNumbersVisibility() {
             isTemplateNumbersHidden = !isTemplateNumbersHidden;
-            const btn = document.getElementById('toggle-template-num-btn');
-            if (btn) btn.textContent = isTemplateNumbersHidden ? "👁️ إظهار الأرقام" : "👁️ إخفاء الأرقام";
+            document.getElementById('toggle-template-num-btn').textContent = isTemplateNumbersHidden ? "👁️ إظهار الأرقام" : "👁️ إخفاء الأرقام";
             renderJawGrid();
         }
-
         function togglePatientNumbersVisibility() {
             isNumbersHidden = !isNumbersHidden;
-            const btn = document.getElementById('toggle-num-btn');
-            if (btn) btn.textContent = isNumbersHidden ? "👁️ إظهار الأرقام" : "👁️ إخفاء الأرقام";
+            document.getElementById('toggle-num-btn').textContent = isNumbersHidden ? "👁️ إظهار الأرقام" : "👁️ إخفاء الأرقام";
             renderJawGrid();
         }
 
@@ -1167,7 +1173,6 @@
             let h = parseInt(document.getElementById('edit-height').value);
             let r = parseInt(document.getElementById('edit-radius').value);
             let rot = parseInt(document.getElementById('edit-rotate').value);
-
             hotspotStyles[editingHotspotTooth] = { width: w, height: h, radius: r, rotate: rot };
             localStorage.setItem('clinic_jaw_styles', JSON.stringify(hotspotStyles));
             renderJawGrid();
@@ -1188,13 +1193,10 @@
                     let rect = container.getBoundingClientRect();
                     let x = ((ev.clientX - rect.left) / rect.width) * 100;
                     let y = ((ev.clientY - rect.top) / rect.height) * 100;
-                    x = Math.max(2, Math.min(98, x));
-                    y = Math.max(2, Math.min(98, y));
+                    x = Math.max(2, Math.min(98, x)); y = Math.max(2, Math.min(98, y));
                     hotspotPositions[toothNum] = { x: x, y: y };
-                    element.style.left = x + '%';
-                    element.style.top = y + '%';
+                    element.style.left = x + '%'; element.style.top = y + '%';
                 }
-
                 function onPointerUp(ev) {
                     if (ev.pointerId !== activeTouchId) return;
                     element.releasePointerCapture(ev.pointerId);
@@ -1210,18 +1212,18 @@
         function toggleEditMode() {
             isEditMode = !isEditMode;
             let btn = document.getElementById('edit-mode-btn');
-            if (isEditMode) {
-                btn.textContent = "🔒 إيقاف وضع السحب";
-                btn.style.background = "#EF4444";
-            } else {
-                btn.textContent = "🔓 تفعيل وضع السحب والتخصيص";
-                btn.style.background = "var(--primary)";
-                closeHotspotEditor();
-            }
+            btn.textContent = isEditMode ? "🔒 إيقاف وضع السحب" : "🔓 تفعيل وضع السحب والتخصيص";
+            btn.style.background = isEditMode ? "#EF4444" : "var(--primary)";
+            if (!isEditMode) closeHotspotEditor();
             renderJawGrid();
         }
 
-        document.addEventListener("DOMContentLoaded", () => { renderJawGrid(); renderDictManagerList(); });
+        document.addEventListener("DOMContentLoaded", () => {
+            renderJawGrid();
+            renderDictManagerList();
+            initDraggableRxBoxes();
+            loadSavedRxLayout();
+        });
 
         auth.onAuthStateChanged((user) => {
             if (user) { currentUser = user; switchTab('dashboard-section'); }
@@ -1230,21 +1232,18 @@
 
         function handleLogin(event) {
             event.preventDefault();
-            const email = document.getElementById('login-email').value;
-            const pass = document.getElementById('login-pass').value;
-            auth.signInWithEmailAndPassword(email, pass).catch((error) => alert('خطأ في تسجيل الدخول: ' + error.message));
+            auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value)
+                .catch((error) => alert('خطأ في تسجيل الدخول: ' + error.message));
         }
 
         function handleRegister(event) {
             event.preventDefault();
-            const email = document.getElementById('reg-email').value;
-            const pass = document.getElementById('reg-pass').value;
-            auth.createUserWithEmailAndPassword(email, pass)
+            auth.createUserWithEmailAndPassword(document.getElementById('reg-email').value, document.getElementById('reg-pass').value)
                 .then(() => alert('تم إنشاء الحساب السحابي بنجاح!'))
                 .catch((error) => alert('خطأ في التسجيل: ' + error.message));
         }
 
-        function logout() { auth.signOut().catch((error) => console.log(error)); }
+        function logout() { auth.signOut(); }
 
         function openNewPatientForm() {
             editingPatientId = null;
@@ -1286,21 +1285,20 @@
                     }
                     querySnapshot.forEach((doc) => {
                         const data = doc.data();
-                        const item = document.createElement('div');
-                        item.className = 'patient-item';
-                        item.innerHTML = `
-                            <div class="patient-info">
-                                <h4>${data.name}</h4>
-                                <p>العمر: ${data.age} سنة | الهاتف: ${data.phone}</p>
-                            </div>
-                            <div class="patient-actions">
-                                <button onclick="editPatient('${doc.id}')">تعديل الملف</button>
+                        container.innerHTML += `
+                            <div class="patient-item">
+                                <div class="patient-info">
+                                    <h4>${data.name}</h4>
+                                    <p>العمر: ${data.age} سنة | الهاتف: ${data.phone}</p>
+                                </div>
+                                <div class="patient-actions">
+                                    <button onclick="editPatient('${doc.id}')">تعديل الملف</button>
+                                </div>
                             </div>
                         `;
-                        container.appendChild(item);
                     });
                 })
-                .catch((error) => container.innerHTML = '<p style="text-align: center; color: #EF4444; font-size: 13px;">خطأ: ' + error.message + '</p>');
+                .catch((error) => container.innerHTML = '<p style="text-align: center; color: #EF4444;">خطأ: ' + error.message + '</p>');
         }
 
         function editPatient(patientId) {
@@ -1338,12 +1336,7 @@
 
         function savePatientToCloud() {
             if (!currentUser) { alert('الرجاء تسجيل الدخول أولاً'); return; }
-            const finalPatientData = {
-                doctorId: currentUser.uid,
-                ...temporaryPatientInfo,
-                teeth: toothData,
-                updatedAt: new Date()
-            };
+            const finalPatientData = { doctorId: currentUser.uid, ...temporaryPatientInfo, teeth: toothData, updatedAt: new Date() };
             if (editingPatientId) {
                 db.collection("patients").doc(editingPatientId).update(finalPatientData)
                     .then(() => { alert('تم تحديث ملف المريض بنجاح!'); switchTab('dashboard-section'); });
@@ -1356,15 +1349,12 @@
         function openToothPanel(toothNum) {
             currentSelectedTooth = toothNum;
             document.getElementById('panel-tooth-title').textContent = `إدارة السن رقم: ${toothNum}`;
-            if (!toothData[toothNum]) {
-                toothData[toothNum] = { status: 'سليم', notes: '', imagesBefore: [], imagesAfter: [] };
-            }
+            if (!toothData[toothNum]) toothData[toothNum] = { status: 'سليم', notes: '', imagesBefore: [], imagesAfter: [] };
             document.getElementById('tooth-status').value = toothData[toothNum].status || 'سليم';
             document.getElementById('tooth-notes').value = toothData[toothNum].notes || '';
             renderToothImages();
-            const panel = document.getElementById('tooth-panel');
-            panel.classList.add('active');
-            panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            document.getElementById('tooth-panel').classList.add('active');
+            document.getElementById('tooth-panel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
 
         function closeToothPanel() { document.getElementById('tooth-panel').classList.remove('active'); }
@@ -1372,29 +1362,25 @@
         function handleToothImagesUpload(event, type) {
             const files = event.target.files;
             if (!files || files.length === 0) return;
-            let targetArray = type === 'before' ? 'imagesBefore' : 'imagesAfter';
+            let arr = type === 'before' ? 'imagesBefore' : 'imagesAfter';
             Array.from(files).forEach(file => {
                 const reader = new FileReader();
-                reader.onload = function(e) {
-                    toothData[currentSelectedTooth][targetArray].push(e.target.result);
-                    renderToothImages();
-                };
+                reader.onload = (e) => { toothData[currentSelectedTooth][arr].push(e.target.result); renderToothImages(); };
                 reader.readAsDataURL(file);
             });
             event.target.value = '';
         }
 
         function renderToothImages() {
-            const beforeContainer = document.getElementById('tooth-before-images');
-            const afterContainer = document.getElementById('tooth-after-images');
-            beforeContainer.innerHTML = ''; afterContainer.innerHTML = '';
-            let toothObj = toothData[currentSelectedTooth] || { imagesBefore: [], imagesAfter: [] };
-
-            (toothObj.imagesBefore || []).forEach((src, idx) => {
-                beforeContainer.innerHTML += `<div class="tooth-img-thumb"><img src="${src}"><button class="tooth-img-delete" type="button" onclick="removeToothImg('before', ${idx})">&times;</button></div>`;
+            const bCont = document.getElementById('tooth-before-images');
+            const aCont = document.getElementById('tooth-after-images');
+            bCont.innerHTML = ''; aCont.innerHTML = '';
+            let obj = toothData[currentSelectedTooth] || { imagesBefore: [], imagesAfter: [] };
+            (obj.imagesBefore || []).forEach((src, idx) => {
+                bCont.innerHTML += `<div class="tooth-img-thumb"><img src="${src}"><button class="tooth-img-delete" type="button" onclick="removeToothImg('before', ${idx})">&times;</button></div>`;
             });
-            (toothObj.imagesAfter || []).forEach((src, idx) => {
-                afterContainer.innerHTML += `<div class="tooth-img-thumb"><img src="${src}"><button class="tooth-img-delete" type="button" onclick="removeToothImg('after', ${idx})">&times;</button></div>`;
+            (obj.imagesAfter || []).forEach((src, idx) => {
+                aCont.innerHTML += `<div class="tooth-img-thumb"><img src="${src}"><button class="tooth-img-delete" type="button" onclick="removeToothImg('after', ${idx})">&times;</button></div>`;
             });
         }
 
@@ -1419,7 +1405,7 @@
             }
         }
 
-        /* دوال القاموس الطبي والاقتراحات الذكية */
+        /* دوال القاموس الطبي */
         function openDictionaryManager() { renderDictManagerList(); switchTab('dict-manager-section'); }
         function addDictItem() {
             const val = document.getElementById('new-dict-item').value.trim();
@@ -1449,21 +1435,16 @@
 
         function handleDictSuggestions(textarea, type) {
             const val = textarea.value;
-            const boxId = 'suggestions-' + type;
-            const box = document.getElementById(boxId);
+            const box = document.getElementById('suggestions-' + type);
             if (!val || val.length === 0) { box.style.display = 'none'; return; }
-
             const lines = val.split('\n');
             const currentLine = lines[lines.length - 1].trim();
             if (currentLine.length < 1) { box.style.display = 'none'; return; }
-
             const matches = medicalDict.filter(item => item.toLowerCase().includes(currentLine.toLowerCase()));
             if (matches.length > 0) {
                 box.innerHTML = matches.map(m => `<div class="suggestion-item" onclick="selectSuggestion('${type}', '${m.replace(/'/g, "\\'")}')">${m}</div>`).join('');
                 box.style.display = 'block';
-            } else {
-                box.style.display = 'none';
-            }
+            } else { box.style.display = 'none'; }
         }
 
         function selectSuggestion(type, term) {
@@ -1479,7 +1460,7 @@
             setTimeout(() => { document.getElementById('suggestions-' + type).style.display = 'none'; }, 250);
         }
 
-        /* دوال الروشتة الطبية والتقارير */
+        /* دوال الروشتة وترويستها وتخصيص إحداثياتها (Draggable & Config Mode) */
         function openRxTemplateManager() {
             const imgEl = document.getElementById('rx-preview-header');
             if (rxHeaderImage) { imgEl.src = rxHeaderImage; imgEl.style.display = 'block'; }
@@ -1490,7 +1471,7 @@
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(evt) { rxHeaderImage = evt.target.result; document.getElementById('rx-preview-header').src = rxHeaderImage; document.getElementById('rx-preview-header').style.display = 'block'; };
+                reader.onload = (evt) => { rxHeaderImage = evt.target.result; document.getElementById('rx-preview-header').src = rxHeaderImage; document.getElementById('rx-preview-header').style.display = 'block'; };
                 reader.readAsDataURL(file);
             }
         }
@@ -1501,57 +1482,153 @@
         }
 
         function openRxModal() {
-            document.getElementById('rx-patient-name').textContent = "المريض: " + (temporaryPatientInfo.name || "غير محدد");
-            document.getElementById('rx-date').textContent = "التاريخ: " + new Date().toLocaleDateString('en-GB');
-            const headerContainer = document.getElementById('rx-header-img-container');
-            headerContainer.innerHTML = rxHeaderImage ? `<img src="${rxHeaderImage}" style="max-height: 90px; max-width: 100%;">` : `<h3 style="color:var(--primary);">عيادة أسناني السحابية</h3>`;
+            document.getElementById('rxDragPatientText').textContent = "المريض: " + (temporaryPatientInfo.name || "غير محدد");
+            document.getElementById('rxDragDateText').textContent = "التاريخ: " + new Date().toLocaleDateString('en-GB');
+            
+            const bgImg = document.getElementById('rxBgImg');
+            if (rxHeaderImage) { bgImg.src = rxHeaderImage; bgImg.style.display = 'block'; }
+            else { bgImg.style.display = 'none'; }
+
+            loadSavedRxLayout();
             document.getElementById('rxModal').style.display = 'flex';
         }
-        function closeRxModal() { document.getElementById('rxModal').style.display = 'none'; }
-
-        function printRxDirectly() {
-            const printArea = document.getElementById('rx-print-area').innerHTML;
-            const win = window.open('', '', 'height=700,width=700');
-            win.document.write('<html><head><title>روشتة طبية</title><style>body{font-family:Cairo,sans-serif;direction:rtl;padding:20px;}</style></head><body>');
-            win.document.write(printArea);
-            win.document.write('</body></html>');
-            win.document.close();
-            win.focus();
-            setTimeout(() => { win.print(); win.close(); }, 500);
+        function closeRxModal() {
+            if (isConfigMode) toggleRxConfigMode();
+            document.getElementById('rxModal').style.display = 'none';
         }
 
-        function downloadRxPDF() {
-            const element = document.getElementById('rx-print-area');
-            html2canvas(element, { scale: 2 }).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const { jsPDF } = window.jspdf;
-                const pdf = new jsPDF('portrait', 'mm', 'a4');
-                const imgWidth = 190;
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
-                pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
-                pdf.save('Prescription_' + (temporaryPatientInfo.name || 'patient') + '.pdf');
+        function toggleRxConfigMode() {
+            isConfigMode = !isConfigMode;
+            document.querySelectorAll('#rxModal .draggable-box').forEach(b => {
+                if (isConfigMode) b.classList.add('config-mode');
+                else b.classList.remove('config-mode');
+            });
+            document.getElementById('rxSaveLayoutBtn').style.display = isConfigMode ? 'block' : 'none';
+            document.getElementById('rxConfigToggleBtn').style.background = isConfigMode ? 'var(--primary)' : '#e0f2fe';
+            document.getElementById('rxConfigToggleBtn').style.color = isConfigMode ? '#fff' : 'var(--primary)';
+        }
+
+        function changeBoxFontSize(boxType, delta) {
+            let targetEl = null;
+            if (boxType === 'patient') targetEl = document.getElementById('rxDragPatientText');
+            else if (boxType === 'date') targetEl = document.getElementById('rxDragDateText');
+            else if (boxType === 'drugs') targetEl = document.getElementById('rx-drugs-textarea');
+            
+            if (targetEl) {
+                let curSize = parseFloat(window.getComputedStyle(targetEl).fontSize);
+                targetEl.style.fontSize = (curSize + delta) + 'px';
+            }
+        }
+
+        function saveRxLayoutPositions() {
+            toggleRxConfigMode();
+            const container = document.getElementById('rxCanvasContainer');
+            const cWidth = container.clientWidth; const cHeight = container.clientHeight;
+            let layoutData = {};
+
+            document.querySelectorAll('#rxModal .draggable-box').forEach(box => {
+                layoutData[box.id] = {
+                    top: ((box.offsetTop / cHeight) * 100) + '%',
+                    left: ((box.offsetLeft / cWidth) * 100) + '%',
+                    width: ((box.offsetWidth / cWidth) * 100) + '%',
+                    fontSize: window.getComputedStyle(box.querySelector('div:not(.box-font-controls), textarea')).fontSize
+                };
+            });
+            localStorage.setItem('clinic_rx_custom_layout', JSON.stringify(layoutData));
+            alert('تم حفظ أماكن ومقاسات الروشتة الحالية نهائياً بنجاح!');
+        }
+
+        function loadSavedRxLayout() {
+            let saved = localStorage.getItem('clinic_rx_custom_layout');
+            if (saved) {
+                try {
+                    let data = JSON.parse(saved);
+                    for (let boxId in data) {
+                        let box = document.getElementById(boxId);
+                        let cfg = data[boxId];
+                        if (box) {
+                            if (cfg.top) box.style.top = cfg.top;
+                            if (cfg.left) box.style.left = cfg.left;
+                            if (cfg.width) box.style.width = cfg.width;
+                            let inner = box.querySelector('div:not(.box-font-controls), textarea');
+                            if (inner && cfg.fontSize) inner.style.fontSize = cfg.fontSize;
+                        }
+                    }
+                } catch(e) { console.log(e); }
+            }
+        }
+
+        function initDraggableRxBoxes() {
+            let activeBox = null; let startX = 0, startY = 0, initLeft = 0, initTop = 0;
+            const container = document.getElementById('rxCanvasContainer');
+            if (!container) return;
+
+            document.querySelectorAll('#rxModal .draggable-box').forEach(box => {
+                box.addEventListener('pointerdown', (e) => {
+                    if (!isConfigMode || e.target.tagName === 'BUTTON' || e.target.tagName === 'TEXTAREA' || e.target.closest('button')) return;
+                    activeBox = box; startX = e.clientX; startY = e.clientY;
+                    initLeft = (box.offsetLeft / container.clientWidth) * 100;
+                    initTop = (box.offsetTop / container.clientHeight) * 100;
+                    box.setPointerCapture(e.pointerId);
+                    e.stopPropagation();
+                });
+                box.addEventListener('pointermove', (e) => {
+                    if (!activeBox || activeBox !== box) return;
+                    let dx = e.clientX - startX; let dy = e.clientY - startY;
+                    box.style.left = (initLeft + (dx / container.clientWidth) * 100) + '%';
+                    box.style.top = (initTop + (dy / container.clientHeight) * 100) + '%';
+                });
+                box.addEventListener('pointerup', (e) => {
+                    if (activeBox === box) { box.releasePointerCapture(e.pointerId); activeBox = null; }
+                });
             });
         }
 
+        function printRxDirectly() {
+            if (isConfigMode) toggleRxConfigMode();
+            // إخفاء أزرار التحكم بالخطوط مؤقتاً أثناء الطباعة
+            document.querySelectorAll('.box-font-controls').forEach(el => el.style.display = 'none');
+            const element = document.getElementById('rxCanvasContainer');
+            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/jpeg', 0.95);
+                const win = window.open('', '', 'height=700,width=700');
+                win.document.write('<html><head><title>طباعة الروشتة</title></head><body style="margin:0;display:flex;justify-content:center;align-items:center;height:100vh;">');
+                win.document.write(`<img src="${imgData}" style="max-width:100%;height:auto;" onload="window.print(); window.close();"/>`);
+                win.document.write('</body></html>');
+                win.document.close();
+                document.querySelectorAll('.box-font-controls').forEach(el => el.style.display = '');
+            });
+        }
+
+        function downloadRxPDF() {
+            if (isConfigMode) toggleRxConfigMode();
+            document.querySelectorAll('.box-font-controls').forEach(el => el.style.display = 'none');
+            const element = document.getElementById('rxCanvasContainer');
+            html2canvas(element, { scale: 2, useCORS: true }).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF('portrait', 'mm', 'a4');
+                pdf.addImage(imgData, 'PNG', 10, 10, 190, (canvas.height * 190) / canvas.width);
+                pdf.save('Prescription_' + (temporaryPatientInfo.name || 'patient') + '.pdf');
+                document.querySelectorAll('.box-font-controls').forEach(el => el.style.display = '');
+            });
+        }
+
+        /* التقارير الطبية والنسخ الاحتياطي */
         function openMedicalReportModal() {
-            const headerContainer = document.getElementById('report-header-img-container');
-            headerContainer.innerHTML = rxHeaderImage ? `<img src="${rxHeaderImage}" style="max-height: 80px; max-width: 100%;">` : `<h3 style="color:var(--primary);">عيادة أسناني السحابية</h3>`;
+            document.getElementById('report-header-img-container').innerHTML = rxHeaderImage ? `<img src="${rxHeaderImage}" style="max-height: 80px; max-width: 100%;">` : `<h3 style="color:var(--primary);">عيادة أسناني السحابية</h3>`;
             document.getElementById('medicalReportModal').style.display = 'flex';
         }
         function closeMedicalReportModal() { document.getElementById('medicalReportModal').style.display = 'none'; }
-
         function printReportDirectly() {
             const printArea = document.getElementById('report-print-area').innerHTML;
             const win = window.open('', '', 'height=700,width=700');
             win.document.write('<html><head><title>تقرير طبي</title><style>body{font-family:Cairo,sans-serif;direction:rtl;padding:20px;}</style></head><body>');
-            win.document.write(printArea);
-            win.document.write('</body></html>');
-            win.document.close();
-            win.focus();
+            win.document.write(printArea); win.document.write('</body></html>');
+            win.document.close(); win.focus();
             setTimeout(() => { win.print(); win.close(); }, 500);
         }
 
-        /* النسخ الاحتياطي والاستعادة */
         function openBackupManager() { switchTab('backup-section'); }
         function exportJsonBackup() {
             const backupObj = {
@@ -1559,28 +1636,28 @@
                 positions: hotspotPositions,
                 styles: hotspotStyles,
                 dict: medicalDict,
-                rxHeader: rxHeaderImage
+                rxHeader: rxHeaderImage,
+                rxLayout: localStorage.getItem('clinic_rx_custom_layout')
             };
             const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(backupObj));
             const dlAnchor = document.createElement('a');
             dlAnchor.setAttribute("href", dataStr);
             dlAnchor.setAttribute("download", "Asnani_Clinic_Backup.json");
-            document.body.appendChild(dlAnchor);
-            dlAnchor.click();
-            dlAnchor.remove();
+            document.body.appendChild(dlAnchor); dlAnchor.click(); dlAnchor.remove();
         }
         function restoreFromJson(e) {
             const file = e.target.files[0];
             if (file) {
                 const reader = new FileReader();
-                reader.onload = function(evt) {
+                reader.onload = (evt) => {
                     try {
                         const parsed = JSON.parse(evt.target.result);
                         if (parsed.jawImage) localStorage.setItem('clinic_global_jaw', parsed.jawImage);
                         if (parsed.positions) localStorage.setItem('clinic_jaw_positions', JSON.stringify(parsed.positions));
                         if (parsed.styles) localStorage.setItem('clinic_jaw_styles', JSON.stringify(parsed.styles));
-                        if (parsed.dict) { medicalDict = parsed.dict; localStorage.setItem('clinic_medical_dict', JSON.stringify(medicalDict)); }
+                        if (parsed.dict) localStorage.setItem('clinic_medical_dict', JSON.stringify(parsed.dict));
                         if (parsed.rxHeader) localStorage.setItem('clinic_rx_header', parsed.rxHeader);
+                        if (parsed.rxLayout) localStorage.setItem('clinic_rx_custom_layout', parsed.rxLayout);
                         alert('تم استعادة النسخة الاحتياطية بنجاح!');
                         location.reload();
                     } catch(err) { alert('ملف النسخة الاحتياطية غير صالح!'); }
@@ -1591,14 +1668,13 @@
 
         function togglePass(id, el) {
             const input = document.getElementById(id);
-            if (input.type === "password") { input.type = "text"; el.textContent = "إخفاء"; }
-            else { input.type = "password"; el.textContent = "إظهار"; }
+            input.type = input.type === "password" ? "text" : "password";
+            el.textContent = input.type === "password" ? "إظهار" : "إخفاء";
         }
 
         function switchTab(cardId) {
             document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
-            const target = document.getElementById(cardId);
-            if (target) target.classList.add('active');
+            document.getElementById(cardId).classList.add('active');
         }
     </script>
 </body>
