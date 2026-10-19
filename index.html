@@ -196,9 +196,7 @@
             background-color: #94A3B8;
             color: #FFFFFF;
         }
-        .btn-secondary:hover {
-            background-color: #64748B;
-        }
+        .btn-secondary:hover { background-color: #64748B; }
 
         .card-footer-link {
             text-align: center;
@@ -529,6 +527,14 @@
             cursor: pointer;
             font-size: 12px;
         }
+        .founder-admin-panel {
+            background: #EFF6FF;
+            border: 2px dashed #3B82F6;
+            border-radius: 14px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -544,30 +550,20 @@
             </div>
             <div class="form-group">
                 <label for="activation-code-input">كود التفعيل:</label>
-                <input type="text" id="activation-code-input" placeholder="مثال: ASNANI-7D-XXXX أو ASNANI-365D-XXXX" style="text-align: center; font-size: 15px; font-weight: bold; letter-spacing: 1px;">
+                <input type="text" id="activation-code-input" placeholder="مثال: ASNANI-7D-XXXX" style="text-align: center; font-size: 15px; font-weight: bold; letter-spacing: 1px;">
             </div>
             <button type="button" class="btn" style="background: #10B981;" onclick="verifyActivationCode()">تحقق وتفعيل الاشتراك</button>
             <div id="subscription-status-box" style="margin-top: 15px; text-align: center; font-size: 13px; font-weight: 700; color: var(--primary);"></div>
             
-            <div style="margin-top: 25px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                <h4 style="font-size: 13px; color: var(--text-muted); margin-bottom: 10px; text-align: center;">توليد كود اشتراك (أسبوعي / سنوي):</h4>
-                <div class="form-row">
-                    <div class="form-group">
-                        <select id="code-duration-select">
-                            <option value="7">اشتراك أسبوعي (7 أيام)</option>
-                            <option value="365">اشتراك سنوي (365 يوماً)</option>
-                        </select>
-                    </div>
-                    <button type="button" class="btn btn-secondary" style="margin-top:0; width: auto; font-size: 12px;" onclick="generateNewActivationCode()">توليد كود جديد</button>
-                </div>
-                <div id="generated-code-display" style="margin-top: 10px; text-align: center; font-size: 14px; font-weight: 900; color: #DC2626;"></div>
+            <div class="card-footer-link" style="margin-top: 15px;">
+                لديك حساب مؤسس؟ <a onclick="switchTab('login-section')">سجل دخولك هنا</a>
             </div>
         </div>
 
         <!-- 1. تسجيل الدخول السحابي -->
         <div class="card" id="login-section">
             <div class="clinic-topbar">
-                <button type="button" onclick="openActivationModalFromApp()" style="background:#e0f2fe; color:var(--primary); border:none; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;"><i class="fa-solid fa-key"></i> حالة الاشتراك</button>
+                <button type="button" onclick="switchTab('activation-section')" style="background:#e0f2fe; color:var(--primary); border:none; padding:5px 10px; border-radius:6px; font-size:11px; font-weight:700; cursor:pointer;"><i class="fa-solid fa-key"></i> شاشة التفعيل</button>
             </div>
             <div class="card-header">
                 <div class="clinic-logo">🦷</div>
@@ -640,6 +636,22 @@
             <div class="card-header" style="margin-bottom: 10px;">
                 <h2>لوحة التحكم الرئيسية</h2>
                 <p id="subscription-badge-text" style="color: #10B981; font-weight: bold; font-size: 12px; margin-top: 4px;"></p>
+            </div>
+
+            <!-- لوحة تحكم المؤسس الخاصة تظهر حصراً لبريدك Musqaqa009@gmail.com -->
+            <div id="founderAdminPanel" class="founder-admin-panel" style="display: none;">
+                <h3 style="color: #1E40AF; font-size: 15px; margin-bottom: 8px;"><i class="fa-solid fa-crown"></i> لوحة تحكم المؤسس (خاص بك وحدك)</h3>
+                <p style="font-size: 11px; color: #64748B; margin-bottom: 10px;">قم بتوليد أكواد التفعيل الأسبوعية أو السنوية للعيادات:</p>
+                <div class="form-row" style="max-width: 350px; margin: 0 auto;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <select id="founder-code-duration">
+                            <option value="7">أسبوعي (7 أيام)</option>
+                            <option value="365">سنوي (365 يوماً)</option>
+                        </select>
+                    </div>
+                    <button type="button" class="btn" style="margin-top:0; width: auto; font-size: 12px; background: #3B82F6;" onclick="generateFounderCode()">توليد كود جديد</button>
+                </div>
+                <div id="founder-generated-code" style="margin-top: 8px; font-size: 14px; font-weight: 900; color: #DC2626;"></div>
             </div>
 
             <div class="dashboard-grid">
@@ -734,7 +746,7 @@
             <button type="button" class="btn" onclick="saveGlobalJawTemplate()">اعتماد قالب الفكين والتخصيصات للعيادة</button>
         </div>
 
-        <!-- 5. أرشيف ملفات المرضى (متاحة دائماً للمشاهدة والاستعراض) -->
+        <!-- 5. أرشيف ملفات المرضى -->
         <div class="card" id="patients-archive-section">
             <div class="clinic-topbar">
                 <a onclick="switchTab('dashboard-section')" class="logout-btn" style="background: rgba(14, 165, 233, 0.1); color: var(--primary);">&rarr; الرئيسية</a>
@@ -1036,11 +1048,11 @@
         </div>
     </div>
 
-    <!-- نافذة تفعيل الاشتراك المنبثقة (لتجديد الاشتراك في أي وقت) -->
+    <!-- نافذة تجديد الاشتراك المنبثقة -->
     <div id="activationModal" class="modal-overlay" style="display: none;">
         <div class="modal-body" style="max-width: 480px; text-align: center;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h3 style="color: var(--primary);"><i class="fa-solid fa-key"></i> إدارة وتجديد الاشتراك</h3>
+                <h3 style="color: var(--primary);"><i class="fa-solid fa-key"></i> تجديد الاشتراك</h3>
                 <button type="button" onclick="closeActivationModal()" style="background: none; border: none; font-size: 18px; cursor: pointer;"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <p id="modal-sub-info" style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;"></p>
@@ -1048,20 +1060,6 @@
                 <input type="text" id="modal-activation-code-input" placeholder="أدخل كود التفعيل (أسبوعي / سنوي)" style="text-align: center; font-size: 15px; font-weight: bold;">
             </div>
             <button type="button" class="btn" style="background: #10B981;" onclick="verifyModalActivationCode()">تفعيل وتجديد الاشتراك فوراً</button>
-            
-            <div style="margin-top: 20px; border-top: 1px solid var(--border-color); padding-top: 15px;">
-                <h4 style="font-size: 12px; color: var(--text-muted); margin-bottom: 8px;">توليد أكواد جديدة (للإدارة):</h4>
-                <div class="form-row">
-                    <div class="form-group">
-                        <select id="modal-code-duration-select">
-                            <option value="7">أسبوعي (7 أيام)</option>
-                            <option value="365">سنوي (365 يوماً)</option>
-                        </select>
-                    </div>
-                    <button type="button" class="btn btn-secondary" style="margin-top:0; width: auto; font-size: 11px;" onclick="generateModalActivationCode()">توليد كود</button>
-                </div>
-                <div id="modal-generated-code-display" style="margin-top: 8px; font-size: 13px; font-weight: 900; color: #DC2626;"></div>
-            </div>
         </div>
     </div>
 
@@ -1079,6 +1077,9 @@
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
+
+        // 🌟 إيميل المؤسس المعتمد حصراً
+        const FOUNDER_EMAIL = "Musqaqa009@gmail.com";
 
         let toothData = {};
         let globalJawImage = localStorage.getItem('clinic_global_jaw') || "https://images.unsplash.com/photo-1588776814546-1ffcf47267a5?auto=format&fit=crop&w=800&q=80";
@@ -1122,7 +1123,7 @@
             return pos;
         }
 
-        /* نظام الاشتراكات الذكي وتجديد الأسبوعي/السنوي */
+        /* نظام الاشتراكات وتوليد الأكواد للمؤسس */
         function checkSubscriptionStatus() {
             let subData = localStorage.getItem('clinic_subscription');
             if (subData) {
@@ -1146,9 +1147,7 @@
                 try {
                     let parsed = JSON.parse(subData);
                     let currentExpiry = new Date(parsed.expiry);
-                    if (currentExpiry > baseDate) {
-                        baseDate = currentExpiry; // إذا كان الاشتراك ساري، نضيف الأيام الجديدة فوقه (يدعم التجديد المتكرر للأسبوعي أو السنوي)
-                    }
+                    if (currentExpiry > baseDate) baseDate = currentExpiry;
                 } catch(e) {}
             }
             baseDate.setDate(baseDate.getDate() + parseInt(daysToAdd));
@@ -1159,23 +1158,18 @@
             let code = document.getElementById('activation-code-input').value.trim();
             let savedCodes = JSON.parse(localStorage.getItem('clinic_valid_codes')) || {};
             
-            // كود تجريبي افتراضي
             if (code === "ASNANI-VIP-7D" || code === "ASNANI-VIP-365D" || savedCodes[code]) {
-                let days = 7;
-                if (code.includes("365") || savedCodes[code] === 365) days = 365;
-                if (savedCodes[code]) days = savedCodes[code];
-
+                let days = savedCodes[code] || 7;
                 applySubscriptionDays(days);
                 alert(`🎉 تم تفعيل / تجديد الاشتراك بنجاح لمدة ${days} يوم!`);
-                closeActivationModal();
                 checkAuthAndRedirect();
             } else {
                 alert('❌ كود التفعيل غير صالح!');
             }
         }
 
-        function generateNewActivationCode() {
-            let days = parseInt(document.getElementById('code-duration-select').value);
+        function generateFounderCode() {
+            let days = parseInt(document.getElementById('founder-code-duration').value);
             let randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
             let newCode = `ASNANI-${days}D-${randomPart}`;
             
@@ -1183,14 +1177,14 @@
             savedCodes[newCode] = days;
             localStorage.setItem('clinic_valid_codes', JSON.stringify(savedCodes));
             
-            document.getElementById('generated-code-display').innerHTML = `الكود المولّد: ${newCode} (${days === 7 ? 'أسبوعي' : 'سنوي'})`;
+            document.getElementById('founder-generated-code').innerHTML = `الكود الجديد: ${newCode} (${days === 7 ? 'أسبوعي' : 'سنوي'})`;
         }
 
         function openActivationModalFromApp() {
             let sub = checkSubscriptionStatus();
             document.getElementById('modal-sub-info').innerHTML = sub.active ? 
-                `الحالة: <span style="color:#10B981; font-weight:bold;">مفعل (باقي ${sub.daysLeft} يوم)</span>. يمكنك إدخال كود جديد لتجديد الاشتراك (أسبوعي أو سنوي) في أي وقت.` :
-                `الحالة: <span style="color:#EF4444; font-weight:bold;">منتهي الصلاحية</span>. يمكنك مشاهدة ملفات المرضى، لكن يلزم التجديد لإضافة مرضى جدد.`;
+                `الحالة: <span style="color:#10B981; font-weight:bold;">مفعل (باقي ${sub.daysLeft} يوم)</span>. أدخل كود تفعيل لتجديد الاشتراك.` :
+                `الحالة: <span style="color:#EF4444; font-weight:bold;">منتهي الصلاحية</span>. يلزم التجديد لإضافة مرضى جدد.`;
             document.getElementById('activationModal').style.display = 'flex';
         }
         function closeActivationModal() { document.getElementById('activationModal').style.display = 'none'; }
@@ -1199,33 +1193,21 @@
             let code = document.getElementById('modal-activation-code-input').value.trim();
             let savedCodes = JSON.parse(localStorage.getItem('clinic_valid_codes')) || {};
             if (code === "ASNANI-VIP-7D" || code === "ASNANI-VIP-365D" || savedCodes[code]) {
-                let days = 7;
-                if (code.includes("365") || savedCodes[code] === 365) days = 365;
-                if (savedCodes[code]) days = savedCodes[code];
-
+                let days = savedCodes[code] || 7;
                 applySubscriptionDays(days);
                 alert(`🎉 تم تجديد الاشتراك بنجاح لمدة ${days} يوم!`);
                 closeActivationModal();
-                updateDashboardSubscriptionBadge();
+                updateDashboardState();
             } else {
                 alert('❌ كود التفعيل غير صالح!');
             }
         }
 
-        function generateModalActivationCode() {
-            let days = parseInt(document.getElementById('modal-code-duration-select').value);
-            let randomPart = Math.random().toString(36).substring(2, 8).toUpperCase();
-            let newCode = `ASNANI-${days}D-${randomPart}`;
-            let savedCodes = JSON.parse(localStorage.getItem('clinic_valid_codes')) || {};
-            savedCodes[newCode] = days;
-            localStorage.setItem('clinic_valid_codes', JSON.stringify(savedCodes));
-            document.getElementById('modal-generated-code-display').innerHTML = `الكود: ${newCode}`;
-        }
-
-        function updateDashboardSubscriptionBadge() {
+        function updateDashboardState() {
             let sub = checkSubscriptionStatus();
             const badge = document.getElementById('subscription-badge-text');
             const tileNew = document.getElementById('tile-new-patient');
+            
             if (sub.active) {
                 badge.innerHTML = `🟢 الاشتراك مفعل (باقي ${sub.daysLeft} يوم)`;
                 badge.style.color = "#10B981";
@@ -1234,22 +1216,33 @@
                 badge.innerHTML = `⚠️ انتهى الاشتراك! (يمكنك مشاهدة المرضى، ويلزم التجديد لإضافة مرضى جدد)`;
                 badge.style.color = "#EF4444";
             }
+
+            // فحص هل المستخدم الحالي هو المؤسس (Founder) عبر الإيميل الصحيح
+            if (currentUser && currentUser.email && currentUser.email.toLowerCase() === FOUNDER_EMAIL.toLowerCase()) {
+                document.getElementById('founderAdminPanel').style.display = 'block';
+            } else {
+                document.getElementById('founderAdminPanel').style.display = 'none';
+            }
         }
 
         function checkAuthAndRedirect() {
-            let sub = checkSubscriptionStatus();
-            if (sub.active) {
-                auth.onAuthStateChanged((user) => {
-                    if (user) { currentUser = user; switchTab('dashboard-section'); updateDashboardSubscriptionBadge(); }
-                    else { currentUser = null; switchTab('login-section'); }
-                });
-            } else {
-                // إذا انتهى الاشتراك، نسمح للطبيب بالدخول لعرض المرضى والأرشيف لكن مع تنبيه، أو شاشة التفعيل
-                auth.onAuthStateChanged((user) => {
-                    if (user) { currentUser = user; switchTab('dashboard-section'); updateDashboardSubscriptionBadge(); }
-                    else { currentUser = null; switchTab('login-section'); }
-                });
-            }
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    currentUser = user;
+                    let sub = checkSubscriptionStatus();
+                    if (sub.active || currentUser.email.toLowerCase() === FOUNDER_EMAIL.toLowerCase()) {
+                        switchTab('dashboard-section');
+                        updateDashboardState();
+                    } else {
+                        switchTab('activation-section');
+                    }
+                } else {
+                    currentUser = null;
+                    let sub = checkSubscriptionStatus();
+                    if (sub.active) switchTab('login-section');
+                    else switchTab('activation-section');
+                }
+            });
         }
 
         document.addEventListener("DOMContentLoaded", () => {
@@ -1408,21 +1401,32 @@
         function handleLogin(event) {
             event.preventDefault();
             auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value)
+                .then((res) => {
+                    currentUser = res.user;
+                    switchTab('dashboard-section');
+                    updateDashboardState();
+                })
                 .catch((error) => alert('خطأ في تسجيل الدخول: ' + error.message));
         }
 
         function handleRegister(event) {
             event.preventDefault();
             auth.createUserWithEmailAndPassword(document.getElementById('reg-email').value, document.getElementById('reg-pass').value)
-                .then(() => alert('تم إنشاء الحساب السحابي بنجاح!'))
+                .then((res) => {
+                    currentUser = res.user;
+                    alert('تم إنشاء الحساب السحابي بنجاح!');
+                    switchTab('dashboard-section');
+                    updateDashboardState();
+                })
                 .catch((error) => alert('خطأ في التسجيل: ' + error.message));
         }
 
-        function logout() { auth.signOut(); }
+        function logout() { auth.signOut().then(() => { currentUser = null; switchTab('login-section'); }); }
 
         function openNewPatientForm() {
             let sub = checkSubscriptionStatus();
-            if (!sub.active) {
+            let isFounder = currentUser && currentUser.email && currentUser.email.toLowerCase() === FOUNDER_EMAIL.toLowerCase();
+            if (!sub.active && !isFounder) {
                 alert('⚠️ انتهى اشتراك العيادة! يرجى تجديد الاشتراك (أسبوعي أو سنوي) من زر "تجديد الاشتراك" لإضافة مرضى جدد.');
                 openActivationModalFromApp();
                 return;
@@ -1518,7 +1522,8 @@
         function savePatientToCloud() {
             if (!currentUser) { alert('الرجاء تسجيل الدخول أولاً'); return; }
             let sub = checkSubscriptionStatus();
-            if (!editingPatientId && !sub.active) {
+            let isFounder = currentUser && currentUser.email && currentUser.email.toLowerCase() === FOUNDER_EMAIL.toLowerCase();
+            if (!editingPatientId && !sub.active && !isFounder) {
                 alert('⚠️ انتهى اشتراك العيادة! يرجى تجديد الاشتراك لإضافة مريض جديد.');
                 openActivationModalFromApp();
                 return;
@@ -1850,9 +1855,9 @@
             el.textContent = input.type === "password" ? "إظهار" : "إخفاء";
         }
 
-        function switchTab(cardId) {
+        function switchTab(CardId) {
             document.querySelectorAll('.card').forEach(card => card.classList.remove('active'));
-            document.getElementById(cardId).classList.add('active');
+            document.getElementById(CardId).classList.add('active');
         }
     </script>
 </body>
